@@ -72,7 +72,7 @@
                 'img/Pastel6.jpg'
             ],
 
-            googleSheetsUrl: 'https://script.google.com/macros/s/AKfycbwMWws_33grr7GhaxEr9cV7LTLFqH3GbsWrhCOXJvfFrazI2PGpAiRWkpFqSD6cQwOHpw/exec'
+            googleSheetsUrl: 'https://script.google.com/macros/s/AKfycbwH6_2oK8gNBnTkS9rxjXNSVTj-_84t8a0a3EwRBb1JuO0UIjH8fzi7tuDH4enlPhRUgA/exec'
         };
 
         document.documentElement.style.setProperty('--brand-main', CLIENT_CONFIG.colors.main);
@@ -152,6 +152,132 @@
             padding: 1.5rem;
             box-shadow: 0 4px 20px -2px rgba(86, 155, 158, 0.05);
         }
+
+        /* ===== DISPONIBILIDAD DE PEDIDOS · UI PREMIUM ===== */
+        .order-status-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.75rem;
+            padding: 1.25rem;
+            border: 1px solid rgba(91, 49, 52, .10);
+            background: linear-gradient(135deg, #fff 0%, #f8fbfb 100%);
+            box-shadow: 0 12px 35px -18px rgba(45, 73, 76, .28);
+        }
+        .order-status-card::before {
+            content: '';
+            position: absolute;
+            width: 130px; height: 130px;
+            right: -45px; top: -65px;
+            border-radius: 999px;
+            background: rgba(86,155,158,.10);
+            pointer-events: none;
+        }
+     .order-status-card.is-open { border-color: rgba(16,185,129,.20); background: linear-gradient(135deg,#ffffff 0%,#f0fdf8 100%); }
+        .order-status-card.is-closing { border-color: rgba(245,158,11,.24); background: linear-gradient(135deg,#ffffff 0%,#fffbeb 100%); }
+        .order-status-card.is-closed { border-color: rgba(225,29,72,.16); background: linear-gradient(135deg,#ffffff 0%,#fff6f7 100%); }
+        .order-status-orb { width: 42px; height: 42px; border-radius: 1rem; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+        .order-status-card.is-open .order-status-orb { background:#dcfce7; color:#15803d; }
+        .order-status-card.is-closing .order-status-orb { background:#dcfce7; color:#b45309; }
+        .order-status-card.is-closed .order-status-orb { background:#ffe4e6; color:#be123c; }
+        .order-status-badge { display:inline-flex; align-items:center; gap:.4rem; font-size:.64rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+        .order-status-dot { width:7px; height:7px; border-radius:50%; background:currentColor; box-shadow:0 0 0 4px rgba(16,185,129,.10); }
+        .order-status-card.is-open .order-status-badge { color:#15803d; }
+        .order-status-card.is-closing .order-status-badge { color:#b45309; }
+        .order-status-card.is-closed .order-status-badge { color:#be123c; }
+        .order-progress { height:5px; border-radius:999px; background:#e9eeee; overflow:hidden; }
+        .order-progress-fill { height:100%; width:0; border-radius:inherit; transition:width .7s ease; background:linear-gradient(90deg,var(--brand-focus),var(--brand-main)); }
+        .order-status-card.is-closing .order-progress-fill { background:linear-gradient(90deg,#f59e0b,#d97706); }
+        .order-hours-chip { display:inline-flex; align-items:center; gap:.45rem; padding:.48rem .7rem; border-radius:999px; background:rgba(255,255,255,.72); border:1px solid rgba(91,49,52,.08); color:#6b625f; font-size:.66rem; font-weight:600; }
+        .order-live-pulse { animation: orderPulse 2s infinite; }
+        @keyframes orderPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.55;transform:scale(.82)} }
+        .admin-hours-row { transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+        .admin-hours-row:hover { transform:translateY(-1px); box-shadow:0 8px 22px -16px rgba(45,73,76,.45); border-color:rgba(86,155,158,.22); }
+        .admin-day-avatar { width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#f0f7f7,#fff);color:var(--brand-main);font-family:'Playfair Display',serif;font-size:1rem;font-weight:700; }
+        .admin-toggle { position:relative; width:43px; height:24px; }
+        .admin-toggle input { opacity:0; width:0; height:0; }
+        .admin-toggle-track { position:absolute; inset:0; border-radius:999px; background:#d9e0df; cursor:pointer; transition:.2s; }
+        .admin-toggle-track::after { content:''; position:absolute; width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15);transition:.2s; }
+        .admin-toggle input:checked + .admin-toggle-track { background:var(--brand-focus); }
+        .admin-toggle input:checked + .admin-toggle-track::after { transform:translateX(19px); }
+
+        /* ===== CALENDARIO DE DISPONIBILIDAD · UI PREMIUM ===== */
+        .availability-calendar {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.75rem;
+            border: 1px solid rgba(91,49,52,.09);
+            background: linear-gradient(145deg,#fff 0%,#fbfdfd 100%);
+            box-shadow: 0 12px 35px -20px rgba(45,73,76,.30);
+            padding: 1.15rem;
+        }
+        .availability-calendar::after {
+            content:'';
+            position:absolute;
+            width:170px;height:170px;
+            right:-90px;bottom:-95px;
+            border-radius:50%;
+            background:rgba(86,155,158,.07);
+            pointer-events:none;
+        }
+        .availability-calendar-head { position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:.75rem; }
+        .availability-calendar-title { display:flex;align-items:center;gap:.7rem; }
+        .availability-calendar-icon { width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:#eef9f8;color:var(--brand-main); }
+        .availability-calendar-month { font-family:'Playfair Display',serif;color:var(--brand-main);font-size:1.05rem;font-weight:700; }
+        .availability-calendar-sub { margin-top:1px;color:#9a918d;font-size:.62rem; }
+        .availability-calendar-nav { width:32px;height:32px;border-radius:11px;border:1px solid #edf1f0;background:#fff;color:#6b625f;display:flex;align-items:center;justify-content:center;transition:.2s; }
+        .availability-calendar-nav:hover { transform:translateY(-1px);border-color:rgba(86,155,158,.25);color:var(--brand-main);box-shadow:0 7px 16px -12px rgba(45,73,76,.5); }
+        .availability-week { position:relative;z-index:1;display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem;margin-top:1rem; }
+        .availability-week span { text-align:center;color:#aaa29e;font-size:.54rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase; }
+        .availability-grid { position:relative;z-index:1;display:grid;grid-template-columns:repeat(7,1fr);gap:.38rem;margin-top:.45rem; }
+        .availability-day {
+            position:relative;min-height:52px;border:1px solid transparent;border-radius:15px;background:rgba(250,250,249,.72);
+            color:#57504d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+            cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+        }
+        .availability-day:hover { transform:translateY(-2px);box-shadow:0 8px 18px -14px rgba(45,73,76,.5); }
+        .availability-day.is-empty { background:transparent;cursor:default; }
+        .availability-day .day-number { font-size:.72rem;font-weight:800;line-height:1; }
+        .availability-day .day-status-dot { width:6px;height:6px;border-radius:50%; }
+        .availability-day.available .day-status-dot { background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.09); }
+        .availability-day.limited .day-status-dot { background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.09); }
+        .availability-day.full .day-status-dot { background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.08); }
+        .availability-day.closed .day-status-dot { background:#a8a29e; }
+        .availability-day.limited { background:#fffbeb;border-color:rgba(245,158,11,.12); }
+        .availability-day.full { background:#fff5f5;border-color:rgba(239,68,68,.11); }
+        .availability-day.closed { background:#f5f5f4;color:#aaa29e;cursor:default; }
+        .availability-day.today { border-color:rgba(86,155,158,.35); }
+        .availability-day.selected { background:#eef9f8;border-color:rgba(86,155,158,.42);box-shadow:0 0 0 3px rgba(86,155,158,.08); }
+        .availability-day.disabled { cursor:not-allowed;opacity:.62; }
+        .availability-legend { position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem 1rem;margin-top:.95rem;padding-top:.8rem;border-top:1px solid #f0f2f1; }
+        .availability-legend-item { display:flex;align-items:center;gap:.35rem;color:#827a76;font-size:.59rem;font-weight:700; }
+        .availability-legend-dot { width:7px;height:7px;border-radius:50%; }
+        .availability-detail { position:relative;z-index:1;margin-top:.8rem;padding:.7rem .8rem;border-radius:13px;background:#f8faf9;color:#6b625f;font-size:.64rem;line-height:1.55;text-align:center;min-height:36px; }
+        .availability-detail strong { color:var(--brand-main); }
+        .availability-admin-card { margin-top:.75rem;padding:1rem;border-radius:1.4rem;border:1px solid #edf1f0;background:#fbfcfc; }
+        .availability-admin-month { display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.75rem; }
+        .availability-admin-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem; }
+        .availability-admin-day { min-height:46px;border:1px solid #edf1f0;border-radius:12px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:.18s; }
+        .availability-admin-day:hover { transform:translateY(-1px);box-shadow:0 6px 15px -12px rgba(45,73,76,.55); }
+        .availability-admin-day .n { font-size:.67rem;font-weight:800;color:#57504d; }
+        .availability-admin-day .s { width:6px;height:6px;border-radius:50%; }
+        .availability-admin-day.available .s { background:#10b981; }
+        .availability-admin-day.limited .s { background:#f59e0b; }
+        .availability-admin-day.full .s { background:#ef4444; }
+        .availability-admin-day.closed .s { background:#a8a29e; }
+        .availability-admin-day.empty { border-color:transparent;background:transparent;cursor:default; }
+        .availability-admin-day.selected { box-shadow:0 0 0 3px rgba(86,155,158,.08);border-color:rgba(86,155,158,.4); }
+        .availability-admin-controls { display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:end;margin-top:.75rem; }
+        .availability-admin-status { padding:.75rem;border-radius:13px;background:#fff;border:1px solid #edf1f0; }
+        .availability-admin-status label { display:block;color:#827a76;font-size:.58rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.4rem; }
+        .availability-status-select { width:100%;padding:.6rem .7rem;border:1px solid #e7eceb;border-radius:10px;background:#fff;color:#57504d;font-size:.68rem;font-weight:700;outline:none; }
+        .availability-status-select:focus { border-color:rgba(86,155,158,.45);box-shadow:0 0 0 3px rgba(86,155,158,.08); }
+        @media(max-width:560px){
+            .availability-day{min-height:45px;border-radius:12px}
+            .availability-day .day-number{font-size:.66rem}
+            .availability-grid,.availability-week{gap:.25rem}
+            .availability-admin-controls{grid-template-columns:1fr}
+        }
+
         #toast-container {
             position: fixed;
             bottom: 1.5rem;
@@ -227,58 +353,40 @@ background-repeat:no-repeat;">
 </section>
 
     <!-- Contenido Principal -->
-  <main class="w-full max-w-[1400px] mx-auto px-6 py-10 space-y-12">
+  <main class="w-full max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8 space-y-8">
 
        <!-- SECCIÓN 1: PORTAFOLIO -->
-<section id="portfolio-section" class="space-y-8">
+<section id="portfolio-section" class="space-y-5">
 
     <div class="text-center">
         <span class="text-xs uppercase font-bold tracking-[4px] text-brand-500">
             PORTAFOLIO
         </span>
 
-        <h3 class="text-3xl font-serif text-brand-700 mt-2">
+        <h3 class="text-2xl md:text-3xl font-serif text-brand-700 mt-1">
             Nuestras Creaciones
         </h3>
     </div>
 
     <div id="portfolio-grid"
-         class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+         class="grid grid-cols-3 gap-2.5 md:gap-4">
 
-        <div class="overflow-hidden rounded-3xl shadow-md bg-white">
+        <div class="overflow-hidden rounded-2xl shadow-md bg-white">
             <img src="" id="portfolio-image-1"
                  onclick="openImage(this.src)"
-                class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500 cursor-pointer">
+                class="w-full aspect-square object-cover hover:scale-105 transition duration-500 cursor-pointer">
         </div>
 
-        <div class="overflow-hidden rounded-3xl shadow-md bg-white">
+        <div class="overflow-hidden rounded-2xl shadow-md bg-white">
             <img src="" id="portfolio-image-2"
                   onclick="openImage(this.src)"
-         class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500 cursor-pointer">
+         class="w-full aspect-square object-cover hover:scale-105 transition duration-500 cursor-pointer">
         </div>
 
-        <div class="overflow-hidden rounded-3xl shadow-md bg-white">
+        <div class="overflow-hidden rounded-2xl shadow-md bg-white">
             <img src="" id="portfolio-image-3"
                   onclick="openImage(this.src)"
-         class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500 cursor-pointer">
-        </div>
-
-        <div class="overflow-hidden rounded-3xl shadow-md bg-white">
-            <img src="" id="portfolio-image-4"
-                  onclick="openImage(this.src)"
-         class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500 cursor-pointer">
-        </div>
-
-        <div class="overflow-hidden rounded-3xl shadow-md bg-white">
-            <img src="" id="portfolio-image-5"
-                  onclick="openImage(this.src)"
-         class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500 cursor-pointer">
-        </div>
-
-        <div class="overflow-hidden rounded-3xl shadow-md bg-white">
-            <img src="" id="portfolio-image-6"
-                  onclick="openImage(this.src)"
-         class="w-full aspect-[4/5] object-cover hover:scale-105 transition duration-500 cursor-pointer">
+         class="w-full aspect-square object-cover hover:scale-105 transition duration-500 cursor-pointer">
         </div>
 
     </div>
@@ -352,7 +460,35 @@ background-repeat:no-repeat;">
                 <p class="text-xs text-stone-400 pt-1">Ingresa los datos requeridos para generar tu solicitud oficial</p>
             </div>
 
-            <form id="orderForm" onsubmit="handleReviewOrder(event)" class="space-y-6">
+            <!-- ESTADO DINÁMICO DE RECEPCIÓN DE PEDIDOS -->
+            <div id="orderAvailabilityStatus" class="order-status-card" aria-live="polite">
+                <div class="relative z-10 flex items-start gap-3">
+                    <span id="orderAvailabilityIcon" class="order-status-orb">
+                        <i class="fa-solid fa-clock"></i>
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <p id="orderAvailabilityTitle" class="order-status-badge">
+                                <span class="order-status-dot order-live-pulse"></span>
+                                <span>Consultando disponibilidad…</span>
+                            </p>
+                            <span id="orderAvailabilityCountdown" class="text-[11px] font-semibold text-stone-500"></span>
+                        </div>
+                        <p id="orderAvailabilityMessage" class="text-xs leading-relaxed mt-1.5 text-stone-600"></p>
+                        <div id="orderProgressWrap" class="mt-3 hidden">
+                            <div class="flex justify-between text-[10px] font-semibold text-stone-400 mb-1.5">
+                                <span id="orderProgressStart">Apertura</span>
+                                <span id="orderProgressEnd">Cierre</span>
+                            </div>
+                            <div class="order-progress"><div id="orderProgressFill" class="order-progress-fill"></div></div>
+                        </div>
+                        <div id="orderHoursChips" class="flex flex-wrap gap-1.5 mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="orderHoursSummary" class="text-[10px] text-stone-400 text-center leading-relaxed"></div>
+
+             <form id="orderForm" onsubmit="handleReviewOrder(event)" class="space-y-6">
                 <!-- Nombre Completo -->
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
@@ -386,39 +522,8 @@ background-repeat:no-repeat;">
                     <select
  <select id="eventType" required class="w-full input-canva font-medium"></select>
                 </div>
-              
-<!-- SOLICITAR DISEÑO -->
-<div id="designIdeaContainer" class="p-4 bg-purple-50 border border-purple-200 rounded-2xl text-center space-y-2">
 
-    <p class="text-xs font-medium text-purple-900">
-        🎨 <strong>¿Tienes alguna idea para tu pastel?</strong>
-    </p>
-
-    <p class="text-[11px] text-purple-700 leading-relaxed">
-    <span class="font-semibold">1. Completa primero:</span>
-    nombre, WhatsApp, fecha y tipo de evento.
-    <br>
-    <span class="font-semibold">2. Después:</span>
-    envíanos tu idea o una foto de referencia por WhatsApp
-    y continúa con tu pedido.
-</p>
-
-    <button
-        type="button"
-        onclick="sendDesignIdeaWhatsApp()"
-        class="inline-flex items-center justify-center gap-2
-               bg-purple-600 hover:bg-purple-700
-               text-white font-semibold text-xs
-               px-5 py-2.5 rounded-xl shadow transition">
-
-        <i class="fa-brands fa-whatsapp"></i>
-        Enviar idea o foto por WhatsApp
-
-    </button>
-
-</div>
-
-                <!-- Porciones / Tamaño -->
+                 <!-- Porciones / Tamaño -->
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
                         PORCIONES / TAMAÑO <span class="text-rose-500">*</span>
@@ -457,7 +562,7 @@ background-repeat:no-repeat;">
                     </div>
 
                     <!-- Opción Recoger -->
-                    <div id="pickupContainer" class="p-5 bg-rose-50/40 rounded-3xl border border-pink-100/60 space-y-4">
+                    <div id="pickupContainer" class="p-5 bg-stone-50 rounded-3xll border border-stone-200/60 space-y-4">
                         <div class="space-y-2">
                             <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">SUCURSAL / PUNTO</label>
                             <select id="pickupLocationSelect" onchange="updatePickupDetails()" class="w-full input-canva"></select>
@@ -516,7 +621,7 @@ Notas adicionales:</textarea>
     <footer class="w-full bg-brand-500 text-white text-center py-10 px-4 space-y-4">
         <h4 id="footer-business-name" class="font-serif text-xl tracking-wide"></h4>
         <p id="footer-business-subtitle" class="text-xs font-light text-stone-100 opacity-90"></p>
-        <p class="text-xs font-light text-stone-100 opacity-90">© Agenda de Pedidos -Ledessertmx. Todos los derechos reservados.</p>
+        <p class="text-xs font-light text-stone-100 opacity-90">© Agenda de Pedidos -Dulce Reino. Todos los derechos reservados.</p>
         
         <div class="pt-2">
             <span class="text-[10px] uppercase font-bold tracking-widest block mb-3 opacity-80">SÍGUENOS & CONTÁCTANOS</span>
@@ -597,41 +702,6 @@ Notas adicionales:</textarea>
                     <button onclick="lockAdminSession()" class="text-xs text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1.5 transition">
                         <i class="fa-solid fa-lock text-xs"></i> Cerrar Sesión
                     </button>
-                </div>
-
-                <!-- 1. ESTATUS DE PRODUCCIÓN EN COCINA -->
-                <div class="admin-section-card space-y-4 bg-amber-50/40 border-amber-200/60">
-                    <div class="flex justify-between items-center border-b border-amber-200/60 pb-3">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-sm">
-                                <i class="fa-solid fa-fire-burner"></i>
-                            </span>
-                            <div>
-                                <h4 class="font-bold text-amber-900 text-sm md:text-base">Estatus de Producción en Cocina</h4>
-                                <p class="text-[11px] text-amber-800/80">Control exclusivo de avance en repostería (Pendiente, En Proceso, Terminado)</p>
-                            </div>
-                        </div>
-                        <span id="kitchenCountBadge" class="bg-amber-200/80 text-amber-900 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-list-check text-[10px]"></i> 0 Activos
-                        </span>
-                    </div>
-
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <button onclick="filterKitchenView('all')" class="px-3.5 py-1.5 bg-amber-200/60 hover:bg-amber-200 text-amber-900 rounded-xl font-bold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-border-all text-[11px]"></i> Todos
-                        </button>
-                        <button onclick="filterKitchenView('Pendiente')" class="px-3.5 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl font-bold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-hourglass-start text-[11px]"></i> Pendientes
-                        </button>
-                        <button onclick="filterKitchenView('En Proceso')" class="px-3.5 py-1.5 bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-xl font-bold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-kitchen-set text-[11px]"></i> En Proceso
-                        </button>
-                       <button type="button" onclick="filterKitchenView('Terminado')" class="px-3.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-xl font-bold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-check text-[11px]"></i> Completos
-                        </button>
-                    </div>
-
-                    <div id="kitchenOrdersContainer" class="space-y-3"></div>
                 </div>
 
                 <!-- 2. WHATSAPP DE NEGOCIO Y REDES SOCIALES -->
@@ -850,21 +920,6 @@ Notas adicionales:</textarea>
                     </div>
                 </div>
 
-                <!-- 6. PLANTILLA DIRECCIÓN PRIVADA -->
-                <div class="admin-section-card space-y-3">
-                    <div class="flex items-center gap-2.5 border-b border-stone-100 pb-3">
-                        <span class="w-8 h-8 rounded-xl bg-teal-50 text-brand-600 flex items-center justify-center text-sm">
-                            <i class="fa-solid fa-message"></i>
-                        </span>
-                        <h4 class="font-bold text-brand-700 text-base">Plantilla de Dirección Privada (Venta en Casa)</h4>
-                    </div>
-                    <p class="text-xs text-stone-400">Este mensaje personalizado se enviará al cliente cuando hagas clic en el botón '📍 Dir. Privada WA' dentro del pedido.</p>
-                    <textarea id="privateMessageTemplate" rows="3" class="w-full input-canva" placeholder="Hola! Gracias por tu anticipo. La ubicación exacta es..."></textarea>
-                    <button onclick="savePrivateMessage()" class="bg-brand-500 hover:bg-brand-600 text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar Plantilla
-                    </button>
-                </div>
-
                 <!-- 7. BLOQUEAR FECHAS -->
                 <div class="admin-section-card space-y-4">
                     <div class="flex items-center gap-2.5 border-b border-stone-100 pb-3">
@@ -886,7 +941,7 @@ Notas adicionales:</textarea>
                     </div>
                 </div>
 
-                <!-- 8. HISTORIAL GENERAL DE PEDIDOS (CON ESTATUS DE FINANZAS) -->
+                <!-- 10. HISTORIAL GENERAL DE PEDIDOS (CON ESTATUS DE FINANZAS) -->
                 <div class="space-y-4 pt-2">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2">
@@ -971,6 +1026,236 @@ Notas adicionales:</textarea>
         </div>
         </div>
        </div>
+<!-- ============================================================
+     MODAL: DATOS PARA REALIZAR EL PAGO
+============================================================ -->
+
+<div id="paymentInfoModal"
+     class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-7 shadow-2xl space-y-5 border border-stone-100 max-h-[92vh] overflow-y-auto relative">
+
+        <!-- Cerrar -->
+        <button
+            type="button"
+            onclick="closePaymentInfoModal()"
+            class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-500 hover:text-stone-800 flex items-center justify-center text-sm font-bold">
+            ✕
+        </button>
+
+        <!-- Encabezado -->
+        <div class="flex items-center gap-3 border-b border-stone-100 pb-4">
+
+            <span class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                <i class="fa-solid fa-credit-card"></i>
+            </span>
+
+            <div>
+                <h3 class="text-lg font-serif text-brand-700">
+                    Datos para realizar el pago
+                </h3>
+
+                <p id="paymentInfoClientName"
+                   class="text-[11px] text-stone-400">
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL -->
+        <div class="space-y-2">
+
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
+                TOTAL DEL PEDIDO
+            </label>
+
+            <div class="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 text-brand-700 font-extrabold text-base"
+                 id="paymentInfoTotal">
+                $0.00 MXN
+            </div>
+
+        </div>
+
+
+        <!-- PORCENTAJE -->
+        <div class="space-y-2">
+
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
+                PORCENTAJE DE ANTICIPO
+            </label>
+
+            <div class="flex items-center gap-2">
+
+                <input
+                    type="number"
+                    id="paymentInfoPercent"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="50"
+                    oninput="calculatePaymentInfoAmount()"
+                    class="w-full input-canva">
+
+                <span class="font-bold text-stone-500">
+                    %
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- MONTO DEL ANTICIPO -->
+        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+
+            <div class="flex justify-between items-center">
+
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                    ANTICIPO SOLICITADO
+                </span>
+
+                <span id="paymentInfoAmount"
+                      class="text-lg font-extrabold text-emerald-800">
+                    $0.00
+                </span>
+
+            </div>
+
+        </div>
+
+<!-- ============================================================
+     DATOS DE PAGO Y MENSAJE
+============================================================ -->
+<div class="space-y-4">
+
+    <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
+            🏦 DATOS DE PAGO Y MENSAJE
+        </label>
+
+        <p class="text-[11px] text-stone-400 leading-relaxed mt-1">
+            Completa los datos una vez y guárdalos para utilizarlos en tus mensajes de pago.
+        </p>
+    </div>
+
+    <!-- BANCO -->
+    <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+            Banco
+        </label>
+
+        <input
+            type="text"
+            id="paymentInfoBank"
+            value="BBVA"
+            placeholder="Ej. BBVA"
+            class="w-full input-canva text-sm">
+    </div>
+
+    <!-- TITULAR -->
+    <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+            Titular
+        </label>
+
+        <input
+            type="text"
+            id="paymentInfoHolder"
+            value="María López"
+            placeholder="Nombre del titular"
+            class="w-full input-canva text-sm">
+    </div>
+
+    <!-- CUENTA / CLABE -->
+    <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+            Cuenta / CLABE
+        </label>
+
+        <input
+            type="text"
+            id="paymentInfoAccount"
+            value="012345678901234567"
+            placeholder="Cuenta o CLABE"
+            class="w-full input-canva text-sm">
+    </div>
+
+    <!-- INFORMACIÓN ADICIONAL -->
+    <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+            Información adicional
+        </label>
+
+        <textarea
+            id="paymentInfoAdditional"
+            rows="4"
+            class="w-full input-canva text-xs leading-relaxed"
+            placeholder="Ej. Después de realizar el pago, por favor envíame tu comprobante por este medio."
+            oninput="updatePaymentInfoPreview()">Después de realizar el pago, por favor envíame tu comprobante por este medio.</textarea>
+    </div>
+
+    <!-- GUARDAR -->
+    <div class="flex justify-end">
+
+        <button
+            type="button"
+            onclick="savePaymentInfoDraft()"
+            class="bg-brand-500 hover:bg-brand-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-sm transition flex items-center gap-2">
+
+            <i class="fa-solid fa-floppy-disk"></i>
+
+            Guardar información
+        </button>
+
+    </div>
+
+</div>
+
+
+        <!-- VISTA PREVIA -->
+        <div class="space-y-2">
+
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
+                VISTA PREVIA DEL MENSAJE
+            </label>
+
+            <textarea
+                id="paymentInfoPreview"
+                rows="9"
+                class="w-full input-canva text-xs leading-relaxed"
+                readonly></textarea>
+
+        </div>
+
+
+        <!-- BOTONES -->
+        <div class="flex gap-3 pt-2">
+
+            <button
+                type="button"
+                onclick="closePaymentInfoModal()"
+                class="w-1/2 bg-stone-200 text-stone-700 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-stone-300 transition">
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                onclick="sendPaymentInfoWhatsApp()"
+                class="w-1/2 bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-2xl text-xs font-bold uppercase tracking-wider shadow transition flex items-center justify-center gap-2">
+
+                <i class="fa-brands fa-whatsapp"></i>
+
+                Enviar por WhatsApp
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    
 
     <!-- MODAL DE EDICIÓN EXCLUSIVA DEL FORMULARIO DE PEDIDO -->
     <div id="editFormModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
@@ -1197,7 +1482,29 @@ Notas adicionales:"></textarea>
                 tiktok: 'https://tiktok.com'
             },
             privateMessageTemplate: '¡Hola! Muchas gracias por tu anticipo. Te compartimos la dirección privada para la entrega de tu pedido: Calle Olmo #405, Col. Jardines, Mty. ¡Te esperamos!',
+            paymentBank: '',
+paymentHolder: '',
+paymentAccount: '',
+paymentAdditional: '',
+paymentTemplate: '',
+
+blockedDates: [],
+limitedDates: [],
+orderHours: {
+    lunes: { activo: true, apertura: '09:00', cierre: '18:00' },
+    // ...
+},
             blockedDates: [],
+            limitedDates: [],
+            orderHours: {
+                lunes: { activo: true, apertura: '09:00', cierre: '18:00' },
+                martes: { activo: true, apertura: '09:00', cierre: '18:00' },
+                miercoles: { activo: true, apertura: '09:00', cierre: '18:00' },
+                jueves: { activo: true, apertura: '09:00', cierre: '18:00' },
+                viernes: { activo: true, apertura: '09:00', cierre: '18:00' },
+                sabado: { activo: true, apertura: '09:00', cierre: '14:00' },
+                domingo: { activo: false, apertura: '09:00', cierre: '18:00' }
+            },
             branches: [
                 { id: 1, name: 'Sucursal Matriz - San Pedro', address: 'Av. Vasconcelos #120, SPGG', map: 'https://maps.google.com' }
             ],
@@ -1423,6 +1730,11 @@ function closeImage() {
     renderSocialLinks();
     renderBranches();
     renderBlockedDates();
+    renderOrderHoursAdmin();
+    renderAvailabilityCalendar();
+    renderAdminAvailabilityCalendar();
+    updateOrderAvailability();
+    setInterval(updateOrderAvailability, 60000);
 
     cargarConfiguracionDesdeGoogleSheets();
     cargarPedidosDesdeGoogleSheets();
@@ -1502,8 +1814,38 @@ if (config.branches) {
         if (config.privateMessageTemplate !== undefined) {
             state.privateMessageTemplate = config.privateMessageTemplate;
         }
+        // ============================================
+// INFORMACIÓN DE PAGO
+// ============================================
+if (config.paymentBank !== undefined) {
+    state.paymentBank = String(config.paymentBank);
+}
 
-        if (config.blockedDates) {
+if (config.paymentHolder !== undefined) {
+    state.paymentHolder = String(config.paymentHolder);
+}
+
+if (config.paymentAccount !== undefined) {
+    state.paymentAccount = String(config.paymentAccount);
+}
+
+if (config.paymentAdditional !== undefined) {
+    state.paymentAdditional = String(config.paymentAdditional);
+}
+
+if (config.paymentTemplate !== undefined) {
+    state.paymentTemplate = String(config.paymentTemplate);
+}
+
+        if (config.orderHours) {
+    state.orderHours = normalizarHorarioPedidos(config.orderHours);
+}
+
+if (config.limitedDates) {
+    state.limitedDates = Array.isArray(config.limitedDates) ? config.limitedDates.map(String) : [];
+}
+
+if (config.blockedDates) {
     state.blockedDates = config.blockedDates.map(fecha => {
         if (!fecha) return '';
 
@@ -1523,6 +1865,10 @@ if (config.branches) {
         renderSocialLinks();
         renderBranches();
        renderBlockedDates();
+       renderOrderHoursAdmin();
+       renderAvailabilityCalendar();
+       renderAdminAvailabilityCalendar();
+       updateOrderAvailability();
 
         console.log('Configuración cargada desde Google Sheets');
 
@@ -1693,12 +2039,24 @@ function showToast(message, type = 'info') {
         function checkDateAvailability() {
             const inputDate = document.getElementById('eventDate').value;
             const warningEl = document.getElementById('dateWarning');
-            if (state.blockedDates.includes(inputDate)) {
-                warningEl.textContent = '⚠️ Esta fecha está completamente llena en agenda. Elige otro día o contáctanos directamente.';
+            const status = availabilityStatusForDate(inputDate);
+
+            if (status === 'full') {
+                warningEl.textContent = '🔴 Esta fecha tiene la agenda llena. Elige otra fecha en el calendario de disponibilidad.';
+                warningEl.classList.remove('hidden');
+            } else if (status === 'limited') {
+                warningEl.textContent = '🟡 Esta fecha tiene poca disponibilidad. Te recomendamos solicitar tu pedido pronto.';
+                warningEl.classList.remove('hidden');
+            } else if (status === 'closed') {
+                warningEl.textContent = '⚫ Esta fecha no está disponible para pedidos.';
                 warningEl.classList.remove('hidden');
             } else {
                 warningEl.classList.add('hidden');
             }
+
+            selectedAvailabilityDate = inputDate;
+            renderAvailabilityCalendar();
+            renderAdminAvailabilityCalendar();
         }
 
         // GESTIÓN DEL FORMULARIO Y CONFIRMACIÓN POR EL CLIENTE
@@ -1706,9 +2064,18 @@ function showToast(message, type = 'info') {
 
         function handleReviewOrder(e) {
             e.preventDefault();
+
+            if (!estaDentroDelHorarioDePedidos()) {
+                updateOrderAvailability(true);
+                showToast(obtenerMensajeHorarioCerrado(), 'error');
+                return;
+            }
+
             const dateVal = document.getElementById('eventDate').value;
-            if (state.blockedDates.includes(dateVal)) {
-                showToast('La fecha seleccionada no está disponible. Elige otra fecha.', 'error');
+            const dateStatus = availabilityStatusForDate(dateVal);
+            if (dateStatus === 'full' || dateStatus === 'closed') {
+                showToast(dateStatus === 'full' ? 'La fecha seleccionada tiene la agenda llena. Elige otra fecha.' : 'La fecha seleccionada no está disponible para pedidos.', 'error');
+                renderAvailabilityCalendar();
                 return;
             }
 
@@ -1830,8 +2197,10 @@ pendingOrderData = {
 
     status: 'Pendiente',
     createdAt: new Date().toLocaleDateString('es-MX'),
-    totalPrice: 0,
-    anticipo: 0
+   totalPrice: 0,
+   anticipo: 0,
+   anticipoPorcentaje: 50,
+   anticipoSolicitado: 0 
 };
             const container = document.getElementById('reviewDetailsContainer');
             container.innerHTML = `
@@ -1857,6 +2226,14 @@ pendingOrderData = {
 
         function confirmAndSendWhatsApp() {
             if (!pendingOrderData) return;
+
+            // Comprobación final para evitar que un pedido se envíe después del cierre.
+            if (!estaDentroDelHorarioDePedidos()) {
+                closeReviewModal();
+                updateOrderAvailability(true);
+                showToast(obtenerMensajeHorarioCerrado(), 'error');
+                return;
+            }
 
             state.orders.unshift(pendingOrderData);
             saveAppState();
@@ -2013,6 +2390,8 @@ const waUrl =
         document.getElementById('privateMessageTemplate').value =
             state.privateMessageTemplate || '';
 
+        renderOrderHoursAdmin();
+
         showToast('Sesión de administración iniciada', 'success');
 
     } else {
@@ -2118,6 +2497,71 @@ document.getElementById('adminPinConfirm').value = '';
 saveAppState();
 guardarConfiguracionEnGoogleSheets();
 }
+     // ============================================================
+// GUARDAR INFORMACIÓN DE PAGO
+// ============================================================
+function savePaymentInfoDraft() {
+
+    if (!currentPaymentInfoOrderId) {
+        showToast(
+            'No hay un pedido seleccionado',
+            'error'
+        );
+        return;
+    }
+
+    const order = state.orders.find(
+        o => String(o.id) === String(currentPaymentInfoOrderId)
+    );
+
+    if (!order) {
+        showToast(
+            'No se encontró el pedido',
+            'error'
+        );
+        return;
+    }
+
+    // Información de pago
+    state.paymentBank =
+        document.getElementById('paymentInfoBank').value.trim();
+
+    state.paymentHolder =
+        document.getElementById('paymentInfoHolder').value.trim();
+
+    state.paymentAccount =
+        document.getElementById('paymentInfoAccount').value.trim();
+
+    state.paymentAdditional =
+        document.getElementById('paymentInfoAdditional').value.trim();
+
+    // Anticipo solicitado del pedido
+    const porcentaje =
+        parseFloat(
+            document.getElementById('paymentInfoPercent').value
+        ) || 0;
+
+    const total =
+        parseFloat(order.totalPrice) || 0;
+
+    order.anticipoPorcentaje =
+        Math.max(0, Math.min(100, porcentaje));
+
+    order.anticipoSolicitado =
+        total * (order.anticipoPorcentaje / 100);
+
+    // Guardar localmente
+    saveAppState();
+
+    // Actualizar vista previa
+    updatePaymentInfoPreview();
+
+    // Guardar configuración general
+    guardarConfiguracionEnGoogleSheets();
+
+    // Guardar datos específicos del pedido en Finanzas
+    actualizarFinanzasEnGoogleSheets(order);
+}
 
         function saveSocialLinks() {
             state.businessPhone = document.getElementById('adminBusinessWA').value.trim();
@@ -2138,7 +2582,17 @@ guardarConfiguracionEnGoogleSheets();
         branches: state.branches,
         catalogs: state.catalogs,
         privateMessageTemplate: state.privateMessageTemplate,
+
         blockedDates: state.blockedDates,
+        limitedDates: state.limitedDates,
+        orderHours: state.orderHours,
+
+        paymentBank: state.paymentBank || '',
+        paymentHolder: state.paymentHolder || '',
+        paymentAccount: state.paymentAccount || '',
+        paymentAdditional: state.paymentAdditional || '',
+        paymentTemplate: state.paymentTemplate || '',
+
         pin: state.pin,
         emailPrimary: state.emailPrimary,
         emailSecondary: state.emailSecondary
@@ -2326,6 +2780,457 @@ function addCatalogOption(key, inputId) {
             });
         }
 
+        // ============================================
+        // HORARIO PARA RECIBIR PEDIDOS
+        // ============================================
+        const ORDER_DAY_KEYS = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+        const ORDER_DAY_LABELS = {
+            lunes: 'Lunes', martes: 'Martes', miercoles: 'Miércoles', jueves: 'Jueves',
+            viernes: 'Viernes', sabado: 'Sábado', domingo: 'Domingo'
+        };
+
+        function crearHorarioPedidosDefault() {
+            return {
+                lunes: { activo: true, apertura: '09:00', cierre: '18:00' },
+                martes: { activo: true, apertura: '09:00', cierre: '18:00' },
+                miercoles: { activo: true, apertura: '09:00', cierre: '18:00' },
+                jueves: { activo: true, apertura: '09:00', cierre: '18:00' },
+                viernes: { activo: true, apertura: '09:00', cierre: '18:00' },
+                sabado: { activo: true, apertura: '09:00', cierre: '14:00' },
+                domingo: { activo: false, apertura: '09:00', cierre: '18:00' }
+            };
+        }
+
+        function normalizarHorarioPedidos(horario) {
+            const base = crearHorarioPedidosDefault();
+            const origen = horario && typeof horario === 'object' ? horario : {};
+            Object.keys(base).forEach(dia => {
+                if (origen[dia] && typeof origen[dia] === 'object') {
+                    base[dia] = {
+                        activo: origen[dia].activo !== false,
+                        apertura: /^([01]\d|2[0-3]):[0-5]\d$/.test(String(origen[dia].apertura || '')) ? String(origen[dia].apertura) : base[dia].apertura,
+                        cierre: /^([01]\d|2[0-3]):[0-5]\d$/.test(String(origen[dia].cierre || '')) ? String(origen[dia].cierre) : base[dia].cierre
+                    };
+                }
+            });
+            return base;
+        }
+
+        function formatOrderTime(hora) {
+            if (!hora) return '';
+            const [h, m] = String(hora).split(':').map(Number);
+            return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+        }
+
+        function getOrderDayKey(date = new Date()) {
+            return ORDER_DAY_KEYS[date.getDay()];
+        }
+
+        function minutesFromTime(hora) {
+            const [h, m] = String(hora || '00:00').split(':').map(Number);
+            return (h * 60) + m;
+        }
+
+        function estaDentroDelHorarioDePedidos(date = new Date()) {
+            const dia = getOrderDayKey(date);
+            const config = state.orderHours?.[dia];
+            if (!config || config.activo === false) return false;
+            const ahora = date.getHours() * 60 + date.getMinutes();
+            return ahora >= minutesFromTime(config.apertura) && ahora < minutesFromTime(config.cierre);
+        }
+
+        function getNextOrderOpening(fromDate = new Date()) {
+            const inicio = new Date(fromDate);
+            inicio.setSeconds(0, 0);
+            for (let offset = 0; offset <= 7; offset++) {
+                const candidato = new Date(inicio);
+                candidato.setDate(inicio.getDate() + offset);
+                const dia = getOrderDayKey(candidato);
+                const config = state.orderHours?.[dia];
+                if (!config || config.activo === false) continue;
+                const apertura = minutesFromTime(config.apertura);
+                const cierre = minutesFromTime(config.cierre);
+                const minutos = candidato.getHours() * 60 + candidato.getMinutes();
+                if (offset === 0 && minutos < apertura) {
+                    candidato.setHours(Math.floor(apertura / 60), apertura % 60, 0, 0);
+                    return candidato;
+                }
+                if (offset > 0) {
+                    candidato.setHours(Math.floor(apertura / 60), apertura % 60, 0, 0);
+                    return candidato;
+                }
+                if (minutos >= apertura && minutos < cierre) return candidato;
+            }
+            return null;
+        }
+
+        function obtenerNombreRelativo(fecha, ahora = new Date()) {
+            const hoy = new Date(ahora); hoy.setHours(0, 0, 0, 0);
+            const dia = new Date(fecha); dia.setHours(0, 0, 0, 0);
+            const diferencia = Math.round((dia - hoy) / 86400000);
+            if (diferencia === 0) return 'hoy';
+            if (diferencia === 1) return 'mañana';
+            return ORDER_DAY_LABELS[getOrderDayKey(fecha)];
+        }
+
+        function obtenerMensajeHorarioCerrado() {
+            const ahora = new Date();
+            const dia = getOrderDayKey(ahora);
+            const config = state.orderHours?.[dia];
+            const proxima = getNextOrderOpening(ahora);
+            if (config && config.activo !== false) {
+                const minutos = ahora.getHours() * 60 + ahora.getMinutes();
+                const apertura = minutesFromTime(config.apertura);
+                const cierre = minutesFromTime(config.cierre);
+                if (minutos < apertura) return `Los pedidos todavía no están disponibles. Hoy comenzamos a recibir pedidos a las ${formatOrderTime(config.apertura)}.`;
+                if (minutos >= cierre && proxima) return `Por hoy hemos cerrado la recepción de pedidos. Favor de enviar tu pedido ${obtenerNombreRelativo(proxima, ahora)} a partir de las ${formatOrderTime(String(proxima.getHours()).padStart(2, '0') + ':' + String(proxima.getMinutes()).padStart(2, '0'))}.`;
+            }
+            if (proxima) return `Disculpe las molestias. Nuestro próximo horario de atención es ${obtenerNombreRelativo(proxima, ahora)} a partir de las ${formatOrderTime(String(proxima.getHours()).padStart(2, '0') + ':' + String(proxima.getMinutes()).padStart(2, '0'))}.`;
+            return 'En este momento no estamos recibiendo pedidos. Favor de intentarlo durante nuestro horario de atención.';
+        }
+
+        function getOrderHoursSummary() {
+            const partes = [];
+            ORDER_DAY_KEYS.slice(1).forEach(dia => {
+                const config = state.orderHours?.[dia];
+                partes.push(`${ORDER_DAY_LABELS[dia]}: ${config && config.activo !== false ? `${formatOrderTime(config.apertura)}–${formatOrderTime(config.cierre)}` : 'Cerrado'}`);
+            });
+            return partes.join(' · ');
+        }
+
+        function updateOrderAvailability() {
+            const box = document.getElementById('orderAvailabilityStatus');
+            const icon = document.getElementById('orderAvailabilityIcon');
+            const title = document.getElementById('orderAvailabilityTitle');
+            const message = document.getElementById('orderAvailabilityMessage');
+            const countdown = document.getElementById('orderAvailabilityCountdown');
+            const summary = document.getElementById('orderHoursSummary');
+            const progressWrap = document.getElementById('orderProgressWrap');
+            const progressFill = document.getElementById('orderProgressFill');
+            const progressStart = document.getElementById('orderProgressStart');
+            const progressEnd = document.getElementById('orderProgressEnd');
+            const chips = document.getElementById('orderHoursChips');
+            if (!box || !icon || !title || !message) return;
+
+            const ahora = new Date();
+            const dia = getOrderDayKey(ahora);
+            const config = state.orderHours?.[dia];
+            const abierto = estaDentroDelHorarioDePedidos(ahora);
+            const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+            const proxima = getNextOrderOpening(ahora);
+
+            box.classList.remove('is-open','is-closing','is-closed');
+            progressWrap?.classList.add('hidden');
+            if (countdown) countdown.textContent = '';
+
+            if (abierto && config) {
+                const apertura = minutesFromTime(config.apertura);
+                const cierre = minutesFromTime(config.cierre);
+                const quedan = cierre - minutosAhora;
+                const progreso = Math.max(0, Math.min(100, ((minutosAhora - apertura) / Math.max(1, cierre - apertura)) * 100));
+                const cerrando = quedan <= 30;
+                box.classList.add(cerrando ? 'is-closing' : 'is-open');
+                icon.innerHTML = cerrando ? '<i class="fa-solid fa-hourglass-half"></i>' : '<i class="fa-solid fa-circle-check"></i>';
+                title.innerHTML = `<span class="order-status-dot order-live-pulse"></span><span>${cerrando ? 'Estamos por cerrar pedidos' : 'Estamos recibiendo pedidos'}</span>`;
+                message.textContent = cerrando
+                    ? `Aún estás a tiempo. Puedes enviar tu pedido hasta las ${formatOrderTime(config.cierre)}.`
+                    : `Hoy puedes enviar tu pedido hasta las ${formatOrderTime(config.cierre)}. Te recomendamos apartar tu fecha con anticipación.`;
+                if (countdown) countdown.textContent = `Cierra en ${Math.floor(quedan / 60)}h ${String(quedan % 60).padStart(2,'0')} min`;
+                progressWrap?.classList.remove('hidden');
+                if (progressFill) progressFill.style.width = `${progreso}%`;
+                if (progressStart) progressStart.textContent = formatOrderTime(config.apertura);
+                if (progressEnd) progressEnd.textContent = formatOrderTime(config.cierre);
+            } else {
+                box.classList.add('is-closed');
+                icon.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                const diaActivo = config && config.activo !== false;
+                title.innerHTML = ``;
+                message.textContent = obtenerMensajeHorarioCerrado();
+                if (proxima) {
+                    const diff = Math.max(0, proxima.getTime() - ahora.getTime());
+                    const horas = Math.floor(diff / 3600000);
+                    const mins = Math.floor((diff % 3600000) / 60000);
+                    if (countdown) countdown.textContent = horas > 0 ? `Próxima apertura en ${horas}h ${mins}m` : `Próxima apertura en ${mins} min`;
+                }
+            }
+
+            if (chips) {
+                const activos = ORDER_DAY_KEYS.slice(1).filter(d => state.orderHours?.[d]?.activo !== false);
+                chips.innerHTML = activos.map(d => {
+                    const c = state.orderHours[d];
+                    return `<span class="order-hours-chip"><i class="fa-regular fa-calendar"></i>${ORDER_DAY_LABELS[d].slice(0,3)} ${formatOrderTime(c.apertura)}–${formatOrderTime(c.cierre)}</span>`;
+                }).join('');
+            }
+            if (summary) summary.textContent = 'El horario se actualiza automáticamente según la configuración de atención.';
+        }
+
+        function renderOrderHoursAdmin() {
+            const container = document.getElementById('orderHoursAdminList');
+            if (!container) return;
+            state.orderHours = normalizarHorarioPedidos(state.orderHours);
+            container.innerHTML = ORDER_DAY_KEYS.slice(1).concat('domingo').map(dia => {
+                const config = state.orderHours[dia];
+                const inicial = ORDER_DAY_LABELS[dia].charAt(0);
+                return `<div class="admin-hours-row grid grid-cols-1 md:grid-cols-[1.2fr_auto_1fr_1fr] gap-3 items-center p-3.5 bg-white rounded-2xl border border-stone-100 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="admin-day-avatar">${inicial}</span>
+                        <div><div class="font-bold text-stone-700">${ORDER_DAY_LABELS[dia]}</div><div id="orderDay_${dia}_status" class="text-[10px] text-stone-400 mt-0.5">${config.activo ? 'Disponible para pedidos' : 'Día cerrado'}</div></div>
+                    </div>
+                    <label class="flex items-center justify-between gap-2 cursor-pointer md:justify-start">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Pedidos</span>
+                        <span class="admin-toggle"><input type="checkbox" id="orderDay_${dia}_activo" ${config.activo ? 'checked' : ''} onchange="toggleOrderDayInputs('${dia}')"><span class="admin-toggle-track"></span></span>
+                    </label>
+                    <label class="relative"><span class="absolute left-3 -top-2 px-1.5 bg-white text-[9px] font-bold uppercase tracking-wider text-stone-400">Abre</span><input type="time" id="orderDay_${dia}_apertura" value="${config.apertura}" ${config.activo ? '' : 'disabled'} class="input-canva !py-2 !pl-3 !text-sm w-full"></label>
+                    <label class="relative"><span class="absolute left-3 -top-2 px-1.5 bg-white text-[9px] font-bold uppercase tracking-wider text-stone-400">Cierra</span><input type="time" id="orderDay_${dia}_cierre" value="${config.cierre}" ${config.activo ? '' : 'disabled'} class="input-canva !py-2 !pl-3 !text-sm w-full"></label>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleOrderDayInputs(dia) {
+            const activo = document.getElementById(`orderDay_${dia}_activo`)?.checked;
+            const apertura = document.getElementById(`orderDay_${dia}_apertura`);
+            const cierre = document.getElementById(`orderDay_${dia}_cierre`);
+            if (apertura) apertura.disabled = !activo;
+            if (cierre) cierre.disabled = !activo;
+            const estado = document.getElementById(`orderDay_${dia}_status`);
+            if (estado) estado.textContent = activo ? 'Disponible para pedidos' : 'Día cerrado';
+        }
+
+        function saveOrderHours() {
+            const nuevoHorario = {};
+            for (const dia of ORDER_DAY_KEYS.slice(1).concat('domingo')) {
+                const activo = document.getElementById(`orderDay_${dia}_activo`)?.checked || false;
+                const apertura = document.getElementById(`orderDay_${dia}_apertura`)?.value || '09:00';
+                const cierre = document.getElementById(`orderDay_${dia}_cierre`)?.value || '18:00';
+                if (activo && minutesFromTime(cierre) <= minutesFromTime(apertura)) {
+                    showToast(`Revisa el horario de ${ORDER_DAY_LABELS[dia]}. La hora de cierre debe ser posterior a la apertura.`, 'error');
+                    return;
+                }
+                nuevoHorario[dia] = { activo, apertura, cierre };
+            }
+            state.orderHours = nuevoHorario;
+            saveAppState();
+            guardarConfiguracionEnGoogleSheets();
+            updateOrderAvailability();
+            showToast('Horario para recibir pedidos guardado', 'success');
+        }
+
+
+        // ============================================================
+        // CALENDARIO DE DISPONIBILIDAD
+        // ============================================================
+        let availabilityCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        let adminAvailabilityMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        let selectedAvailabilityDate = '';
+
+        const AVAILABILITY_MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+        function normalizeDateKey(date) {
+            const d = new Date(date);
+            if (Number.isNaN(d.getTime())) return '';
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+
+        function dateFromKey(key) {
+            const [y,m,d] = String(key).split('-').map(Number);
+            return new Date(y, (m || 1)-1, d || 1);
+        }
+
+        function availabilityStatusForDate(key) {
+            if (state.blockedDates.includes(key)) return 'full';
+            if ((state.limitedDates || []).includes(key)) return 'limited';
+
+            const date = dateFromKey(key);
+            const dayKey = ORDER_DAY_KEYS[date.getDay()];
+            const schedule = state.orderHours?.[dayKey];
+            if (!schedule || schedule.activo === false) return 'closed';
+
+            const todayKey = normalizeDateKey(new Date());
+            if (key < todayKey) return 'closed';
+            return 'available';
+        }
+
+        function availabilityStatusText(status) {
+            return {
+                available: 'Disponible · Puedes solicitar esta fecha.',
+                limited: 'Poca disponibilidad · Te recomendamos solicitar tu pedido pronto.',
+                full: 'Agenda llena · Ya no estamos aceptando pedidos para esta fecha.',
+                closed: 'Día no laborable o fecha no disponible para pedidos.'
+            }[status] || 'Selecciona una fecha para consultar su disponibilidad.';
+        }
+
+        function formatLongDate(key) {
+            const d = dateFromKey(key);
+            return d.toLocaleDateString('es-MX', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+        }
+
+        function renderAvailabilityCalendar() {
+            const grid = document.getElementById('availabilityCalendarGrid');
+            const monthTitle = document.getElementById('availabilityCalendarMonth');
+            if (!grid || !monthTitle) return;
+
+            const year = availabilityCalendarMonth.getFullYear();
+            const month = availabilityCalendarMonth.getMonth();
+            monthTitle.textContent = `${AVAILABILITY_MONTHS[month]} ${year}`;
+
+            const first = new Date(year, month, 1);
+            let start = first.getDay();
+            start = start === 0 ? 6 : start - 1;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let html = '';
+            for (let i=0; i<start; i++) html += '<div class="availability-day is-empty"></div>';
+
+            for (let day=1; day<=daysInMonth; day++) {
+                const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const status = availabilityStatusForDate(key);
+                const today = key === normalizeDateKey(new Date());
+                const selected = key === selectedAvailabilityDate;
+                const clickable = status !== 'closed' && key >= normalizeDateKey(new Date());
+
+                html += `<button type="button" class="availability-day ${status} ${today ? 'today' : ''} ${selected ? 'selected' : ''} ${!clickable ? 'disabled' : ''}" ${clickable ? `onclick="selectAvailabilityDate('${key}')"` : ''}>
+                    <span class="day-number">${day}</span>
+                    <span class="day-status-dot"></span>
+                </button>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function selectAvailabilityDate(key) {
+            selectedAvailabilityDate = key;
+            const status = availabilityStatusForDate(key);
+            const detail = document.getElementById('availabilityCalendarDetail');
+            const input = document.getElementById('eventDate');
+
+            if (detail) {
+                detail.innerHTML = `<strong>${formatLongDate(key)}</strong><br>${availabilityStatusText(status)}`;
+            }
+
+            if (status === 'available' || status === 'limited') {
+                if (input) {
+                    input.value = key;
+                    input.dispatchEvent(new Event('change', { bubbles:true }));
+                    input.scrollIntoView({ behavior:'smooth', block:'center' });
+                }
+            }
+
+            renderAvailabilityCalendar();
+        }
+
+        function changeAvailabilityMonth(delta) {
+            const next = new Date(availabilityCalendarMonth);
+            next.setMonth(next.getMonth() + delta);
+            const min = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            if (next < min) return;
+            availabilityCalendarMonth = next;
+            selectedAvailabilityDate = '';
+            const detail = document.getElementById('availabilityCalendarDetail');
+            if (detail) detail.textContent = 'Selecciona una fecha para consultar su disponibilidad.';
+            renderAvailabilityCalendar();
+        }
+
+        function renderAdminAvailabilityCalendar() {
+            const grid = document.getElementById('adminAvailabilityGrid');
+            const title = document.getElementById('adminAvailabilityMonth');
+            if (!grid || !title) return;
+
+            const year = adminAvailabilityMonth.getFullYear();
+            const month = adminAvailabilityMonth.getMonth();
+            title.textContent = `${AVAILABILITY_MONTHS[month]} ${year}`;
+
+            const first = new Date(year, month, 1);
+            let start = first.getDay();
+            start = start === 0 ? 6 : start - 1;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let html = '';
+            for (let i=0; i<start; i++) html += '<div class="availability-admin-day empty"></div>';
+
+            for (let day=1; day<=daysInMonth; day++) {
+                const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const status = availabilityStatusForDate(key);
+                const selected = key === selectedAvailabilityDate;
+                html += `<button type="button" class="availability-admin-day ${status} ${selected ? 'selected' : ''}" onclick="selectAdminAvailabilityDate('${key}')">
+                    <span class="n">${day}</span><span class="s"></span>
+                </button>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function selectAdminAvailabilityDate(key) {
+            selectedAvailabilityDate = key;
+            const selected = document.getElementById('adminAvailabilitySelected');
+            const select = document.getElementById('adminAvailabilityStatus');
+            if (selected) selected.textContent = formatLongDate(key);
+            if (select) select.value = availabilityStatusForDate(key);
+            renderAdminAvailabilityCalendar();
+            renderAvailabilityCalendar();
+        }
+
+        function changeAdminAvailabilityMonth(delta) {
+            const next = new Date(adminAvailabilityMonth);
+            next.setMonth(next.getMonth() + delta);
+            const min = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            if (next < min) return;
+            adminAvailabilityMonth = next;
+            renderAdminAvailabilityCalendar();
+        }
+
+        function saveSelectedAvailabilityStatus() {
+            if (!selectedAvailabilityDate) {
+                showToast('Primero selecciona una fecha.', 'error');
+                return;
+            }
+
+            const status = document.getElementById('adminAvailabilityStatus')?.value || 'available';
+
+            state.limitedDates = Array.isArray(state.limitedDates) ? state.limitedDates : [];
+            state.limitedDates = state.limitedDates.filter(d => d !== selectedAvailabilityDate);
+
+            if (status === 'limited') {
+                if (!state.blockedDates.includes(selectedAvailabilityDate)) {
+                    state.limitedDates.push(selectedAvailabilityDate);
+                }
+            } else if (status === 'full') {
+                if (!state.blockedDates.includes(selectedAvailabilityDate)) {
+                    state.blockedDates.push(selectedAvailabilityDate);
+                }
+            } else {
+                state.blockedDates = state.blockedDates.filter(d => d !== selectedAvailabilityDate);
+            }
+
+            saveAppState();
+            guardarConfiguracionEnGoogleSheets();
+            renderBlockedDates();
+            renderAvailabilityCalendar();
+            renderAdminAvailabilityCalendar();
+            updateOrderAvailability();
+            showToast(`Disponibilidad actualizada: ${status === 'available' ? 'Disponible' : status === 'limited' ? 'Poca disponibilidad' : 'Agenda llena'}`, 'success');
+        }
+
+        function clearSelectedLimitedDate() {
+            if (!selectedAvailabilityDate) {
+                showToast('Primero selecciona una fecha.', 'error');
+                return;
+            }
+
+            state.limitedDates = (state.limitedDates || []).filter(d => d !== selectedAvailabilityDate);
+            state.blockedDates = state.blockedDates.filter(d => d !== selectedAvailabilityDate);
+
+            saveAppState();
+            guardarConfiguracionEnGoogleSheets();
+            renderBlockedDates();
+            renderAvailabilityCalendar();
+            renderAdminAvailabilityCalendar();
+
+            const select = document.getElementById('adminAvailabilityStatus');
+            if (select) select.value = 'available';
+
+            showToast('Estado de la fecha eliminado.', 'info');
+        }
+
         // FECHAS BLOQUEADAS
         function blockSpecificDate() {
     const d = document.getElementById('blockDateInput').value;
@@ -2338,6 +3243,8 @@ function addCatalogOption(key, inputId) {
         saveAppState();
         guardarConfiguracionEnGoogleSheets();
         renderBlockedDates();
+        renderAvailabilityCalendar();
+        renderAdminAvailabilityCalendar();
 
         document.getElementById('blockDateInput').value = '';
 
@@ -2351,6 +3258,8 @@ function addCatalogOption(key, inputId) {
     saveAppState();
     guardarConfiguracionEnGoogleSheets();
     renderBlockedDates();
+    renderAvailabilityCalendar();
+    renderAdminAvailabilityCalendar();
 
     showToast('Fecha desbloqueada', 'info');
 }
@@ -2449,56 +3358,30 @@ function addCatalogOption(key, inputId) {
                         </button>
                     </div>
 
-                    <!-- BOTONES DE ACCIÓN COMPLETOS (SE MANTIENEN TODOS LOS EXISTENTES Y SE AGREGA AGENDA IPHONE QUE ABRE DIRECTO EL CALENDARIO) -->
+                    <!-- BOTONES DE ACCIÓN DEL PEDIDO -->
                     <div class="flex flex-wrap gap-2 pt-1 border-t border-stone-100 items-center">
-                        <!-- Direct WhatsApp Contact -->
                         <button onclick="contactClientWA('${order.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200">
-    <i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido
-</button>
-<button onclick="requestCakeDesignWA('${order.id}')"
-    class="bg-purple-50 hover:bg-purple-100 text-purple-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-purple-200">
-    <i class="fa-solid fa-palette text-purple-600"></i> Pedir diseño
-</button>
+                            <i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido
+                        </button>
 
-
-                        <!-- Recordatorio Pedido -->
                         <button onclick="sendOrderReminderWA('${order.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200">
                             <i class="fa-solid fa-bell text-teal-600"></i> Recordatorio Pedido
                         </button>
 
-                        <!-- Comprobante Anticipo -->
                         <button onclick="requestPaymentReceiptWA('${order.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200">
                             <i class="fa-solid fa-receipt text-amber-600"></i> Comprobante
                         </button>
 
-                        <!-- Google Calendar -->
                         <button onclick="addToGoogleCalendar('${order.id}')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-sky-200">
-                            <i class="fa-solid fa-calendar-plus text-sky-600"></i> Calendario Google
+                            <i class="fa-solid fa-calendar-plus text-sky-600"></i> Calendario Android
                         </button>
 
-                        <!-- AGENDA IPHONE / CALENDARIO APPLE (Abre directo el calendario en iPhone sin descargar archivo) -->
                         <button onclick="openIphoneCalendarDirect('${order.id}')" class="bg-slate-900 hover:bg-black text-white px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-brands fa-apple text-sm"></i> Agenda iPhone
+                            <i class="fa-brands fa-apple text-sm"></i> Calendario iPhone
                         </button>
 
-                        <!-- Envío de Dirección Privada WA -->
-                        <button onclick="sendPrivateAddressWA('${order.clientPhone}')" class="bg-purple-50 hover:bg-purple-100 text-purple-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-purple-200">
-                            <i class="fa-solid fa-map-location-dot text-purple-600"></i> Dir. Privada WA
-                        </button>
-
-                        <!-- Ver Resumen -->
-                        <button onclick="openSummaryModal('${order.id}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-file-lines"></i> Resumen
-                        </button>
-
-                        <!-- Editar Formulario -->
                         <button onclick="openEditFormModal('${order.id}')" class="bg-stone-100 hover:bg-stone-200 text-brand-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5">
                             <i class="fa-solid fa-pen"></i> Editar Datos
-                        </button>
-
-                        <!-- Eliminar Pedido -->
-                        <button onclick="deleteOrder('${order.id}')" class="ml-auto text-rose-500 hover:text-rose-700 p-1.5 hover:bg-rose-50 rounded-xl transition">
-                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 `;
@@ -3239,6 +4122,351 @@ function addToGoogleCalendar(orderId) {
 
     showToast('Pedido marcado como pagado', 'success');
 }
+// ============================================================
+// MODAL: DATOS PARA REALIZAR EL PAGO
+// ============================================================
+
+let currentPaymentInfoOrderId = null;
+
+
+// ============================================================
+// ABRIR MODAL
+// ============================================================
+function openPaymentInfoModal(id) {
+
+    const order = state.orders.find(
+        o => String(o.id) === String(id)
+    );
+
+    if (!order) {
+        showToast('No se encontró el pedido', 'error');
+        return;
+    }
+
+    currentPaymentInfoOrderId = id;
+
+    const total =
+        parseFloat(order.totalPrice) || 0;
+
+    document.getElementById('paymentInfoClientName').textContent =
+        `Cliente: ${order.clientName || 'Sin nombre'} · ${order.eventDate || 'Sin fecha'}`;
+
+    document.getElementById('paymentInfoTotal').textContent =
+        `$${total.toFixed(2)} MXN`;
+
+    // ============================================
+    // PORCENTAJE DEL PEDIDO
+    // ============================================
+    const porcentajeGuardado =
+        Number(order.anticipoPorcentaje);
+
+    document.getElementById('paymentInfoPercent').value =
+        Number.isFinite(porcentajeGuardado) &&
+        porcentajeGuardado > 0
+            ? porcentajeGuardado
+            : 50;
+
+    // ============================================
+    // INFORMACIÓN DE PAGO
+    // ============================================
+    document.getElementById('paymentInfoBank').value =
+        state.paymentBank || '';
+
+    document.getElementById('paymentInfoHolder').value =
+        state.paymentHolder || '';
+
+    document.getElementById('paymentInfoAccount').value =
+        state.paymentAccount || '';
+
+    document.getElementById('paymentInfoAdditional').value =
+        state.paymentAdditional || '';
+
+    calculatePaymentInfoAmount();
+
+    const modal =
+        document.getElementById('paymentInfoModal');
+
+    if (!modal) {
+        showToast('No se encontró el modal de pago', 'error');
+        return;
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+
+// ============================================================
+// CERRAR MODAL
+// ============================================================
+function closePaymentInfoModal() {
+
+    const modal =
+        document.getElementById('paymentInfoModal');
+
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    currentPaymentInfoOrderId = null;
+}
+
+
+// ============================================================
+// CALCULAR ANTICIPO
+// ============================================================
+function calculatePaymentInfoAmount() {
+
+    if (!currentPaymentInfoOrderId) return;
+
+    const order = state.orders.find(
+        o => String(o.id) === String(currentPaymentInfoOrderId)
+    );
+
+    if (!order) return;
+
+    const total =
+        parseFloat(order.totalPrice) || 0;
+
+    let porcentaje =
+        parseFloat(
+            document.getElementById('paymentInfoPercent').value
+        );
+
+    if (!Number.isFinite(porcentaje)) {
+        porcentaje = 0;
+    }
+
+    porcentaje = Math.max(
+        0,
+        Math.min(100, porcentaje)
+    );
+const anticipo =
+    total * (porcentaje / 100);
+
+order.anticipoPorcentaje = porcentaje;
+order.anticipoSolicitado = anticipo;
+
+document.getElementById('paymentInfoAmount').textContent =
+    `$${anticipo.toFixed(2)} MXN`;
+
+    updatePaymentInfoPreview();
+}
+
+
+// ============================================================
+// VISTA PREVIA
+// ============================================================
+function updatePaymentInfoPreview() {
+
+    if (!currentPaymentInfoOrderId) return;
+
+    const order = state.orders.find(
+        o => String(o.id) === String(currentPaymentInfoOrderId)
+    );
+
+    if (!order) return;
+
+    const nombre =
+        order.clientName || 'cliente';
+
+    const total =
+        parseFloat(order.totalPrice) || 0;
+
+    let porcentaje =
+        parseFloat(
+            document.getElementById('paymentInfoPercent').value
+        ) || 0;
+
+    porcentaje =
+        Math.max(
+            0,
+            Math.min(100, porcentaje)
+        );
+
+    const anticipo =
+        total * (porcentaje / 100);
+
+    const banco =
+        document.getElementById('paymentInfoBank').value.trim();
+
+    const titular =
+        document.getElementById('paymentInfoHolder').value.trim();
+
+    const cuenta =
+        document.getElementById('paymentInfoAccount').value.trim();
+
+    const adicional =
+        document.getElementById('paymentInfoAdditional').value.trim();
+
+    const mensaje =
+`Hola ${nombre} 
+
+Te comparto los datos para realizar tu pago:
+
+🏦 Banco: ${banco}
+👤 Titular: ${titular}
+🔢 Cuenta / CLABE: ${cuenta}
+
+💳 Anticipo solicitado: $${anticipo.toFixed(2)} MXN
+
+${adicional}
+
+¡Muchas gracias!`;
+
+    document.getElementById(
+        'paymentInfoPreview'
+    ).value = mensaje;
+}
+
+
+// ============================================================
+// ACTUALIZAR VISTA PREVIA MIENTRAS ESCRIBE
+// ============================================================
+document.addEventListener('input', function(event) {
+
+    if (
+        event.target.id === 'paymentInfoBank' ||
+        event.target.id === 'paymentInfoHolder' ||
+        event.target.id === 'paymentInfoAccount' ||
+        event.target.id === 'paymentInfoAdditional' ||
+        event.target.id === 'paymentInfoPercent'
+    ) {
+        updatePaymentInfoPreview();
+    }
+
+});
+// ============================================================
+// ENVIAR A WHATSAPP
+// ============================================================
+function sendPaymentInfoWhatsApp() {
+
+    if (!currentPaymentInfoOrderId) {
+        showToast(
+            'No hay un pedido seleccionado',
+            'error'
+        );
+        return;
+    }
+
+    const order = state.orders.find(
+        o => String(o.id) === String(currentPaymentInfoOrderId)
+    );
+
+    if (!order) {
+        showToast(
+            'No se encontró el pedido',
+            'error'
+        );
+        return;
+    }
+
+    let phone =
+        String(order.clientPhone || '')
+            .replace(/\D/g, '');
+
+    if (!phone) {
+        showToast(
+            'Este pedido no tiene un WhatsApp válido',
+            'error'
+        );
+        return;
+    }
+
+    if (phone.length === 10) {
+        phone = '52' + phone;
+    }
+
+    const mensaje =
+        document.getElementById(
+            'paymentInfoPreview'
+        ).value.trim();
+
+    if (!mensaje) {
+        showToast(
+            'El mensaje está vacío',
+            'error'
+        );
+        return;
+    }
+
+    const url =
+        `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, '_blank');
+
+    closePaymentInfoModal();
+
+    showToast(
+        'Abriendo WhatsApp con los datos de pago',
+        'success'
+    );
+}
+
+
+   // ============================================
+// ENVIAR INFORMACIÓN FINANCIERA POR WHATSAPP
+// ============================================
+function sendFinancialInfo(id) {
+
+    const order = state.orders.find(o => o.id == id);
+
+    if (!order) {
+        showToast('No se encontró el pedido', 'error');
+        return;
+    }
+
+    // WhatsApp del pedido
+    let phone = String(order.clientPhone || '').replace(/\D/g, '');
+
+    if (!phone) {
+        showToast('Este pedido no tiene un WhatsApp válido', 'error');
+        return;
+    }
+
+    // Agregar código de México si el número tiene 10 dígitos
+    if (phone.length === 10) {
+        phone = '52' + phone;
+    }
+
+    // Datos financieros actuales
+    const total = parseFloat(order.totalPrice) || 0;
+    const anticipo = parseFloat(order.anticipo) || 0;
+    const restante = Math.max(0, total - anticipo);
+
+    // Estado financiero
+    const pagado = restante <= 0 && total > 0;
+
+    const estado = pagado
+        ? '✅ Pedido pagado'
+        : '⏳ Pendiente de pago';
+
+    // Nombre del cliente
+    const nombre = order.clientName || 'cliente';
+
+    // Mensaje
+    const mensaje =
+`Hola ${nombre} 
+
+Te compartimos la información actualizada de tu pedido:
+
+💰 Total: $${total.toFixed(2)} MXN
+💳 Anticipo: $${anticipo.toFixed(2)} MXN
+💵 Restante: $${restante.toFixed(2)} MXN
+
+${estado}
+
+Cualquier duda, quedamos atentos. 
+
+¡Muchas gracias! `;
+
+    // Abrir WhatsApp directamente al cliente
+    const url =
+        `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(url, '_blank');
+}  
 
 
         // EDITAR DATOS DE FORMULARIO DE PEDIDO
@@ -3606,6 +4834,12 @@ function toggleEditDeliveryFields() {
 // SOLICITAR DISEÑO POR WHATSAPP
 function sendDesignIdeaWhatsApp() {
 
+    if (!estaDentroDelHorarioDePedidos()) {
+        updateOrderAvailability(true);
+        showToast(obtenerMensajeHorarioCerrado(), 'error');
+        return;
+    }
+
     const name =
         document.getElementById('clientName')?.value.trim() || '';
 
@@ -3902,5 +5136,11 @@ function sendSummaryWA() {
      class="fixed bottom-5 right-5 z-[9999] flex flex-col items-end pointer-events-none">
 </div>
 
+    <script>
+        // Actualiza el estado del horario sin recargar la página.
+        setInterval(() => {
+            if (document.getElementById('orderAvailabilityStatus')) updateOrderAvailability();
+        }, 30000);
+    </script>
 </body>
 </html>

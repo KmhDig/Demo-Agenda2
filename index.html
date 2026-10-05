@@ -10,9 +10,9 @@
 
     <meta id="og-title" property="og:title" content="Dulce Reino - Agenda de Pedidos">
     <meta id="og-description" property="og:description" content="Pastelería Artesanal">
-    <meta id="og-image" property="og:image" content="https://dulcereino-demo.vercel.app//img/preview-DulceReino.jpg">
+    <meta id="og-image" property="og:image" content="https://dulcereino-demo.vercel.app/img/preview-DulceReino.jpg">
     <meta property="og:type" content="website">
-    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app//">
+    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app/">
 
     
 </head>
@@ -473,7 +473,7 @@ background-repeat:no-repeat;">
         <!-- SECCIÓN 4: FORMULARIO DE PEDIDO -->
         <section id="form-section" class="bg-white p-8 md:p-12 rounded-[2.5rem] border border-stone-100 canva-card-shadow space-y-8">
             <div class="text-center space-y-1">
-                <span class="text-xs uppercase font-bold tracking-widest text-brand-500">ENVIAR PEDIDO POR WHATSAPP</span>
+                <span class="text-xs uppercase font-bold tracking-widest text-brand-500">ENVIAR PEDIDO</span>
                 <h3 class="text-2xl md:text-3xl font-serif text-brand-700">Formulario de Pedido</h3>
                 <p class="text-xs text-stone-400 pt-1">Ingresa los datos requeridos para generar tu solicitud oficial</p>
             </div>
@@ -634,12 +634,29 @@ Notas adicionales:</textarea>
 
             <div id="reviewDetailsContainer" class="text-xs text-stone-600 bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2 leading-relaxed"></div>
 
+            <div class="space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">¿Cómo quieres enviar tu pedido?</label>
+                <input type="hidden" id="orderSendChannel" value="whatsapp">
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" data-channel="whatsapp" onclick="seleccionarCanalPedido('whatsapp')" class="order-channel-btn border-2 border-brand-500 bg-brand-50 text-brand-700 py-3 rounded-2xl text-[11px] font-bold transition">
+                        <i class="fa-brands fa-whatsapp block text-lg mb-1"></i>WhatsApp
+                    </button>
+                    <button type="button" data-channel="instagram" onclick="seleccionarCanalPedido('instagram')" class="order-channel-btn border border-stone-200 bg-white text-stone-600 py-3 rounded-2xl text-[11px] font-bold transition hover:border-brand-300">
+                        <i class="fa-brands fa-instagram block text-lg mb-1"></i>Instagram
+                    </button>
+                    <button type="button" data-channel="facebook" onclick="seleccionarCanalPedido('facebook')" class="order-channel-btn border border-stone-200 bg-white text-stone-600 py-3 rounded-2xl text-[11px] font-bold transition hover:border-brand-300">
+                        <i class="fa-brands fa-facebook block text-lg mb-1"></i>Facebook
+                    </button>
+                </div>
+                <p id="channelHelpText" class="text-[11px] text-stone-400">WhatsApp abrirá directamente con tu pedido listo para enviar.</p>
+            </div>
+
             <div class="flex gap-3 pt-2">
                 <button onclick="closeReviewModal()" class="w-1/2 bg-stone-200 text-stone-700 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-stone-300 transition">
                     Corregir
                 </button>
-                <button onclick="confirmAndSendWhatsApp()" class="w-1/2 bg-brand-500 text-white py-3 rounded-2xl text-xs font-bold uppercase tracking-wider shadow hover:bg-brand-600 transition flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> Confirmar
+                <button id="sendOrderChannelBtn" onclick="confirmAndSendWhatsApp()" class="w-1/2 bg-brand-500 text-white py-3 rounded-2xl text-xs font-bold uppercase tracking-wider shadow hover:bg-brand-600 transition flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Enviar pedido
                 </button>
             </div>
         </div>
@@ -693,6 +710,34 @@ Notas adicionales:</textarea>
                         <i class="fa-solid fa-lock text-xs"></i> Cerrar Sesión
                     </button>
                 </div>
+
+                <!-- CATEGORÍAS DEL PANEL ADMINISTRATIVO -->
+                <div class="admin-section-card p-2">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" onclick="showAdminCategory('configuracion')" data-admin-tab="configuracion" class="admin-category-tab active px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-gear"></i> Configuración
+                        </button>
+                        <button type="button" onclick="showAdminCategory('opciones')" data-admin-tab="opciones" class="admin-category-tab px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-list-check"></i> Opciones
+                        </button>
+                        <button type="button" onclick="showAdminCategory('pedidos')" data-admin-tab="pedidos" class="admin-category-tab px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-receipt"></i> Pedidos
+                        </button>
+                        <button type="button" onclick="showAdminCategory('proximos')" data-admin-tab="proximos" class="admin-category-tab px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calendar-day"></i> Próximos
+                        </button>
+                    </div>
+                </div>
+
+                <style>
+                    .admin-category-tab { background:#f5f5f4; color:#78716c; border:1px solid #e7e5e4; }
+                    .admin-category-tab:hover { background:#ede9e5; color:#57534e; }
+                    .admin-category-tab.active { background:#7c5a3c; color:#fff; border-color:#7c5a3c; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+                    .admin-category-panel { display:none; }
+                    .admin-category-panel.active { display:block; }
+                </style>
+
+                <div id="adminCategoryConfiguracion" class="admin-category-panel active space-y-6">
 
                 <!-- 2. WHATSAPP DE NEGOCIO Y REDES SOCIALES -->
                 <div class="admin-section-card space-y-4">
@@ -791,6 +836,10 @@ Notas adicionales:</textarea>
                         </button>
                     </div>
                 </div>
+
+                </div>
+
+                <div id="adminCategoryOpciones" class="admin-category-panel space-y-6">
 
                 <!-- 4. PUNTOS DE RECOLECCIÓN (SUCURSALES) -->
                 <div class="admin-section-card space-y-4">
@@ -919,10 +968,13 @@ Notas adicionales:</textarea>
                         <h4 class="font-bold text-brand-700 text-base">Bloquear Fechas (Agenda Llena)</h4>
                     </div>
                     
-                    <div class="flex gap-3">
-                        <input type="date" id="blockDateInput" class="input-canva flex-grow">
+                    <div class="flex gap-3 flex-wrap">
+                        <input type="date" id="blockDateInput" class="input-canva flex-grow min-w-[180px]">
                         <button onclick="blockSpecificDate()" class="bg-brand-500 text-white px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest shadow hover:bg-brand-600 transition flex items-center gap-1.5">
                             <i class="fa-solid fa-ban"></i> BLOQUEAR
+                        </button>
+                        <button onclick="removePastBlockedDates()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-1.5 border border-rose-200" title="Eliminar de la lista las fechas bloqueadas anteriores a hoy">
+                            <i class="fa-solid fa-calendar-minus"></i> BORRAR FECHAS PASADAS
                         </button>
                     </div>
                     
@@ -931,9 +983,13 @@ Notas adicionales:</textarea>
                     </div>
                 </div>
 
+                </div>
+
+                <div id="adminCategoryPedidos" class="admin-category-panel space-y-6">
+
                 <!-- 10. HISTORIAL GENERAL DE PEDIDOS -->
                 <div class="space-y-4 pt-2">
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center gap-3 flex-wrap">
                         <div class="flex items-center gap-2">
                             <span class="w-8 h-8 rounded-xl bg-teal-50 text-brand-600 flex items-center justify-center text-sm">
                                 <i class="fa-solid fa-clock-rotate-left"></i>
@@ -944,7 +1000,36 @@ Notas adicionales:</textarea>
                             <i class="fa-solid fa-broom"></i> LIMPIAR PASADOS
                         </button>
                     </div>
+                    <div class="flex gap-2 items-center">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>
+                            <input id="orderSearchInput" type="search"
+                                oninput="renderOrders(this.value)"
+                                placeholder="Buscar por número de pedido, nombre o WhatsApp..."
+                                class="w-full input-canva pl-9 text-xs">
+                        </div>
+                    </div>
                     <div id="ordersContainer" class="space-y-4"></div>
+                </div>
+
+                </div>
+
+                <div id="adminCategoryProximos" class="admin-category-panel space-y-4">
+                    <div class="admin-section-card space-y-4">
+                        <div class="flex flex-wrap justify-between items-center gap-3 border-b border-stone-100 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-calendar-day"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-brand-700 text-base">Próximos pedidos</h4>
+                                    <p class="text-[11px] text-stone-400">Se actualiza automáticamente conforme pasan las fechas.</p>
+                                </div>
+                            </div>
+                            <span id="upcomingOrderCount" class="text-xs font-bold text-brand-700 bg-brand-50 px-3 py-1.5 rounded-full">0 próximos</span>
+                        </div>
+                        <div id="upcomingOrdersContainer" class="space-y-3"></div>
+                    </div>
                 </div>
 
             </div>
@@ -1808,10 +1893,8 @@ if (config.blockedDates) {
         renderSocialLinks();
         renderBranches();
        renderBlockedDates();
-       renderOrderHoursAdmin();
        renderAvailabilityCalendar();
        renderAdminAvailabilityCalendar();
-       updateOrderAvailability();
 
         console.log('Configuración cargada desde Google Sheets');
 
@@ -2005,14 +2088,112 @@ function showToast(message, type = 'info') {
         // GESTIÓN DEL FORMULARIO Y CONFIRMACIÓN POR EL CLIENTE
         let pendingOrderData = null;
 
+        function generarNumeroPedido() {
+            const year = new Date().getFullYear();
+            const key = `dulce_reino_order_seq_${year}`;
+            const next = (parseInt(localStorage.getItem(key) || '0', 10) || 0) + 1;
+            localStorage.setItem(key, String(next));
+            return `DR-${year}-${String(next).padStart(4, '0')}`;
+        }
+
+        function construirMensajePedido(order) {
+            const detallesFormateados = order.eventDetails || 'Ninguno';
+            let informacionEntrega = '';
+            if (order.deliveryMethod === 'Recoger en tienda') {
+                const sucursal = state.branches.find(branch => String(branch.name).trim() === String(order.branchName).trim());
+                informacionEntrega = `🏬 *Sucursal:* ${order.branchName}\n`;
+                if (order.branchAddress) informacionEntrega += `📍 *Dirección:* ${order.branchAddress}\n`;
+                if (sucursal && sucursal.map) informacionEntrega += `🔗 *Google Maps:* ${sucursal.map}\n`;
+                informacionEntrega += `🕐 *Horario:* ${order.pickupTime || 'No especificado'}\n`;
+            } else {
+                informacionEntrega = `📍 *Dirección:* ${order.address || 'No especificada'}\n` + `👤 *Recibe:* ${order.receiver || 'No especificado'}\n` + `🕐 *Horario:* ${order.deliveryTime || 'No especificado'}\n`;
+            }
+            return `*SOLICITUD DE PEDIDO*\n\n` +
+                `🔖 *No. de pedido:* ${order.orderNumber}\n` +
+                `👤 *Cliente:* ${order.clientName}\n` +
+                `📱 *WhatsApp:* ${order.clientPhone}\n` +
+                `📅 *Fecha Evento:* ${order.eventDate}\n` +
+                `🎉 *Tipo Evento:* ${order.eventType}\n` +
+                `*Porciones:* ${order.portions}\n` +
+                `*Pan:* ${order.flavor}\n` +
+                `*Relleno:* ${order.filling}\n` +
+                `*Betún:* ${order.frosting}\n` +
+                `🚚 *Método Entrega:* ${order.deliveryMethod}\n` +
+                informacionEntrega +
+                `\n🎨 *Detalles Adicionales:*\n${detallesFormateados}`;
+        }
+
+        function seleccionarCanalPedido(channel) {
+            const input = document.getElementById('orderSendChannel');
+            const help = document.getElementById('channelHelpText');
+            const button = document.getElementById('sendOrderChannelBtn');
+            if (!input || !button) return;
+
+            input.value = channel;
+
+            document.querySelectorAll('.order-channel-btn').forEach(btn => {
+                const active = btn.dataset.channel === channel;
+                btn.classList.toggle('border-brand-500', active);
+                btn.classList.toggle('bg-brand-50', active);
+                btn.classList.toggle('text-brand-700', active);
+                btn.classList.toggle('border-stone-200', !active);
+                btn.classList.toggle('bg-white', !active);
+                btn.classList.toggle('text-stone-600', !active);
+            });
+
+            if (channel === 'whatsapp') {
+                button.innerHTML = '<i class="fa-brands fa-whatsapp text-sm"></i> Enviar pedido';
+                help.textContent = 'WhatsApp abrirá directamente con tu pedido listo para enviar.';
+            } else if (channel === 'instagram') {
+                button.innerHTML = '<i class="fa-solid fa-copy text-sm"></i> Copiar y abrir Instagram';
+                help.textContent = 'Se copiará la información del pedido y se abrirá el chat de Instagram.';
+            } else {
+                button.innerHTML = '<i class="fa-solid fa-copy text-sm"></i> Copiar y abrir Facebook';
+                help.textContent = 'Se copiará la información del pedido y se abrirá el chat de Facebook.';
+            }
+        }
+
+        async function enviarPedidoPorCanal() {
+            if (!pendingOrderData) return;
+            const channel = document.getElementById('orderSendChannel')?.value || 'whatsapp';
+            pendingOrderData.sendChannel = channel;
+            const msg = construirMensajePedido(pendingOrderData);
+            const cleanWA = String(state.businessPhone || '').replace(/\D/g, '');
+            let destination = '';
+
+            if (channel === 'whatsapp') {
+                if (!cleanWA) { showToast('No hay un WhatsApp configurado en Administración', 'error'); return; }
+                destination = `https://wa.me/${cleanWA}?text=${encodeURIComponent(msg)}`;
+            } else {
+                // Enlaces directos proporcionados para abrir Messenger / Instagram Direct.
+                destination = channel === 'instagram'
+                    ? 'https://ig.me/m/kmhdigital_'
+                    : 'https://m.me/KmhDigital';
+
+                try {
+                    await navigator.clipboard.writeText(msg);
+                } catch (e) {
+                    // Si el navegador no permite copiar automáticamente, el chat se abre igualmente.
+                }
+            }
+
+            closeReviewModal();
+            document.getElementById('orderForm').reset();
+            toggleDeliveryFields();
+            seleccionarCanalPedido('whatsapp');
+
+            showToast(
+                channel === 'whatsapp'
+                    ? `¡Pedido ${pendingOrderData.orderNumber} registrado!`
+                    : `¡Pedido ${pendingOrderData.orderNumber} registrado! La información fue copiada.`,
+                'success'
+            );
+
+            setTimeout(() => window.open(destination, '_blank'), 300);
+        }
+
         function handleReviewOrder(e) {
             e.preventDefault();
-
-            if (!estaDentroDelHorarioDePedidos()) {
-                updateOrderAvailability(true);
-                showToast(obtenerMensajeHorarioCerrado(), 'error');
-                return;
-            }
 
             const dateVal = document.getElementById('eventDate').value;
             const dateStatus = availabilityStatusForDate(dateVal);
@@ -2114,6 +2295,7 @@ if (deliveryMethod === 'Recoger en tienda') {
 
 pendingOrderData = {
     id: Date.now().toString(),
+    orderNumber: generarNumeroPedido(),
     clientName,
     clientPhone,
     eventDate: dateVal,
@@ -2147,6 +2329,7 @@ pendingOrderData = {
 };
             const container = document.getElementById('reviewDetailsContainer');
             container.innerHTML = `
+                <p><strong>Pedido:</strong> ${pendingOrderData.orderNumber}</p>
                 <p><strong>Cliente:</strong> ${clientName} (${clientPhone})</p>
                 <p><strong>Fecha Evento:</strong> ${dateVal}</p>
                 <p><strong>Evento:</strong> ${eventType}</p>
@@ -2169,102 +2352,15 @@ pendingOrderData = {
 
         function confirmAndSendWhatsApp() {
             if (!pendingOrderData) return;
-
-            // Comprobación final para evitar que un pedido se envíe después del cierre.
-            if (!estaDentroDelHorarioDePedidos()) {
-                closeReviewModal();
-                updateOrderAvailability(true);
-                showToast(obtenerMensajeHorarioCerrado(), 'error');
-                return;
-            }
-
             state.orders.unshift(pendingOrderData);
             saveAppState();
-
-           // Guardar pedido en Google Sheets
-enviarPedidoAGoogleSheets(pendingOrderData);
-
-// Crear registro en Producción como Pendiente
-const pedidoProduccion = {
-    ...pendingOrderData,
-    status: 'Pendiente'
-};
-
-actualizarProduccionEnGoogleSheets(pedidoProduccion);
-
-// Crear registro en Finanzas
-actualizarFinanzasEnGoogleSheets(pendingOrderData);
-
-renderOrders();
-renderKitchenOrders();
-
-          const detallesFormateados = pendingOrderData.eventDetails || 'Ninguno';
-
-let informacionEntrega = '';
-
-if (pendingOrderData.deliveryMethod === 'Recoger en tienda') {
-
-    const sucursal = state.branches.find(
-        branch =>
-            String(branch.name).trim() ===
-            String(pendingOrderData.branchName).trim()
-    );
-
-    informacionEntrega =
-        `🏬 *Sucursal:* ${pendingOrderData.branchName}\n`;
-
-    if (pendingOrderData.branchAddress) {
-        informacionEntrega +=
-            `📍 *Dirección:* ${pendingOrderData.branchAddress}\n`;
-    }
-
-    if (sucursal && sucursal.map) {
-        informacionEntrega +=
-            `🔗 *Google Maps:* ${sucursal.map}\n`;
-    }
-
-    informacionEntrega +=
-        `🕐 *Horario:* ${pendingOrderData.pickupTime || 'No especificado'}\n`;
-
-} else {
-
-    informacionEntrega =
-        `📍 *Dirección:* ${pendingOrderData.address || 'No especificada'}\n` +
-        `👤 *Recibe:* ${pendingOrderData.receiver || 'No especificado'}\n` +
-        `🕐 *Horario:* ${pendingOrderData.deliveryTime || 'No especificado'}\n`;
-}
-
-
-const msg =
-    `*SOLICITUD DE PEDIDO*\n\n` +
-    `👤 *Cliente:* ${pendingOrderData.clientName}\n` +
-    `📱 *Teléfono:* ${pendingOrderData.clientPhone}\n` +
-    `📅 *Fecha Evento:* ${pendingOrderData.eventDate}\n` +
-    `🎉 *Tipo Evento:* ${pendingOrderData.eventType}\n` +
-    `*Porciones:* ${pendingOrderData.portions}\n` +
-    `*Pan:* ${pendingOrderData.flavor}\n` +
-    `*Relleno:* ${pendingOrderData.filling}\n` +
-    `*Betún:* ${pendingOrderData.frosting}\n` +
-    `🚚 *Método Entrega:* ${pendingOrderData.deliveryMethod}\n` +
-    informacionEntrega +
-    `\n🎨 *Detalles Adicionales:*\n` +
-    detallesFormateados;
-
-
-const waNumber = state.businessPhone.replace(/\D/g, '');
-
-const waUrl =
-    `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-            
-
-           closeReviewModal();
-            document.getElementById('orderForm').reset();
-            toggleDeliveryFields();
-            showToast('¡Pedido registrado! Redirigiendo a WhatsApp...', 'success');
-
-            setTimeout(() => {
-                window.open(waUrl, '_blank');
-            }, 600);
+            enviarPedidoAGoogleSheets(pendingOrderData);
+            const pedidoProduccion = { ...pendingOrderData, status: 'Pendiente' };
+            actualizarProduccionEnGoogleSheets(pedidoProduccion);
+            actualizarFinanzasEnGoogleSheets(pendingOrderData);
+            renderOrders();
+            renderKitchenOrders();
+            enviarPedidoPorCanal();
         }
 
         // ADMIN LOGIN & MODAL CONTROLS
@@ -2333,8 +2429,7 @@ const waUrl =
         document.getElementById('privateMessageTemplate').value =
             state.privateMessageTemplate || '';
 
-        renderOrderHoursAdmin();
-
+ 
         showToast('Sesión de administración iniciada', 'success');
 
     } else {
@@ -2775,11 +2870,8 @@ function addCatalogOption(key, inputId) {
         }
 
         function estaDentroDelHorarioDePedidos(date = new Date()) {
-            const dia = getOrderDayKey(date);
-            const config = state.orderHours?.[dia];
-            if (!config || config.activo === false) return false;
-            const ahora = date.getHours() * 60 + date.getMinutes();
-            return ahora >= minutesFromTime(config.apertura) && ahora < minutesFromTime(config.cierre);
+            // Esta versión básica no limita los pedidos por horario.
+            return true;
         }
 
         function getNextOrderOpening(fromDate = new Date()) {
@@ -2954,8 +3046,7 @@ function addCatalogOption(key, inputId) {
             state.orderHours = nuevoHorario;
             saveAppState();
             guardarConfiguracionEnGoogleSheets();
-            updateOrderAvailability();
-            showToast('Horario para recibir pedidos guardado', 'success');
+                 showToast('Horario para recibir pedidos guardado', 'success');
         }
 
 
@@ -2982,11 +3073,6 @@ function addCatalogOption(key, inputId) {
         function availabilityStatusForDate(key) {
             if (state.blockedDates.includes(key)) return 'full';
             if ((state.limitedDates || []).includes(key)) return 'limited';
-
-            const date = dateFromKey(key);
-            const dayKey = ORDER_DAY_KEYS[date.getDay()];
-            const schedule = state.orderHours?.[dayKey];
-            if (!schedule || schedule.activo === false) return 'closed';
 
             const todayKey = normalizeDateKey(new Date());
             if (key < todayKey) return 'closed';
@@ -3149,8 +3235,7 @@ function addCatalogOption(key, inputId) {
             renderBlockedDates();
             renderAvailabilityCalendar();
             renderAdminAvailabilityCalendar();
-            updateOrderAvailability();
-            showToast(`Disponibilidad actualizada: ${status === 'available' ? 'Disponible' : status === 'limited' ? 'Poca disponibilidad' : 'Agenda llena'}`, 'success');
+                 showToast(`Disponibilidad actualizada: ${status === 'available' ? 'Disponible' : status === 'limited' ? 'Poca disponibilidad' : 'Agenda llena'}`, 'success');
         }
 
         function clearSelectedLimitedDate() {
@@ -3207,6 +3292,30 @@ function addCatalogOption(key, inputId) {
     showToast('Fecha desbloqueada', 'info');
 }
 
+        function removePastBlockedDates() {
+    const today = new Date();
+    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const pastDates = (state.blockedDates || []).filter(d => d < todayKey);
+
+    if (pastDates.length === 0) {
+        showToast('No hay fechas bloqueadas pasadas para borrar.', 'info');
+        return;
+    }
+
+    const confirmDelete = confirm(`Se borrarán ${pastDates.length} fecha${pastDates.length !== 1 ? 's' : ''} bloqueada${pastDates.length !== 1 ? 's' : ''} que ya pasó${pastDates.length !== 1 ? 'aron' : ''}. ¿Continuar?`);
+    if (!confirmDelete) return;
+
+    state.blockedDates = (state.blockedDates || []).filter(d => d >= todayKey);
+
+    saveAppState();
+    guardarConfiguracionEnGoogleSheets();
+    renderBlockedDates();
+    renderAvailabilityCalendar();
+    renderAdminAvailabilityCalendar();
+
+    showToast(`${pastDates.length} fecha${pastDates.length !== 1 ? 's' : ''} pasada${pastDates.length !== 1 ? 's' : ''} eliminada${pastDates.length !== 1 ? 's' : ''}.`, 'success');
+}
+
         function renderBlockedDates() {
             const container = document.getElementById('blockedDatesList');
             if (!container) return;
@@ -3223,7 +3332,96 @@ function addCatalogOption(key, inputId) {
             });
         }
 
-        function renderOrders() {
+        function showAdminCategory(category) {
+            const categories = ['configuracion', 'opciones', 'pedidos', 'proximos'];
+            categories.forEach(name => {
+                const panel = document.getElementById(`adminCategory${name.charAt(0).toUpperCase()}${name.slice(1)}`);
+                const tab = document.querySelector(`[data-admin-tab="${name}"]`);
+                if (panel) panel.classList.toggle('active', name === category);
+                if (tab) tab.classList.toggle('active', name === category);
+            });
+
+            if (category === 'proximos') renderUpcomingOrders();
+        }
+
+        function parseOrderDateLocal(dateValue) {
+            const match = String(dateValue || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!match) return null;
+            const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+            return Number.isNaN(date.getTime()) ? null : date;
+        }
+
+        function formatUpcomingDate(dateValue) {
+            const date = parseOrderDateLocal(dateValue);
+            if (!date) return dateValue || 'Sin fecha';
+            return date.toLocaleDateString('es-MX', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+        }
+
+        function renderUpcomingOrders() {
+            const container = document.getElementById('upcomingOrdersContainer');
+            const countEl = document.getElementById('upcomingOrderCount');
+            if (!container) return;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const upcoming = state.orders
+                .map(order => ({ order, date: parseOrderDateLocal(order.eventDate) }))
+                .filter(item => item.date && item.date >= today)
+                .sort((a, b) => a.date - b.date || String(a.order.clientName || '').localeCompare(String(b.order.clientName || '')))
+                .map(item => item.order);
+
+            if (countEl) countEl.textContent = `${upcoming.length} próximo${upcoming.length === 1 ? '' : 's'}`;
+            container.innerHTML = '';
+
+            if (!upcoming.length) {
+                container.innerHTML = '<div class="p-6 bg-stone-50 rounded-2xl text-center text-stone-400 text-xs">No hay pedidos próximos registrados.</div>';
+                return;
+            }
+
+            upcoming.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-2xl border border-stone-200/80 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h5 class="font-bold text-stone-800 text-sm">${escapeHtml(order.clientName || 'Sin nombre')}</h5>
+                                ${order.orderNumber ? `<span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">#${escapeHtml(order.orderNumber)}</span>` : ''}
+                            </div>
+                            <p class="text-xs text-brand-700 font-semibold mt-1">${escapeHtml(formatUpcomingDate(order.eventDate))}</p>
+                            <p class="text-[11px] text-stone-400 mt-1">${escapeHtml(order.eventType || '')}</p>
+                        </div>
+                        <div class="text-right text-xs">
+                            <p class="font-semibold text-stone-700">${escapeHtml(order.deliveryMethod || '')}</p>
+                            <p class="text-stone-400 mt-1">${escapeHtml(order.deliveryDetails || '')}</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-stone-100 flex flex-wrap gap-2 items-center">
+                        <span class="text-[11px] text-stone-500"><strong>Pedido:</strong> ${escapeHtml(order.portions || '')}</span>
+                        <span class="text-[11px] text-stone-500"><strong>Pan:</strong> ${escapeHtml(order.flavor || '')}</span>
+                        <span class="text-[11px] text-stone-500"><strong>Relleno:</strong> ${escapeHtml(order.filling || '')}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function startUpcomingOrdersAutoRefresh() {
+            renderUpcomingOrders();
+            if (window.__upcomingOrdersTimer) clearInterval(window.__upcomingOrdersTimer);
+            window.__upcomingOrdersTimer = setInterval(renderUpcomingOrders, 60000);
+        }
+
+        function renderOrders(searchTerm = '') {
+            const normalizedSearch = String(searchTerm || '').trim().toLowerCase();
+            const visibleOrders = normalizedSearch
+                ? state.orders.filter(order => [
+                    order.orderNumber,
+                    order.clientName,
+                    order.clientPhone
+                  ].some(value => String(value || '').toLowerCase().includes(normalizedSearch)))
+                : state.orders;
             const container = document.getElementById('ordersContainer');
             const countEl = document.getElementById('orderCount');
             if (!container) return;
@@ -3236,7 +3434,7 @@ function addCatalogOption(key, inputId) {
                 return;
             }
 
-            state.orders.forEach(order => {
+            visibleOrders.forEach(order => {
                 const card = document.createElement('div');
                 card.className = 'bg-white p-5 rounded-2xl border border-stone-200/80 shadow-sm space-y-4 text-xs';
                 card.innerHTML = `
@@ -3250,6 +3448,7 @@ function addCatalogOption(key, inputId) {
                         <div class="text-right">
                             <span class="font-serif text-brand-700 font-bold text-sm block">Fecha: ${order.eventDate}</span>
                             <span class="text-[10px] text-stone-400 uppercase tracking-wider">${order.eventType}</span>
+                        ${order.orderNumber ? `<span class="text-[10px] font-bold text-brand-600">#${order.orderNumber}</span>` : ''}
                         </div>
                     </div>
 
@@ -3269,16 +3468,28 @@ function addCatalogOption(key, inputId) {
 
                     <!-- BOTONES DE ACCIÓN DEL PEDIDO -->
                     <div class="flex flex-wrap gap-2 pt-1 border-t border-stone-100 items-center">
-                        <button onclick="contactClientWA('${order.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200">
+                        <button onclick="contactClientWA('${order.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200" title="Enviar la confirmación directamente por WhatsApp">
                             <i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido
                         </button>
 
-                        <button onclick="sendOrderReminderWA('${order.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200">
+                        <button onclick="copyAdminOrderMessage('${order.id}','confirmar')" class="bg-white hover:bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200" title="Copiar la información completa de confirmación para pegarla en Instagram o Facebook">
+                            <i class="fa-solid fa-copy text-emerald-600"></i> Copiar confirmación
+                        </button>
+
+                        <button onclick="sendOrderReminderWA('${order.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200" title="Enviar el recordatorio directamente por WhatsApp">
                             <i class="fa-solid fa-bell text-teal-600"></i> Recordatorio Pedido
                         </button>
 
-                        <button onclick="requestPaymentReceiptWA('${order.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200">
+                        <button onclick="copyAdminOrderMessage('${order.id}','recordatorio')" class="bg-white hover:bg-teal-50 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200" title="Copiar el recordatorio para pegarlo en Instagram o Facebook">
+                            <i class="fa-solid fa-copy text-teal-600"></i> Copiar recordatorio
+                        </button>
+
+                        <button onclick="requestPaymentReceiptWA('${order.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200" title="Solicitar el comprobante directamente por WhatsApp">
                             <i class="fa-solid fa-receipt text-amber-600"></i> Comprobante
+                        </button>
+
+                        <button onclick="copyAdminOrderMessage('${order.id}','comprobante')" class="bg-white hover:bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200" title="Copiar la solicitud de comprobante para pegarla en Instagram o Facebook">
+                            <i class="fa-solid fa-copy text-amber-600"></i> Copiar comprobante
                         </button>
 
                         <button onclick="addToGoogleCalendar('${order.id}')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-sky-200">
@@ -3289,13 +3500,20 @@ function addCatalogOption(key, inputId) {
                             <i class="fa-brands fa-apple text-sm"></i> Calendario iPhone
                         </button>
 
-                        <button onclick="openEditFormModal('${order.id}')" class="bg-stone-100 hover:bg-stone-200 text-brand-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5">
+                        <button onclick="openEditFormModal('${order.id}')" class="bg-stone-100 hover:bg-stone-200 text-brand-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5" title="Editar los datos de este pedido">
                             <i class="fa-solid fa-pen"></i> Editar Datos
                         </button>
+
+                        <button onclick="deleteOrder('${order.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-rose-200" title="Eliminar este pedido o cotización del historial">
+                            <i class="fa-solid fa-trash-can text-rose-600"></i> Borrar pedido
+                        </button>
+                    </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+
+            renderUpcomingOrders();
         }
 
         // FUNCIONES DE ACCIÓN DIRECTAS A WHATSAPP
@@ -3341,80 +3559,90 @@ const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
 }
 
 
-function sendOrderReminderWA(orderId) {
-    const order = state.orders.find(o => o.id == orderId);
 
-    if (!order) return;
-
-    const cleanPhone = String(order.clientPhone || '').replace(/\D/g, '');
-    const restante = (order.totalPrice || 0) - (order.anticipo || 0);
-    // Buscar la sucursal seleccionada
-  const branch = state.branches.find(
-        b => b.name === order.branchName
-    );
-
-    // Mostrar Google Maps solamente si la sucursal tiene enlace público
-    const mapInfo = branch?.map
-        ? `\n*UBICACIÓN:* ${branch.map}`
-        : '';
-
-    const msg =
-    `👤 Hola ${order.clientName}, te escribimos para compartirte el resumen de la información de tu pedido:\n\n` +
-    `📅 *FECHA DE ENTREGA:* ${order.eventDate}\n` +
-    `🎉 *EVENTO:* ${order.eventType}\n\n` +
-    `*DETALLE DEL PEDIDO:*\n` +
-    `Porciones: ${order.portions}\n` +
-    `Pan: ${order.flavor}\n` +
-    `Relleno: ${order.filling}\n` +
-    `Betún: ${order.frosting}\n\n` +
-    `🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod}\n` +
-    `📍 *LOGÍSTICA/HORARIO:* ${order.deliveryDetails}${mapInfo}\n\n` +
-    `🎨 *DETALLES:*\n` +
-    `${order.eventDetails || 'Ninguno'}\n\n` +
-    `Por favor confirma si todo está correcto o menciónanos si hay algún error para corregirlo a tiempo.\n\n` +
-    `¡Muchas gracias!`;
-
-    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
-
-    window.open(waUrl, '_blank');
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
-        function sendOrderReminderWA(orderId) {
-    const order = state.orders.find(o => o.id == orderId);
-    if (!order) return;
-
-    const cleanPhone = String(order.clientPhone || '').replace(/\D/g, '');
-    const restante = (order.totalPrice || 0) - (order.anticipo || 0);
-
-    // Buscar la sucursal seleccionada
-    const branch = state.branches.find(
-        b => b.name === order.branchName
-    );
-
-    // Mostrar Google Maps solamente si la sucursal tiene enlace público
-     const mapInfo = branch?.map
-        ? `\n*UBICACIÓN:* ${branch.map}`
-        : '';
-
-  const text =
-    `👤 Hola ${order.clientName}, te escribimos para recordarte la fecha y logística de tu entrega:\n\n` +
-    `📅 *FECHA DE ENTREGA:* ${order.eventDate}\n` +
-    `🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod}\n` +
-    `📍 *LOGÍSTICA/HORARIO:* ${order.deliveryDetails}${mapInfo}\n\n` +
-    `Cualquier detalle o ajuste, quedamos con gusto a tus órdenes. ¡Muchas gracias!`;
-
-window.open(
-    `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`,
-    '_blank'
-);
-
-    showToast(
-        'Redirigiendo a WhatsApp con Recordatorio de Pedido',
-        'success'
-    );
+async function copyAdminMessage(text, label) {
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast(`${label} copiado. Ahora abre el chat del pedido y pega la información.`, 'success');
+    } catch (e) {
+        showToast('No se pudo copiar automáticamente. Selecciona y copia el mensaje manualmente.', 'error');
+    }
 }
 
-        function requestPaymentReceiptWA(orderId) {
+function buildAdminOrderMessage(order) {
+    const branch = state.branches.find(b => b.name === order.branchName);
+    const mapInfo = branch?.map ? `\n*UBICACIÓN:* ${branch.map}` : '';
+
+    return `👤 Hola ${order.clientName}, te escribimos para compartirte el resumen de la información de tu pedido:\n\n` +
+        `🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}\n` +
+        `📅 *FECHA DE ENTREGA:* ${order.eventDate}\n` +
+        `🎉 *EVENTO:* ${order.eventType}\n\n` +
+        `*DETALLE DEL PEDIDO:*\n` +
+        `Porciones: ${order.portions}\n` +
+        `Pan: ${order.flavor}\n` +
+        `Relleno: ${order.filling}\n` +
+        `Betún: ${order.frosting}\n\n` +
+        `🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod}\n` +
+        `📍 *LOGÍSTICA/HORARIO:* ${order.deliveryDetails}${mapInfo}\n\n` +
+        `🎨 *DETALLES:*\n` +
+        `${order.eventDetails || 'Ninguno'}\n\n` +
+        `Por favor confirma si todo está correcto o menciónanos si hay algún error para corregirlo a tiempo.\n\n` +
+        `¡Muchas gracias!`;
+}
+
+function buildAdminReminderMessage(order) {
+    const branch = state.branches.find(b => b.name === order.branchName);
+    const mapInfo = branch?.map ? `\n*UBICACIÓN:* ${branch.map}` : '';
+
+    return `👤 Hola ${order.clientName}, te escribimos para recordarte la fecha y logística de tu entrega:\n\n` +
+        `🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}\n` +
+        `📅 *FECHA DE ENTREGA:* ${order.eventDate}\n` +
+        `🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod}\n` +
+        `📍 *LOGÍSTICA/HORARIO:* ${order.deliveryDetails}${mapInfo}\n\n` +
+        `Cualquier detalle o ajuste, quedamos con gusto a tus órdenes. ¡Muchas gracias!`;
+}
+
+function buildAdminReceiptMessage(order) {
+    return `👤 Hola ${order.clientName}, ¿nos podrías enviar por este medio el comprobante de pago de tu anticipo?\n\n` +
+        `🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}\n\n` +
+        `📋 Con esto podremos registrar oficialmente tu fecha en nuestra agenda de producción.\n\n` +
+        `¡Muchas gracias! Quedamos atentos.`;
+}
+
+async function copyAdminOrderMessage(orderId, type) {
+    const order = state.orders.find(o => o.id == orderId);
+    if (!order) {
+        showToast('No se encontró el pedido', 'error');
+        return;
+    }
+
+    let text = '';
+    let label = '';
+
+    if (type === 'confirmar') {
+        text = buildAdminOrderMessage(order);
+        label = 'Información de confirmación';
+    } else if (type === 'recordatorio') {
+        text = buildAdminReminderMessage(order);
+        label = 'Recordatorio';
+    } else {
+        text = buildAdminReceiptMessage(order);
+        label = 'Solicitud de comprobante';
+    }
+
+    await copyAdminMessage(text, label);
+}
+
+function requestPaymentReceiptWA(orderId) {
     const order = state.orders.find(o => o.id == orderId);
 
     if (!order) return;
@@ -4727,6 +4955,7 @@ function toggleEditDeliveryFields() {
     actualizarPedidoEnGoogleSheets(order);
 
     renderOrders();
+    startUpcomingOrdersAutoRefresh();
     renderKitchenOrders();
 
     closeEditFormModal();
@@ -4742,12 +4971,6 @@ function toggleEditDeliveryFields() {
 }
 // SOLICITAR DISEÑO POR WHATSAPP
 function sendDesignIdeaWhatsApp() {
-
-    if (!estaDentroDelHorarioDePedidos()) {
-        updateOrderAvailability(true);
-        showToast(obtenerMensajeHorarioCerrado(), 'error');
-        return;
-    }
 
     const name =
         document.getElementById('clientName')?.value.trim() || '';
@@ -4890,6 +5113,13 @@ function sendSummaryWA() {
 }
 
     async function deleteOrder(id) {
+
+    const order = state.orders.find(o => String(o.id) === String(id));
+    const orderLabel = order?.orderNumber ? `No. ${order.orderNumber}` : 'este pedido';
+
+    if (!confirm(`¿Seguro que quieres borrar ${orderLabel}?\n\nEsta acción eliminará el pedido del historial.`)) {
+        return;
+    }
 
     try {
 
@@ -5048,7 +5278,6 @@ function sendSummaryWA() {
     <script>
         // Actualiza el estado del horario sin recargar la página.
         setInterval(() => {
-            if (document.getElementById('orderAvailabilityStatus')) updateOrderAvailability();
         }, 30000);
     </script>
 </body>

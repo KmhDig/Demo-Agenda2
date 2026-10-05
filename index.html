@@ -10,9 +10,9 @@
 
     <meta id="og-title" property="og:title" content="Dulce Reino - Agenda de Pedidos">
     <meta id="og-description" property="og:description" content="Pastelería Artesanal">
-    <meta id="og-image" property="og:image" content="https://dulcereino-demo.vercel.app/img/preview-DulceReino.jpg">
+    <meta id="og-image" property="og:image" content="https://demo-agenda.vercel.app/img/preview-DulceReino.jpg">
     <meta property="og:type" content="website">
-    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app/">
+    <meta id="og-url" property="og:url" content="https://demo-agenda.vercel.app/">
 
     
 </head>
@@ -72,7 +72,7 @@
                 'img/Pastel6.jpg'
             ],
 
-            googleSheetsUrl: ''
+            googleSheetsUrl: 'https://script.google.com/macros/s/AKfycbwH6_2oK8gNBnTkS9rxjXNSVTj-_84t8a0a3EwRBb1JuO0UIjH8fzi7tuDH4enlPhRUgA/exec'
         };
 
         document.documentElement.style.setProperty('--brand-main', CLIENT_CONFIG.colors.main);
@@ -479,6 +479,13 @@ background-repeat:no-repeat;">
             </div>
 
             <form id="orderForm" onsubmit="handleReviewOrder(event)" class="space-y-6">
+                <div class="space-y-3">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">TIPO DE PEDIDO</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button type="button" id="orderTypeCakeBtn" onclick="setCustomerOrderType('pastel')" class="border border-brand-500 bg-brand-50 text-brand-700 py-3 rounded-2xl text-sm font-bold transition"><i class="fa-solid fa-cake-candles mr-1"></i> Pastel</button>
+                        <button type="button" id="orderTypeOtherBtn" onclick="setCustomerOrderType('otro')" class="border border-stone-200 bg-white text-stone-600 py-3 rounded-2xl text-sm font-bold transition"><i class="fa-solid fa-bag-shopping mr-1"></i> Otro pedido</button>
+                    </div>
+                </div>
                 <!-- Nombre Completo -->
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
@@ -504,6 +511,7 @@ background-repeat:no-repeat;">
                     <p id="dateWarning" class="text-xs text-rose-600 font-semibold hidden"></p>
                 </div>
 
+<div id="cakeOrderFields" class="space-y-6">
                 <!-- Tipo de Evento -->
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
@@ -538,6 +546,14 @@ background-repeat:no-repeat;">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">BETÚN</label>
                     <select id="eventFrosting" required class="w-full input-canva font-medium"></select>
                 </div>
+
+</div>
+
+<div id="otherOrderFields" class="hidden space-y-6">
+    <div class="space-y-2"><label class="block text-xs font-bold uppercase tracking-wider text-stone-600">QUÉ NECESITA <span class="text-rose-500">*</span></label><select id="otherProduct" class="w-full input-canva font-medium"></select></div>
+    <div class="space-y-2"><label class="block text-xs font-bold uppercase tracking-wider text-stone-600">CANTIDAD <span class="text-rose-500">*</span></label><input type="number" id="otherQuantity" min="1" step="1" placeholder="Ej. 12" class="w-full input-canva"></div>
+    <div class="space-y-2"><label class="block text-xs font-bold uppercase tracking-wider text-stone-600">DETALLES</label><textarea id="otherDetails" rows="4" placeholder="Describe lo que necesitas..." class="w-full input-canva"></textarea></div>
+</div>
 
                 <!-- Método de Entrega -->
                 <div class="space-y-4 pt-2">
@@ -581,23 +597,19 @@ background-repeat:no-repeat;">
                     </div>
                 </div>
 
-                <!-- Detalles -->
-<div class="space-y-2 pt-2">
-    <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 leading-relaxed">
-        <span id="design-details-label"></span>
-        <span class="text-stone-400 font-normal normal-case">(Por favor, completa la siguiente información para ayudarnos a preparar tu pedido)</span>
-    </label>
-
-    <textarea
-        id="eventDetails"
-        rows="6"
-        class="w-full input-canva">Temática / Diseño:
+                <div id="cakeDetailsFields" class="space-y-2 pt-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 leading-relaxed"><span id="design-details-label"></span><span class="text-stone-400 font-normal normal-case">(Por favor, completa la siguiente información para ayudarnos a preparar tu pedido)</span></label>
+                    <textarea id="eventDetails" rows="6" class="w-full input-canva">Temática / Diseño:
 Nombre:
 Número de cumpleaños:
 Colores: 
 Texto en el pastel:        
 Notas adicionales:</textarea>
-</div>
+                </div>
+                <div id="otherObservationsField" class="hidden space-y-2 pt-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">OBSERVACIONES</label>
+                    <textarea id="otherObservations" rows="5" placeholder="¿Hay algo más que debamos saber?" class="w-full input-canva"></textarea>
+                </div>
 
                 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-2xl shadow-md transition duration-200 text-sm tracking-widest uppercase">
                     REVISAR Y CONFIRMAR PEDIDO
@@ -713,7 +725,7 @@ Notas adicionales:</textarea>
 
                 <!-- CATEGORÍAS DEL PANEL ADMINISTRATIVO -->
                 <div class="admin-section-card p-2">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
                         <button type="button" onclick="showAdminCategory('configuracion')" data-admin-tab="configuracion" class="admin-category-tab active px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-gear"></i> Configuración
                         </button>
@@ -725,6 +737,9 @@ Notas adicionales:</textarea>
                         </button>
                         <button type="button" onclick="showAdminCategory('proximos')" data-admin-tab="proximos" class="admin-category-tab px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-calendar-day"></i> Próximos
+                        </button>
+                        <button type="button" onclick="showAdminCategory('otrospedidos')" data-admin-tab="otrospedidos" class="admin-category-tab px-4 py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bag-shopping"></i> Otros pedidos
                         </button>
                     </div>
                 </div>
@@ -985,6 +1000,34 @@ Notas adicionales:</textarea>
 
                 </div>
 
+                <div id="adminCategoryOtrospedidos" class="admin-category-panel space-y-6">
+                    <div class="admin-section-card p-6 md:p-7 space-y-5">
+                        <div class="flex items-center justify-between gap-4 border-b border-stone-100 pb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center text-base">
+                                    <i class="fa-solid fa-bag-shopping"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-brand-700 text-base md:text-lg">Otros Productos / Servicios Disponibles</h4>
+                                    <p class="text-xs text-stone-400">Sin precios. Decide qué opciones aparecen en “Otro pedido”.</p>
+                                </div>
+                            </div>
+                            <button type="button" id="otherProductsMasterToggle" onclick="toggleOtherProductsMaster()" class="shrink-0 bg-white border border-stone-200 hover:bg-stone-50 text-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold transition">
+                                ✓ Mostrar en Formulario
+                            </button>
+                        </div>
+
+                        <div id="otherProductsList" class="space-y-3"></div>
+
+                        <div class="flex flex-col sm:flex-row gap-3 pt-1">
+                            <input type="text" id="newOtherProduct" placeholder="Ej. Mini pays" class="w-full input-canva">
+                            <button type="button" onclick="addOtherProduct()" class="sm:w-40 bg-brand-500 hover:bg-brand-600 text-white px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-wide transition">
+                                <i class="fa-solid fa-plus"></i> AGREGAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="adminCategoryPedidos" class="admin-category-panel space-y-6">
 
                 <!-- 10. HISTORIAL GENERAL DE PEDIDOS -->
@@ -999,6 +1042,11 @@ Notas adicionales:</textarea>
                         <button onclick="confirmClearPastMonthOrders()" class="bg-brand-500 text-white hover:bg-brand-600 px-5 py-2.5 rounded-2xl text-xs font-bold tracking-wider uppercase transition shadow-sm flex items-center gap-1.5">
                             <i class="fa-solid fa-broom"></i> LIMPIAR PASADOS
                         </button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <button type="button" onclick="setOrderCategoryFilter('all')" data-order-filter="all" class="order-filter-btn px-4 py-2 rounded-xl text-xs font-bold border border-brand-500 bg-brand-50 text-brand-700 transition">Todos</button>
+                        <button type="button" onclick="setOrderCategoryFilter('pasteles')" data-order-filter="pasteles" class="order-filter-btn px-4 py-2 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-600 transition">Pasteles</button>
+                        <button type="button" onclick="setOrderCategoryFilter('otros')" data-order-filter="otros" class="order-filter-btn px-4 py-2 rounded-xl text-xs font-bold border border-stone-200 bg-white text-stone-600 transition">Otros pedidos</button>
                     </div>
                     <div class="flex gap-2 items-center">
                         <div class="relative flex-1">
@@ -1543,12 +1591,20 @@ orderHours: {
                 fillings: ['Crema de Nutella', 'Cajeta de Sayula', 'Frutos Rojos Finos', 'Queso Crema Vainilla', 'Ganache de Chocolate'],
                 frostings: ['Mantequilla Fina', 'Philadelphia Special', 'Chocolate Gourmet'],
                 pickupTimes: ['10:00 AM - 12:00 PM', '12:00 PM - 2:00 PM', '2:00 PM - 4:00 PM', '4:00 PM - 6:00 PM'],
-                shippingTimes: ['10:00 AM - 1:00 PM (Turno Mañana)', '2:00 PM - 6:00 PM (Turno Tarde)']
+                shippingTimes: ['10:00 AM - 1:00 PM (Turno Mañana)', '2:00 PM - 6:00 PM (Turno Tarde)'],
+                otherProducts: [
+                    { name: 'Cupcakes', visible: true },
+                    { name: 'Galletas decoradas', visible: true },
+                    { name: 'Brownies', visible: false },
+                    { name: 'Mesa de postres', visible: true }
+                ],
+                otherProductsEnabled: true
             },
             orders: []
         };
 
         let state = loadAppState();
+        normalizeOtherProductsCatalog();
 let currentEditingFinanceOrderId = null;
 let kitchenFilter = 'all';
 
@@ -1889,6 +1945,7 @@ if (config.blockedDates) {
 
         saveAppState();
 
+        normalizeOtherProductsCatalog();
         initFormCatalogs();
         renderSocialLinks();
         renderBranches();
@@ -1976,6 +2033,7 @@ function showToast(message, type = 'info') {
 }
         // LLENADO DINÁMICO DE SELECTS
         function initFormCatalogs() {
+            renderOtherProductSelect();
             populateSelect('eventType', state.catalogs.events);
             populateSelect('eventPortions', state.catalogs.portions);
             populateSelect('eventFlavor', state.catalogs.flavors);
@@ -1995,6 +2053,7 @@ function showToast(message, type = 'info') {
             updatePickupDetails();
 
             renderCatalogAdminLists();
+            renderOtherProductsAdmin();
         }
 
         function populateSelect(id, optionsList) {
@@ -2097,6 +2156,10 @@ function showToast(message, type = 'info') {
         }
 
         function construirMensajePedido(order) {
+            if (isOtherOrder(order)) {
+                return `*SOLICITUD DE OTRO PEDIDO*\n\n` + `🔖 *No. de pedido:* ${order.orderNumber}\n` + `👤 *Cliente:* ${order.clientName}\n` + `📱 *WhatsApp:* ${order.clientPhone}\n` + `📅 *Fecha:* ${order.eventDate}\n\n` + `*DETALLE DEL PEDIDO:*\n` + `Qué necesita: ${order.otherProduct || order.otherNeed || 'No especificado'}\n` + `Cantidad: ${order.quantity || 'No especificada'}\n` + `Detalles: ${order.otherDetails || 'Ninguno'}\n\n` + `🚚 *ENTREGA / RECOLECCIÓN:* ${order.deliveryMethod || 'No especificada'}\n` + `📍 *LOGÍSTICA:* ${order.deliveryDetails || 'No especificada'}\n\n` + `📝 *OBSERVACIONES:*\n${order.otherObservations || 'Ninguna'}`;
+            }
+
             const detallesFormateados = order.eventDetails || 'Ninguno';
             let informacionEntrega = '';
             if (order.deliveryMethod === 'Recoger en tienda') {
@@ -2179,6 +2242,7 @@ function showToast(message, type = 'info') {
 
             closeReviewModal();
             document.getElementById('orderForm').reset();
+            setCustomerOrderType('pastel');
             toggleDeliveryFields();
             seleccionarCanalPedido('whatsapp');
 
@@ -2190,6 +2254,37 @@ function showToast(message, type = 'info') {
             );
 
             setTimeout(() => window.open(destination, '_blank'), 300);
+        }
+
+        let customerOrderType = 'pastel';
+
+        function setCustomerOrderType(type) {
+            normalizeOtherProductsCatalog();
+            if (type === 'otro' && state.catalogs.otherProductsEnabled === false) {
+                customerOrderType = 'pastel';
+                type = 'pastel';
+            }
+            customerOrderType = type === 'otro' ? 'otro' : 'pastel';
+            const isOther = customerOrderType === 'otro';
+            document.getElementById('cakeOrderFields')?.classList.toggle('hidden', isOther);
+            document.getElementById('otherOrderFields')?.classList.toggle('hidden', !isOther);
+            document.getElementById('cakeDetailsFields')?.classList.toggle('hidden', isOther);
+            document.getElementById('otherObservationsField')?.classList.toggle('hidden', !isOther);
+            ['eventType','eventPortions','eventFlavor','eventFilling','eventFrosting'].forEach(id => { const el=document.getElementById(id); if(el) el.required=!isOther; });
+            ['otherProduct','otherQuantity'].forEach(id => { const el=document.getElementById(id); if(el) el.required=isOther; });
+            const cakeBtn=document.getElementById('orderTypeCakeBtn'), otherBtn=document.getElementById('orderTypeOtherBtn');
+            cakeBtn?.classList.toggle('border-brand-500', !isOther); cakeBtn?.classList.toggle('bg-brand-50', !isOther); cakeBtn?.classList.toggle('text-brand-700', !isOther);
+            cakeBtn?.classList.toggle('border-stone-200', isOther); cakeBtn?.classList.toggle('bg-white', isOther); cakeBtn?.classList.toggle('text-stone-600', isOther);
+            otherBtn?.classList.toggle('border-brand-500', isOther); otherBtn?.classList.toggle('bg-brand-50', isOther); otherBtn?.classList.toggle('text-brand-700', isOther);
+            otherBtn?.classList.toggle('border-stone-200', !isOther); otherBtn?.classList.toggle('bg-white', !isOther); otherBtn?.classList.toggle('text-stone-600', !isOther);
+            renderOtherProductSelect();
+        }
+
+        function renderOtherProductSelect() {
+            const select=document.getElementById('otherProduct'); if(!select) return;
+            normalizeOtherProductsCatalog();
+            const visible=state.catalogs.otherProducts.filter(item=>item.visible!==false);
+            select.innerHTML=visible.length ? '<option value="">Selecciona una opción</option>'+visible.map(item=>`<option value="${escapeHtml(item.name)}">${escapeHtml(item.name)}</option>`).join('') : '<option value="">No hay opciones disponibles</option>';
         }
 
         function handleReviewOrder(e) {
@@ -2205,13 +2300,17 @@ function showToast(message, type = 'info') {
 
             const clientName = document.getElementById('clientName').value.trim();
             const clientPhone = document.getElementById('clientPhone').value.trim();
-            const eventType = document.getElementById('eventType').value;
-            const portions = document.getElementById('eventPortions').value;
-            const flavor = document.getElementById('eventFlavor').value;
-            const filling = document.getElementById('eventFilling').value;
-            const frosting = document.getElementById('eventFrosting').value;
             const deliveryMethod = document.getElementById('deliveryMethod').value;
-            const eventDetails = document.getElementById('eventDetails').value.trim();
+            const eventType = customerOrderType === 'pastel' ? document.getElementById('eventType').value : '';
+            const portions = customerOrderType === 'pastel' ? document.getElementById('eventPortions').value : '';
+            const flavor = customerOrderType === 'pastel' ? document.getElementById('eventFlavor').value : '';
+            const filling = customerOrderType === 'pastel' ? document.getElementById('eventFilling').value : '';
+            const frosting = customerOrderType === 'pastel' ? document.getElementById('eventFrosting').value : '';
+            const eventDetails = customerOrderType === 'pastel' ? document.getElementById('eventDetails').value.trim() : '';
+            const otherProduct = customerOrderType === 'otro' ? document.getElementById('otherProduct').value : '';
+            const quantity = customerOrderType === 'otro' ? document.getElementById('otherQuantity').value : '';
+            const otherDetails = customerOrderType === 'otro' ? document.getElementById('otherDetails').value.trim() : '';
+            const otherObservations = customerOrderType === 'otro' ? document.getElementById('otherObservations').value.trim() : '';
 
             let deliveryDetails = '';
 let timeChosen = '';
@@ -2296,6 +2395,7 @@ if (deliveryMethod === 'Recoger en tienda') {
 pendingOrderData = {
     id: Date.now().toString(),
     orderNumber: generarNumeroPedido(),
+    orderType: customerOrderType,
     clientName,
     clientPhone,
     eventDate: dateVal,
@@ -2304,6 +2404,11 @@ pendingOrderData = {
     flavor,
     filling,
     frosting,
+    otherProduct,
+    otherNeed: otherProduct,
+    quantity,
+    otherDetails,
+    otherObservations,
 
     deliveryMethod,
 
@@ -2328,8 +2433,18 @@ pendingOrderData = {
    anticipoSolicitado: 0 
 };
             const container = document.getElementById('reviewDetailsContainer');
-            container.innerHTML = `
-                <p><strong>Pedido:</strong> ${pendingOrderData.orderNumber}</p>
+            container.innerHTML = pendingOrderData.orderType === 'otro' ? `
+                <p><strong>Número de pedido:</strong> ${pendingOrderData.orderNumber}</p>
+                <p><strong>Cliente:</strong> ${clientName} (${clientPhone})</p>
+                <p><strong>Fecha:</strong> ${dateVal}</p>
+                <p><strong>Qué necesita:</strong> ${otherProduct}</p>
+                <p><strong>Cantidad:</strong> ${quantity}</p>
+                <p><strong>Detalles:</strong> ${otherDetails || 'Sin detalles adicionales'}</p>
+                <p><strong>Entrega / recolección:</strong> ${deliveryMethod}</p>
+                <p><strong>Logística:</strong> ${deliveryDetails}</p>
+                <p><strong>Observaciones:</strong> ${otherObservations || 'Sin observaciones'}</p>
+            ` : `
+                <p><strong>Número de pedido:</strong> ${pendingOrderData.orderNumber}</p>
                 <p><strong>Cliente:</strong> ${clientName} (${clientPhone})</p>
                 <p><strong>Fecha Evento:</strong> ${dateVal}</p>
                 <p><strong>Evento:</strong> ${eventType}</p>
@@ -3332,8 +3447,123 @@ function addCatalogOption(key, inputId) {
             });
         }
 
+        function normalizeOtherProductsCatalog() {
+            if (!Array.isArray(state.catalogs.otherProducts)) state.catalogs.otherProducts = [];
+            state.catalogs.otherProducts = state.catalogs.otherProducts.map(item => {
+                if (typeof item === 'string') return { name: item, visible: true };
+                return { name: String(item?.name || '').trim(), visible: item?.visible !== false };
+            }).filter(item => item.name);
+            if (typeof state.catalogs.otherProductsEnabled !== 'boolean') state.catalogs.otherProductsEnabled = true;
+        }
+
+        function renderOtherProductsAdmin() {
+            normalizeOtherProductsCatalog();
+            const container = document.getElementById('otherProductsList');
+            const master = document.getElementById('otherProductsMasterToggle');
+            if (!container) return;
+
+            container.innerHTML = '';
+            if (master) {
+                master.textContent = state.catalogs.otherProductsEnabled ? '✓ Mostrar en Formulario' : '○ Oculto del Formulario';
+                master.classList.toggle('bg-white', !state.catalogs.otherProductsEnabled);
+                master.classList.toggle('bg-stone-100', !state.catalogs.otherProductsEnabled);
+            }
+
+            state.catalogs.otherProducts.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-2xl border border-stone-200 bg-white';
+                row.innerHTML = `
+                    <input type="text" value="${escapeHtml(item.name)}" onchange="renameOtherProduct(${index}, this.value)" class="flex-1 input-canva" aria-label="Nombre del producto">
+                    <div class="flex gap-2 items-center">
+                        <button type="button" onclick="toggleOtherProduct(${index})" class="flex-1 sm:flex-none bg-white border border-stone-200 hover:bg-stone-50 text-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold transition">
+                            ${item.visible ? '✓ Mostrar' : '○ Oculto'}
+                        </button>
+                        <button type="button" onclick="removeOtherProduct(${index})" aria-label="Eliminar ${escapeHtml(item.name)}" class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition flex items-center justify-center">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>`;
+                container.appendChild(row);
+            });
+
+            applyOtherProductsFormVisibility();
+        }
+
+        function applyOtherProductsFormVisibility() {
+            normalizeOtherProductsCatalog();
+            const enabled = state.catalogs.otherProductsEnabled !== false;
+            const otherBtn = document.getElementById('orderTypeOtherBtn');
+            const otherFields = document.getElementById('otherOrderFields');
+
+            if (otherBtn) {
+                otherBtn.classList.toggle('hidden', !enabled);
+            }
+
+            if (!enabled && customerOrderType === 'otro') {
+                setCustomerOrderType('pastel');
+                return;
+            }
+
+            if (otherFields && !enabled) {
+                otherFields.classList.add('hidden');
+            }
+
+            renderOtherProductSelect();
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+        }
+
+        function persistOtherProductsCatalog(message) {
+            normalizeOtherProductsCatalog();
+            saveAppState();
+            guardarConfiguracionEnGoogleSheets();
+            renderOtherProductsAdmin();
+            if (message) showToast(message, 'success');
+        }
+
+        function toggleOtherProductsMaster() {
+            normalizeOtherProductsCatalog();
+            state.catalogs.otherProductsEnabled = !state.catalogs.otherProductsEnabled;
+            persistOtherProductsCatalog('Visibilidad de “Otro pedido” actualizada');
+            applyOtherProductsFormVisibility();
+        }
+
+        function toggleOtherProduct(index) {
+            normalizeOtherProductsCatalog();
+            if (!state.catalogs.otherProducts[index]) return;
+            state.catalogs.otherProducts[index].visible = !state.catalogs.otherProducts[index].visible;
+            persistOtherProductsCatalog('Visibilidad actualizada');
+        }
+
+        function renameOtherProduct(index, value) {
+            normalizeOtherProductsCatalog();
+            const name = String(value || '').trim();
+            if (!name || !state.catalogs.otherProducts[index]) return renderOtherProductsAdmin();
+            state.catalogs.otherProducts[index].name = name;
+            persistOtherProductsCatalog('Nombre actualizado');
+        }
+
+        function addOtherProduct() {
+            normalizeOtherProductsCatalog();
+            const input = document.getElementById('newOtherProduct');
+            const name = String(input?.value || '').trim();
+            if (!name) return;
+            const exists = state.catalogs.otherProducts.some(item => item.name.toLowerCase() === name.toLowerCase());
+            if (exists) return showToast('Esa opción ya existe', 'error');
+            state.catalogs.otherProducts.push({ name, visible: true });
+            if (input) input.value = '';
+            persistOtherProductsCatalog('Opción agregada');
+        }
+
+        function removeOtherProduct(index) {
+            normalizeOtherProductsCatalog();
+            state.catalogs.otherProducts.splice(index, 1);
+            persistOtherProductsCatalog('Opción eliminada');
+        }
+
         function showAdminCategory(category) {
-            const categories = ['configuracion', 'opciones', 'pedidos', 'proximos'];
+            const categories = ['configuracion', 'opciones', 'pedidos', 'proximos', 'otrospedidos'];
             categories.forEach(name => {
                 const panel = document.getElementById(`adminCategory${name.charAt(0).toUpperCase()}${name.slice(1)}`);
                 const tab = document.querySelector(`[data-admin-tab="${name}"]`);
@@ -3342,6 +3572,7 @@ function addCatalogOption(key, inputId) {
             });
 
             if (category === 'proximos') renderUpcomingOrders();
+            if (category === 'otrospedidos') renderOtherProductsAdmin();
         }
 
         function parseOrderDateLocal(dateValue) {
@@ -3413,15 +3644,45 @@ function addCatalogOption(key, inputId) {
             window.__upcomingOrdersTimer = setInterval(renderUpcomingOrders, 60000);
         }
 
+        let currentOrderCategoryFilter = 'all';
+
+        function isOtherOrder(order) {
+            return String(order?.orderType || '').toLowerCase() === 'otro'
+                || String(order?.orderType || '').toLowerCase() === 'otros'
+                || !!order?.otherProduct
+                || !!order?.otherNeed;
+        }
+
+        function setOrderCategoryFilter(category) {
+            currentOrderCategoryFilter = category;
+            document.querySelectorAll('.order-filter-btn').forEach(btn => {
+                const active = btn.dataset.orderFilter === category;
+                btn.classList.toggle('border-brand-500', active);
+                btn.classList.toggle('bg-brand-50', active);
+                btn.classList.toggle('text-brand-700', active);
+                btn.classList.toggle('border-stone-200', !active);
+                btn.classList.toggle('bg-white', !active);
+                btn.classList.toggle('text-stone-600', !active);
+            });
+            const search = document.getElementById('orderSearchInput')?.value || '';
+            renderOrders(search);
+        }
+
         function renderOrders(searchTerm = '') {
             const normalizedSearch = String(searchTerm || '').trim().toLowerCase();
-            const visibleOrders = normalizedSearch
-                ? state.orders.filter(order => [
+            let visibleOrders = state.orders.filter(order => {
+                if (currentOrderCategoryFilter === 'pasteles') return !isOtherOrder(order);
+                if (currentOrderCategoryFilter === 'otros') return isOtherOrder(order);
+                return true;
+            });
+
+            if (normalizedSearch) {
+                visibleOrders = visibleOrders.filter(order => [
                     order.orderNumber,
                     order.clientName,
                     order.clientPhone
-                  ].some(value => String(value || '').toLowerCase().includes(normalizedSearch)))
-                : state.orders;
+                ].some(value => String(value || '').toLowerCase().includes(normalizedSearch)));
+            }
             const container = document.getElementById('ordersContainer');
             const countEl = document.getElementById('orderCount');
             if (!container) return;
@@ -3442,21 +3703,26 @@ function addCatalogOption(key, inputId) {
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <h5 class="font-bold text-stone-800 text-sm">${order.clientName}</h5>
+                                <span class="text-[10px] font-bold px-2 py-1 rounded-full ${isOtherOrder(order) ? 'bg-pink-50 text-pink-700' : 'bg-brand-50 text-brand-700'}">${isOtherOrder(order) ? 'OTRO PEDIDO' : 'PASTEL'}</span>
                             </div>
                             <p class="text-stone-400 text-[11px] mt-0.5"><i class="fa-brands fa-whatsapp text-emerald-500"></i> ${order.clientPhone} • Registrado el: ${order.createdAt}</p>
                         </div>
                         <div class="text-right">
                             <span class="font-serif text-brand-700 font-bold text-sm block">Fecha: ${order.eventDate}</span>
-                            <span class="text-[10px] text-stone-400 uppercase tracking-wider">${order.eventType}</span>
-                        ${order.orderNumber ? `<span class="text-[10px] font-bold text-brand-600">#${order.orderNumber}</span>` : ''}
+                            <span class="text-[10px] text-stone-400 uppercase tracking-wider">${isOtherOrder(order) ? (order.otherProduct || order.otherNeed || 'Otro pedido') : (order.eventType || 'Pastel')}</span>
+                            <span class="text-[10px] font-bold text-brand-700 bg-brand-50 px-2 py-1 rounded-full inline-block mt-1">Número de pedido: ${order.orderNumber || order.id || 'Sin número'}</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-100">
                         <div>
-                            <p><strong>Producto:</strong> ${order.portions}</p>
-                            <p><strong>Pan:</strong> ${order.flavor} | <strong>Relleno:</strong> ${order.filling}</p>
-                            <p><strong>Betún:</strong> ${order.frosting}</p>
+                            ${isOtherOrder(order)
+                                ? `<p><strong>Qué necesita:</strong> ${order.otherProduct || order.otherNeed || 'No especificado'}</p>
+                                   <p><strong>Cantidad:</strong> ${order.quantity || 'No especificada'}</p>
+                                   ${order.otherDetails ? `<p><strong>Detalles:</strong> ${order.otherDetails}</p>` : ''}`
+                                : `<p><strong>Producto:</strong> ${order.portions}</p>
+                                   <p><strong>Pan:</strong> ${order.flavor} | <strong>Relleno:</strong> ${order.filling}</p>
+                                   <p><strong>Betún:</strong> ${order.frosting}</p>`}
                         </div>
                         <div>
                             <p><strong>Entrega:</strong> ${order.deliveryMethod}</p>

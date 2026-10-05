@@ -1076,11 +1076,29 @@ Notas adicionales:</textarea>
                             </div>
                             <span id="upcomingOrderCount" class="text-xs font-bold text-brand-700 bg-brand-50 px-3 py-1.5 rounded-full">0 próximos</span>
                         </div>
-                        <div id="upcomingOrdersContainer" class="space-y-3"></div>
+                        <div class="space-y-5">
+                            <div>
+                                <div class="flex items-center gap-2 mb-3"><span class="w-7 h-7 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-xs"><i class="fa-solid fa-cake-candles"></i></span><h5 class="font-bold text-brand-700 text-sm">Pasteles</h5><span id="upcomingCakeCount" class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">0</span></div>
+                                <div id="upcomingCakeOrdersContainer" class="space-y-3"></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-3"><span class="w-7 h-7 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center text-xs"><i class="fa-solid fa-bag-shopping"></i></span><h5 class="font-bold text-pink-700 text-sm">Otros pedidos</h5><span id="upcomingOtherCount" class="text-[10px] font-bold text-pink-600 bg-pink-50 px-2 py-1 rounded-full">0</span></div>
+                                <div id="upcomingOtherOrdersContainer" class="space-y-3"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VER PEDIDO -->
+    <div id="viewOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-stone-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-stone-100 pb-3"><div><h3 class="text-lg font-serif text-brand-700">Información del pedido</h3><p id="viewOrderSubtitle" class="text-[11px] text-stone-400 mt-0.5"></p></div><button onclick="closeViewOrderModal()" class="w-8 h-8 rounded-full bg-stone-100 text-stone-500 hover:text-stone-800 flex items-center justify-center text-sm font-bold">✕</button></div>
+            <div id="viewOrderDetailsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-stone-700"></div>
+            <div class="flex justify-end pt-2"><button onclick="closeViewOrderModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 px-5 py-2.5 rounded-xl text-xs font-bold transition">Cerrar</button></div>
         </div>
     </div>
 
@@ -3589,53 +3607,45 @@ function addCatalogOption(key, inputId) {
         }
 
         function renderUpcomingOrders() {
-            const container = document.getElementById('upcomingOrdersContainer');
-            const countEl = document.getElementById('upcomingOrderCount');
-            if (!container) return;
+            const cakeContainer = document.getElementById('upcomingCakeOrdersContainer');
+            const otherContainer = document.getElementById('upcomingOtherOrdersContainer');
+            const totalCountEl = document.getElementById('upcomingOrderCount');
+            const cakeCountEl = document.getElementById('upcomingCakeCount');
+            const otherCountEl = document.getElementById('upcomingOtherCount');
+            if (!cakeContainer || !otherContainer) return;
 
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const today = new Date(); today.setHours(0,0,0,0);
+            const upcoming = state.orders.map(order => ({order, date: parseOrderDateLocal(order.eventDate)}))
+                .filter(x => x.date && x.date >= today)
+                .sort((a,b) => a.date-b.date || String(a.order.clientName||'').localeCompare(String(b.order.clientName||'')))
+                .map(x => x.order);
+            const cakes = upcoming.filter(o => !isOtherOrder(o));
+            const others = upcoming.filter(o => isOtherOrder(o));
+            if (totalCountEl) totalCountEl.textContent = `${upcoming.length} próximo${upcoming.length===1?'':'s'}`;
+            if (cakeCountEl) cakeCountEl.textContent = cakes.length;
+            if (otherCountEl) otherCountEl.textContent = others.length;
 
-            const upcoming = state.orders
-                .map(order => ({ order, date: parseOrderDateLocal(order.eventDate) }))
-                .filter(item => item.date && item.date >= today)
-                .sort((a, b) => a.date - b.date || String(a.order.clientName || '').localeCompare(String(b.order.clientName || '')))
-                .map(item => item.order);
-
-            if (countEl) countEl.textContent = `${upcoming.length} próximo${upcoming.length === 1 ? '' : 's'}`;
-            container.innerHTML = '';
-
-            if (!upcoming.length) {
-                container.innerHTML = '<div class="p-6 bg-stone-50 rounded-2xl text-center text-stone-400 text-xs">No hay pedidos próximos registrados.</div>';
-                return;
-            }
-
-            upcoming.forEach(order => {
-                const card = document.createElement('div');
-                card.className = 'bg-white p-4 rounded-2xl border border-stone-200/80 shadow-sm';
-                card.innerHTML = `
-                    <div class="flex flex-wrap justify-between items-start gap-3">
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <h5 class="font-bold text-stone-800 text-sm">${escapeHtml(order.clientName || 'Sin nombre')}</h5>
-                                ${order.orderNumber ? `<span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">#${escapeHtml(order.orderNumber)}</span>` : ''}
-                            </div>
-                            <p class="text-xs text-brand-700 font-semibold mt-1">${escapeHtml(formatUpcomingDate(order.eventDate))}</p>
-                            <p class="text-[11px] text-stone-400 mt-1">${escapeHtml(order.eventType || '')}</p>
-                        </div>
-                        <div class="text-right text-xs">
-                            <p class="font-semibold text-stone-700">${escapeHtml(order.deliveryMethod || '')}</p>
-                            <p class="text-stone-400 mt-1">${escapeHtml(order.deliveryDetails || '')}</p>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t border-stone-100 flex flex-wrap gap-2 items-center">
-                        <span class="text-[11px] text-stone-500"><strong>Pedido:</strong> ${escapeHtml(order.portions || '')}</span>
-                        <span class="text-[11px] text-stone-500"><strong>Pan:</strong> ${escapeHtml(order.flavor || '')}</span>
-                        <span class="text-[11px] text-stone-500"><strong>Relleno:</strong> ${escapeHtml(order.filling || '')}</span>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+            const empty = (c,t) => c.innerHTML = `<div class="p-5 bg-stone-50 rounded-2xl text-center text-stone-400 text-xs">${t}</div>`;
+            const card = order => {
+                const other=isOtherOrder(order);
+                const info=other ? `
+                    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-100 text-xs">
+                        <div class="space-y-1.5"><p><strong>Qué necesita:</strong> ${escapeHtml(order.otherProduct||order.otherNeed||'No especificado')}</p><p><strong>Cantidad:</strong> ${escapeHtml(order.quantity||'No especificada')}</p><p><strong>Detalles:</strong> ${escapeHtml(order.otherDetails||'Sin detalles')}</p></div>
+                        <div class="space-y-1.5"><p><strong>Método de entrega:</strong> ${escapeHtml(order.deliveryMethod||'No especificado')}</p><p><strong>Logística:</strong> ${escapeHtml(order.deliveryDetails||'No especificada')}</p><p><strong>Observaciones:</strong> ${escapeHtml(order.otherObservations||'Sin observaciones')}</p></div>
+                    </div>` : `
+                    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-100 text-xs">
+                        <div class="space-y-1.5"><p><strong>Porciones:</strong> ${escapeHtml(order.portions||'')}</p><p><strong>Pan:</strong> ${escapeHtml(order.flavor||'')}</p><p><strong>Relleno:</strong> ${escapeHtml(order.filling||'')}</p></div>
+                        <div class="space-y-1.5"><p><strong>Betún:</strong> ${escapeHtml(order.frosting||'')}</p><p><strong>Método de entrega:</strong> ${escapeHtml(order.deliveryMethod||'')}</p><p><strong>Logística:</strong> ${escapeHtml(order.deliveryDetails||'')}</p></div>
+                    </div>`;
+                return `<div class="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-sm">
+                    <div class="flex flex-wrap justify-between items-start gap-3"><div><div class="flex flex-wrap items-center gap-2"><h5 class="font-bold text-stone-800 text-sm">${escapeHtml(order.clientName||'Sin nombre')}</h5><span class="text-[10px] font-bold px-2 py-1 rounded-full ${other?'bg-pink-50 text-pink-700':'bg-brand-50 text-brand-700'}">${other?'OTRO PEDIDO':'PASTEL'}</span>${order.orderNumber?`<span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">#${escapeHtml(order.orderNumber)}</span>`:''}</div><p class="text-xs text-brand-700 font-semibold mt-1">${escapeHtml(formatUpcomingDate(order.eventDate))}</p><p class="text-[11px] text-stone-400 mt-1">WhatsApp: ${escapeHtml(order.clientPhone||'Sin número')}</p></div><div class="text-right text-xs"><p class="font-semibold text-stone-700">${escapeHtml(other?(order.otherProduct||order.otherNeed||'Otro pedido'):(order.eventType||'Pastel'))}</p></div></div>
+                    ${info}
+                    <div class="mt-3 pt-3 border-t border-stone-100 flex flex-wrap gap-2 items-center"><button type="button" onclick="viewOrderDetails('${order.id}')" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-brand-200"><i class="fa-solid fa-eye"></i> Ver pedido</button><button type="button" onclick="contactClientWA('${order.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200"><i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido</button><button type="button" onclick="sendOrderReminderWA('${order.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200"><i class="fa-solid fa-bell text-teal-600"></i> Recordatorio Pedido</button><button type="button" onclick="requestPaymentReceiptWA('${order.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200"><i class="fa-solid fa-receipt text-amber-600"></i> Comprobante</button></div>
+                </div>`;
+            };
+            cakeContainer.innerHTML=''; otherContainer.innerHTML='';
+            if(!cakes.length) empty(cakeContainer,'No hay pasteles próximos registrados.'); else cakes.forEach(o=>cakeContainer.insertAdjacentHTML('beforeend',card(o)));
+            if(!others.length) empty(otherContainer,'No hay otros pedidos próximos registrados.'); else others.forEach(o=>otherContainer.insertAdjacentHTML('beforeend',card(o)));
         }
 
         function startUpcomingOrdersAutoRefresh() {
@@ -3717,16 +3727,17 @@ function addCatalogOption(key, inputId) {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-100">
                         <div>
                             ${isOtherOrder(order)
-                                ? `<p><strong>Qué necesita:</strong> ${order.otherProduct || order.otherNeed || 'No especificado'}</p>
-                                   <p><strong>Cantidad:</strong> ${order.quantity || 'No especificada'}</p>
-                                   ${order.otherDetails ? `<p><strong>Detalles:</strong> ${order.otherDetails}</p>` : ''}`
+                                ? `<p><strong>Qué necesita:</strong> ${escapeHtml(order.otherProduct || order.otherNeed || 'No especificado')}</p>
+                                   <p><strong>Cantidad:</strong> ${escapeHtml(order.quantity || 'No especificada')}</p>
+                                   <p><strong>Detalles:</strong> ${escapeHtml(order.otherDetails || 'Sin detalles')}</p>
+                                   <p><strong>Observaciones:</strong> ${escapeHtml(order.otherObservations || 'Sin observaciones')}</p>`
                                 : `<p><strong>Producto:</strong> ${order.portions}</p>
                                    <p><strong>Pan:</strong> ${order.flavor} | <strong>Relleno:</strong> ${order.filling}</p>
                                    <p><strong>Betún:</strong> ${order.frosting}</p>`}
                         </div>
                         <div>
-                            <p><strong>Entrega:</strong> ${order.deliveryMethod}</p>
-                            <p class="text-stone-500"><strong>Detalle:</strong> ${order.deliveryDetails}</p>
+                            <p><strong>Entrega:</strong> ${escapeHtml(order.deliveryMethod || 'No especificada')}</p>
+                            <p class="text-stone-500"><strong>Detalle:</strong> ${escapeHtml(order.deliveryDetails || 'No especificada')}</p>
                         </div>
                     </div>
 
@@ -3734,6 +3745,10 @@ function addCatalogOption(key, inputId) {
 
                     <!-- BOTONES DE ACCIÓN DEL PEDIDO -->
                     <div class="flex flex-wrap gap-2 pt-1 border-t border-stone-100 items-center">
+                        <button onclick="viewOrderDetails('${order.id}')" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-brand-200" title="Ver toda la información del pedido">
+                            <i class="fa-solid fa-eye"></i> Ver pedido
+                        </button>
+
                         <button onclick="contactClientWA('${order.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200" title="Enviar la confirmación directamente por WhatsApp">
                             <i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido
                         </button>
@@ -3782,6 +3797,18 @@ function addCatalogOption(key, inputId) {
             renderUpcomingOrders();
         }
 
+        function viewOrderDetails(orderId) {
+            const order = state.orders.find(o => String(o.id) === String(orderId));
+            if (!order) { showToast('No se encontró el pedido', 'error'); return; }
+            const other = isOtherOrder(order);
+            const box=(label,value)=>`<div class="bg-stone-50 rounded-xl border border-stone-100 p-3"><p class="text-[10px] uppercase tracking-wider font-bold text-stone-400 mb-1">${label}</p><p class="font-semibold text-stone-700 whitespace-pre-line">${escapeHtml(value||'—')}</p></div>`;
+            document.getElementById('viewOrderSubtitle').textContent=`${other?'Otros pedidos':'Pastel'} • ${order.orderNumber||order.id||''}`;
+            const fields=other?[["Número de pedido",order.orderNumber||order.id],["Nombre completo",order.clientName],["WhatsApp de contacto",order.clientPhone],["Fecha del evento",order.eventDate],["Qué necesita",order.otherProduct||order.otherNeed],["Cantidad",order.quantity],["Detalles",order.otherDetails],["Método de entrega",order.deliveryMethod],["Logística",order.deliveryDetails],["Observaciones",order.otherObservations]]:[["Número de pedido",order.orderNumber||order.id],["Nombre completo",order.clientName],["WhatsApp de contacto",order.clientPhone],["Fecha del evento",order.eventDate],["Evento",order.eventType],["Porciones",order.portions],["Pan",order.flavor],["Relleno",order.filling],["Betún",order.frosting],["Método de entrega",order.deliveryMethod],["Logística",order.deliveryDetails],["Detalles",order.eventDetails]];
+            document.getElementById('viewOrderDetailsContainer').innerHTML=fields.map(([l,v])=>box(l,v)).join('');
+            document.getElementById('viewOrderModal').classList.remove('hidden'); document.getElementById('viewOrderModal').classList.add('flex');
+        }
+        function closeViewOrderModal(){const m=document.getElementById('viewOrderModal');if(!m)return;m.classList.add('hidden');m.classList.remove('flex');}
+
         // FUNCIONES DE ACCIÓN DIRECTAS A WHATSAPP
        function contactClientWA(orderId) {
     const order = state.orders.find(o => o.id == orderId);
@@ -3789,6 +3816,30 @@ function addCatalogOption(key, inputId) {
     if (!order) {
         showToast('No se encontró el pedido', 'error');
         return;
+    }
+
+    if (isOtherOrder(order)) {
+        const cleanPhone = String(order.clientPhone || '').replace(/\D/g, '');
+        const msg = `👤 Hola ${order.clientName}, te escribimos para compartirte el resumen de la información de tu pedido:
+
+` + `🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}
+` + `📅 *FECHA DEL EVENTO:* ${order.eventDate}
+
+` + `*DETALLE DEL PEDIDO:*
+Qué necesita: ${order.otherProduct || order.otherNeed || 'No especificado'}
+Cantidad: ${order.quantity || 'No especificada'}
+Detalles: ${order.otherDetails || 'Ninguno'}
+
+` + `🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod || 'No especificado'}
+📍 *LOGÍSTICA:* ${order.deliveryDetails || 'No especificada'}
+
+📝 *OBSERVACIONES:*
+${order.otherObservations || 'Ninguna'}
+
+Por favor confirma si todo está correcto o menciónanos si hay algún error para corregirlo a tiempo.
+
+¡Muchas gracias!`;
+        window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`,'_blank'); showToast('Abriendo WhatsApp con la confirmación del otro pedido','success'); return;
     }
 
     const cleanPhone = String(order.clientPhone || '').replace(/\D/g, '');
@@ -3845,6 +3896,25 @@ async function copyAdminMessage(text, label) {
 }
 
 function buildAdminOrderMessage(order) {
+    if (isOtherOrder(order)) return `👤 Hola ${order.clientName}, te escribimos para compartirte el resumen de la información de tu pedido:
+
+🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}
+📅 *FECHA DEL EVENTO:* ${order.eventDate}
+
+*DETALLE DEL PEDIDO:*
+Qué necesita: ${order.otherProduct || order.otherNeed || 'No especificado'}
+Cantidad: ${order.quantity || 'No especificada'}
+Detalles: ${order.otherDetails || 'Ninguno'}
+
+🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod || 'No especificado'}
+📍 *LOGÍSTICA:* ${order.deliveryDetails || 'No especificada'}
+
+📝 *OBSERVACIONES:*
+${order.otherObservations || 'Ninguna'}
+
+Por favor confirma si todo está correcto o menciónanos si hay algún error para corregirlo a tiempo.
+
+¡Muchas gracias!`;
     const branch = state.branches.find(b => b.name === order.branchName);
     const mapInfo = branch?.map ? `\n*UBICACIÓN:* ${branch.map}` : '';
 
@@ -3866,6 +3936,14 @@ function buildAdminOrderMessage(order) {
 }
 
 function buildAdminReminderMessage(order) {
+    if (isOtherOrder(order)) return `👤 Hola ${order.clientName}, te escribimos para recordarte la fecha y logística de tu pedido:
+
+🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}
+📅 *FECHA DEL EVENTO:* ${order.eventDate}
+🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod || 'No especificado'}
+📍 *LOGÍSTICA:* ${order.deliveryDetails || 'No especificada'}
+
+Cualquier detalle o ajuste, quedamos con gusto a tus órdenes. ¡Muchas gracias!`;
     const branch = state.branches.find(b => b.name === order.branchName);
     const mapInfo = branch?.map ? `\n*UBICACIÓN:* ${branch.map}` : '';
 
@@ -3908,6 +3986,23 @@ async function copyAdminOrderMessage(orderId, type) {
     await copyAdminMessage(text, label);
 }
 
+function sendOrderReminderWA(orderId) {
+    const order = state.orders.find(o => o.id == orderId); if (!order) return;
+    const cleanPhone = String(order.clientPhone || '').replace(/\D/g, '');
+    const text = isOtherOrder(order)
+        ? `👤 Hola ${order.clientName}, te escribimos para recordarte la fecha y logística de tu pedido:
+
+🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}
+📅 *FECHA DEL EVENTO:* ${order.eventDate}
+🚚 *MÉTODO DE ENTREGA:* ${order.deliveryMethod || 'No especificado'}
+📍 *LOGÍSTICA:* ${order.deliveryDetails || 'No especificada'}
+
+Cualquier detalle o ajuste, quedamos con gusto a tus órdenes. ¡Muchas gracias!`
+        : buildAdminReminderMessage(order);
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`,'_blank');
+    showToast('Abriendo WhatsApp con el recordatorio del pedido','success');
+}
+
 function requestPaymentReceiptWA(orderId) {
     const order = state.orders.find(o => o.id == orderId);
 
@@ -3916,6 +4011,8 @@ function requestPaymentReceiptWA(orderId) {
     const cleanPhone = String(order.clientPhone || '').replace(/\D/g, '');
 
     const text = `👤 Hola ${order.clientName}, ¿nos podrías enviar por este medio el comprobante de pago de tu anticipo?
+
+🔖 *NO. DE PEDIDO:* ${order.orderNumber || order.id}
 
 📋 Con esto podremos registrar oficialmente tu fecha en nuestra agenda de producción.
 

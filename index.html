@@ -11,7 +11,7 @@
     <meta id="og-description" property="og:description" content="Pastelería Artesanal">
     <meta id="og-image" property="og:image" content="https://dulcereino-demo.vercel.app/img/preview-DulceReino.jpg">
     <meta property="og:type" content="website">
-    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app/">
+    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app">
 
     
 </head>
@@ -290,11 +290,23 @@
         main { padding-top:.75rem !important; padding-bottom:.75rem !important; }
         main > section { margin-bottom:0 !important; }
         #portfolio-section { gap:.5rem !important; }
-        #quality-section { margin-top:.25rem !important; }
+        #quality-guide-grid { display:grid !important; grid-template-columns:minmax(260px,.72fr) minmax(0,1.55fr) !important; gap:0 !important; align-items:stretch !important; margin-top:.25rem !important; overflow:hidden; border-radius:1.5rem; box-shadow:0 4px 20px -2px rgba(86,155,158,.05); }
+        #quality-section { margin-top:0 !important; height:100% !important; }
+        #quality-section > div { height:100%; min-height:100%; border-radius:0 !important; padding:1.5rem !important; display:flex; flex-direction:column; justify-content:center; }
+        #steps-section { border-radius:0 !important; border-left:0 !important; box-shadow:none !important; padding:1.5rem !important; }
+        #steps-section > div:last-child { gap:1.1rem !important; }
+        #quality-section #essence-text { max-width:30rem; }
+        @media(max-width:767px){
+            #quality-guide-grid { grid-template-columns:1fr !important; border-radius:1.25rem; }
+            #quality-section > div { min-height:auto; border-radius:0 !important; padding:1.25rem !important; }
+            #steps-section { border-left:0 !important; border-top:0 !important; padding:1.25rem !important; }
+        }
+        #steps-section { margin-top:0 !important; height:auto !important; }
         #steps-section, #form-section { padding:.9rem !important; border-radius:1.25rem !important; }
         #steps-section { margin-top:.5rem !important; }
         #form-section { margin-top:.5rem !important; }
         #form-section .space-y-8 { gap:1rem !important; }
+        @media (max-width:767px) { #quality-guide-grid { grid-template-columns:1fr !important; } }
         @media (max-width:640px) {
             main { padding-left:.5rem !important; padding-right:.5rem !important; }
             #portfolio-grid { gap:.25rem; }
@@ -410,17 +422,19 @@ background-repeat:no-repeat;">
 
 </section>
 
-        <!-- SECCIÓN 2: NUESTRA ESENCIA / CALIDAD -->
-        <section id="quality-section">
-            <div class="bg-brand-500 text-white p-8 md:p-10 rounded-[2rem] shadow-sm space-y-3 relative overflow-hidden">
-                <span id="essence-label" class="text-[11px] uppercase tracking-widest font-medium opacity-90 block"></span>
-                <h3 id="essence-title" class="text-2xl md:text-3xl font-serif font-medium"></h3>
-                <p id="essence-text" class="text-xs md:text-sm text-stone-100 font-light leading-relaxed max-w-2xl opacity-95"></p>
-            </div>
-        </section>
+        <!-- SECCIONES 2 Y 3: CALIDAD + GUÍA SENCILLA -->
+        <div id="quality-guide-grid" class="grid grid-cols-1 md:grid-cols-2 gap-2 items-start">
+            <!-- CALIDAD -->
+            <section id="quality-section">
+                <div class="bg-brand-500 text-white p-5 md:p-6 rounded-[1.5rem] shadow-sm space-y-3 relative overflow-hidden">
+                    <span id="essence-label" class="text-[11px] uppercase tracking-widest font-medium opacity-90 block"></span>
+                    <h3 id="essence-title" class="text-2xl md:text-3xl font-serif font-medium"></h3>
+                    <p id="essence-text" class="text-xs md:text-sm text-stone-100 font-light leading-relaxed max-w-2xl opacity-95"></p>
+                </div>
+            </section>
 
-        <!-- SECCIÓN 3: GUÍA SENCILLA -->
-        <section id="steps-section" class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-stone-100 canva-card-shadow space-y-6">
+            <!-- GUÍA SENCILLA -->
+            <section id="steps-section" class="bg-white p-5 md:p-6 rounded-[1.5rem] border border-stone-100 canva-card-shadow space-y-5">
             <div class="space-y-1">
                 <span id="guide-label" class="text-xs uppercase font-bold tracking-widest text-brand-500"></span>
                 <h3 id="guide-title" class="text-2xl font-serif text-brand-700"></h3>
@@ -432,17 +446,17 @@ background-repeat:no-repeat;">
                     <div class="space-y-1 pt-0.5">
                         <strong class="text-brand-800 font-semibold text-base block">Elige tu fecha</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Pedidos con mínimo 5 días de anticipación y sujetos a disponibilidad. 
-                           ⚠️ Si la fecha está llena, el sistema te avisará y te dará indicaciones para que elijas otro día.
+                            Selecciona una fecha disponible con mínimo 5 días de anticipación.
                         </p>
                     </div>
                 </div>
-                 <div class="flex items-start gap-4">
+
+                <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">2</div>
                     <div class="space-y-1 pt-0.5">
-                        <strong class="text-brand-800 font-semibold text-base block">Personaliza tu pastel</strong>
+                        <strong class="text-brand-800 font-semibold text-base block">Personaliza tu pedido</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Elige porciones, Sabor de Pan, Relleno y Betún de tu preferencia. Escríbe todos los detalles de tu pastel en el formulario.
+                            Indica las opciones y detalles de lo que necesitas.
                         </p>
                     </div>
                 </div>
@@ -450,9 +464,9 @@ background-repeat:no-repeat;">
                 <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">3</div>
                     <div class="space-y-1 pt-0.5">
-                        <strong class="text-brand-800 font-semibold text-base block">Envía tu orden al instante</strong>
+                        <strong class="text-brand-800 font-semibold text-base block">Envía tu solicitud</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                           El sistema preparará los datos de tu pedido para enviarlos directamente a nuestro WhatsApp. Nos pondremos en contacto contigo para confirmar los detalles y el proceso de pago. 
+                            Revisa tus datos y envía tu pedido.
                         </p>
                     </div>
                 </div>
@@ -460,14 +474,15 @@ background-repeat:no-repeat;">
                 <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">4</div>
                     <div class="space-y-1 pt-0.5">
-                        <strong class="text-brand-800 font-semibold text-base block">Confirma con tu anticipo</strong>
+                        <strong class="text-brand-800 font-semibold text-base block">Confirma tu pedido</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Se requiere un 50% de anticipo para asegurar tu espacio oficial en producción.
+                            Te contactaremos para confirmar los detalles y el anticipo para reservar tu fecha.
                         </p>
                     </div>
                 </div>
             </div>
         </section>
+        </div>
 
         <!-- SECCIÓN 4: FORMULARIO DE PEDIDO -->
         <section id="form-section" class="bg-white p-8 md:p-12 rounded-[2.5rem] border border-stone-100 canva-card-shadow space-y-8">

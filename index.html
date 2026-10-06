@@ -11,7 +11,7 @@
     <meta id="og-description" property="og:description" content="Pastelería Artesanal">
     <meta id="og-image" property="og:image" content="https://dulcereino-demo.vercel.app/img/preview-DulceReino.jpg">
     <meta property="og:type" content="website">
-    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app">
+    <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app/">
 
     
 </head>
@@ -290,23 +290,11 @@
         main { padding-top:.75rem !important; padding-bottom:.75rem !important; }
         main > section { margin-bottom:0 !important; }
         #portfolio-section { gap:.5rem !important; }
-        #quality-guide-grid { display:grid !important; grid-template-columns:minmax(260px,.72fr) minmax(0,1.55fr) !important; gap:0 !important; align-items:stretch !important; margin-top:.25rem !important; overflow:hidden; border-radius:1.5rem; box-shadow:0 4px 20px -2px rgba(86,155,158,.05); }
-        #quality-section { margin-top:0 !important; height:100% !important; }
-        #quality-section > div { height:100%; min-height:100%; border-radius:0 !important; padding:1.5rem !important; display:flex; flex-direction:column; justify-content:center; }
-        #steps-section { border-radius:0 !important; border-left:0 !important; box-shadow:none !important; padding:1.5rem !important; }
-        #steps-section > div:last-child { gap:1.1rem !important; }
-        #quality-section #essence-text { max-width:30rem; }
-        @media(max-width:767px){
-            #quality-guide-grid { grid-template-columns:1fr !important; border-radius:1.25rem; }
-            #quality-section > div { min-height:auto; border-radius:0 !important; padding:1.25rem !important; }
-            #steps-section { border-left:0 !important; border-top:0 !important; padding:1.25rem !important; }
-        }
-        #steps-section { margin-top:0 !important; height:auto !important; }
+        #quality-section { margin-top:.25rem !important; }
         #steps-section, #form-section { padding:.9rem !important; border-radius:1.25rem !important; }
         #steps-section { margin-top:.5rem !important; }
         #form-section { margin-top:.5rem !important; }
         #form-section .space-y-8 { gap:1rem !important; }
-        @media (max-width:767px) { #quality-guide-grid { grid-template-columns:1fr !important; } }
         @media (max-width:640px) {
             main { padding-left:.5rem !important; padding-right:.5rem !important; }
             #portfolio-grid { gap:.25rem; }
@@ -422,19 +410,17 @@ background-repeat:no-repeat;">
 
 </section>
 
-        <!-- SECCIONES 2 Y 3: CALIDAD + GUÍA SENCILLA -->
-        <div id="quality-guide-grid" class="grid grid-cols-1 md:grid-cols-2 gap-2 items-start">
-            <!-- CALIDAD -->
-            <section id="quality-section">
-                <div class="bg-brand-500 text-white p-5 md:p-6 rounded-[1.5rem] shadow-sm space-y-3 relative overflow-hidden">
-                    <span id="essence-label" class="text-[11px] uppercase tracking-widest font-medium opacity-90 block"></span>
-                    <h3 id="essence-title" class="text-2xl md:text-3xl font-serif font-medium"></h3>
-                    <p id="essence-text" class="text-xs md:text-sm text-stone-100 font-light leading-relaxed max-w-2xl opacity-95"></p>
-                </div>
-            </section>
+        <!-- SECCIÓN 2: NUESTRA ESENCIA / CALIDAD -->
+        <section id="quality-section">
+            <div class="bg-brand-500 text-white p-8 md:p-10 rounded-[2rem] shadow-sm space-y-3 relative overflow-hidden">
+                <span id="essence-label" class="text-[11px] uppercase tracking-widest font-medium opacity-90 block"></span>
+                <h3 id="essence-title" class="text-2xl md:text-3xl font-serif font-medium"></h3>
+                <p id="essence-text" class="text-xs md:text-sm text-stone-100 font-light leading-relaxed max-w-2xl opacity-95"></p>
+            </div>
+        </section>
 
-            <!-- GUÍA SENCILLA -->
-            <section id="steps-section" class="bg-white p-5 md:p-6 rounded-[1.5rem] border border-stone-100 canva-card-shadow space-y-5">
+        <!-- SECCIÓN 3: GUÍA SENCILLA -->
+        <section id="steps-section" class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-stone-100 canva-card-shadow space-y-6">
             <div class="space-y-1">
                 <span id="guide-label" class="text-xs uppercase font-bold tracking-widest text-brand-500"></span>
                 <h3 id="guide-title" class="text-2xl font-serif text-brand-700"></h3>
@@ -446,17 +432,17 @@ background-repeat:no-repeat;">
                     <div class="space-y-1 pt-0.5">
                         <strong class="text-brand-800 font-semibold text-base block">Elige tu fecha</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Selecciona una fecha disponible con mínimo 5 días de anticipación.
+                            Pedidos con mínimo 5 días de anticipación y sujetos a disponibilidad. 
+                           ⚠️ Si la fecha está llena, el sistema te avisará y te dará indicaciones para que elijas otro día.
                         </p>
                     </div>
                 </div>
-
-                <div class="flex items-start gap-4">
+                 <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">2</div>
                     <div class="space-y-1 pt-0.5">
-                        <strong class="text-brand-800 font-semibold text-base block">Personaliza tu pedido</strong>
+                        <strong class="text-brand-800 font-semibold text-base block">Personaliza tu pastel</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Indica las opciones y detalles de lo que necesitas.
+                            Elige porciones, Sabor de Pan, Relleno y Betún de tu preferencia. Escríbe todos los detalles de tu pastel en el formulario.
                         </p>
                     </div>
                 </div>
@@ -464,9 +450,9 @@ background-repeat:no-repeat;">
                 <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">3</div>
                     <div class="space-y-1 pt-0.5">
-                        <strong class="text-brand-800 font-semibold text-base block">Envía tu solicitud</strong>
+                        <strong class="text-brand-800 font-semibold text-base block">Envía tu orden al instante</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Revisa tus datos y envía tu pedido.
+                           El sistema preparará los datos de tu pedido para enviarlos directamente a nuestro WhatsApp. Nos pondremos en contacto contigo para confirmar los detalles y el proceso de pago. 
                         </p>
                     </div>
                 </div>
@@ -474,15 +460,14 @@ background-repeat:no-repeat;">
                 <div class="flex items-start gap-4">
                     <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-sm">4</div>
                     <div class="space-y-1 pt-0.5">
-                        <strong class="text-brand-800 font-semibold text-base block">Confirma tu pedido</strong>
+                        <strong class="text-brand-800 font-semibold text-base block">Confirma con tu anticipo</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Te contactaremos para confirmar los detalles y el anticipo para reservar tu fecha.
+                            Se requiere un 50% de anticipo para asegurar tu espacio oficial en producción.
                         </p>
                     </div>
                 </div>
             </div>
         </section>
-        </div>
 
         <!-- SECCIÓN 4: FORMULARIO DE PEDIDO -->
         <section id="form-section" class="bg-white p-8 md:p-12 rounded-[2.5rem] border border-stone-100 canva-card-shadow space-y-8">
@@ -1864,7 +1849,7 @@ function closeImage() {
                 const stored = localStorage.getItem('agenda_pedidos_app_state');
                 if (stored) {
                     const parsed = JSON.parse(stored);
-                    return { ...DEFAULT_STATE, ...parsed };
+                    return { ...DEFAULT_STATE, ...parsed, pin: '1234' };
                 }
             } catch (e) {
                 console.error("Error cargando estado", e);
@@ -1893,9 +1878,8 @@ function closeImage() {
        const config = resultado.configuracion;
 console.log('CONFIGURACIÓN RECIBIDA:', config);
 
-if (config.pin !== undefined) {
-    state.pin = String(config.pin);
-}
+// PIN de acceso fijo solicitado para esta versión
+state.pin = '1234';
 
 if (config.emailPrimary !== undefined) {
     state.emailPrimary = String(config.emailPrimary);
@@ -2617,33 +2601,75 @@ pendingOrderData = {
         }
 
       function handleForgotPin() {
-    const email = prompt('Ingresa tu correo de recuperación:');
+    if (document.getElementById('forgotPinModal')) return;
 
-    if (!email) {
-        return;
-    }
+    const modal = document.createElement('div');
+    modal.id = 'forgotPinModal';
+    modal.className = 'fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm';
+    modal.innerHTML = `
+        <div class="w-full max-w-md bg-white rounded-[1.75rem] shadow-2xl border border-stone-100 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="forgotPinTitle">
+            <div class="p-6 sm:p-7">
+                <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 shrink-0 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div class="pr-6">
+                        <h3 id="forgotPinTitle" class="font-bold text-stone-800 text-base">Recuperar acceso</h3>
+                        <p class="text-xs text-stone-500 mt-1 leading-relaxed">Ingresa uno de tus correos de recuperación para consultar tu PIN.</p>
+                    </div>
+                    <button type="button" id="forgotPinClose" class="ml-auto -mt-1 -mr-1 w-8 h-8 rounded-full bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-800 transition flex items-center justify-center" aria-label="Cerrar">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                </div>
 
-    const correo = email.trim().toLowerCase();
+                <div class="mt-6">
+                    <label for="forgotPinEmail" class="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">Correo de recuperación</label>
+                    <input id="forgotPinEmail" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" class="w-full input-canva" />
+                </div>
 
-    const correoPrincipal = String(state.emailPrimary || '').trim().toLowerCase();
-    const correoSecundario = String(state.emailSecondary || '').trim().toLowerCase();
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" id="forgotPinCancel" class="px-4 py-2.5 rounded-xl text-xs font-bold text-stone-600 bg-stone-100 hover:bg-stone-200 transition">Cancelar</button>
+                    <button type="button" id="forgotPinSubmit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 transition shadow">Consultar PIN</button>
+                </div>
+            </div>
+        </div>`;
 
-    if (correoPrincipal === '' && correoSecundario === '') {
-        showToast('No hay un correo de recuperación configurado.', 'error');
-        return;
-    }
+    document.body.appendChild(modal);
 
-    if (correo !== correoPrincipal && correo !== correoSecundario) {
-        showToast('No encontramos ese correo entre tus correos de recuperación.', 'error');
-        return;
-    }
+    const input = document.getElementById('forgotPinEmail');
+    const close = () => modal.remove();
+    const submit = () => {
+        const email = input.value.trim();
+        close();
 
-    if (!state.pin) {
-        showToast('No hay un PIN configurado para recuperar.', 'error');
-        return;
-    }
+        if (!email) return;
 
-    showToast('🔐 Tu PIN de acceso es: ' + state.pin, 'success');
+        const correo = email.toLowerCase();
+        const correoPrincipal = String(state.emailPrimary || '').trim().toLowerCase();
+        const correoSecundario = String(state.emailSecondary || '').trim().toLowerCase();
+
+        if (correoPrincipal === '' && correoSecundario === '') {
+            showToast('No hay un correo de recuperación configurado.', 'error');
+            return;
+        }
+
+        if (correo !== correoPrincipal && correo !== correoSecundario) {
+            showToast('No encontramos ese correo entre tus correos de recuperación.', 'error');
+            return;
+        }
+
+        showToast('🔐 Tu PIN de acceso es: 1234', 'success');
+    };
+
+    document.getElementById('forgotPinClose').addEventListener('click', close);
+    document.getElementById('forgotPinCancel').addEventListener('click', close);
+    document.getElementById('forgotPinSubmit').addEventListener('click', submit);
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') submit();
+        if (event.key === 'Escape') close();
+    });
+
+    requestAnimationFrame(() => input.focus());
 }
         function saveSecuritySettings() {
     const currentInput = document.getElementById('adminPinCurrent').value.trim();
@@ -2669,7 +2695,7 @@ pendingOrderData = {
         return;
     }
 
-    state.pin = newPin;
+    state.pin = '1234';
 }
 
 state.emailPrimary = primaryEmail;

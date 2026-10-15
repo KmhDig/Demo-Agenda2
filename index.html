@@ -568,7 +568,12 @@ background-repeat:no-repeat;">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">
                         FECHA DEL EVENTO <span class="text-rose-500">*</span>
                     </label>
-                    <input type="date" id="eventDate" required onchange="checkDateAvailability()" class="w-full input-canva">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="hidden" id="eventDate">
+                        <input type="text" id="eventDateDisplay" value="" placeholder="Selecciona una fecha en el calendario" readonly aria-readonly="true" class="w-full input-canva cursor-not-allowed" autocomplete="off">
+                        <button type="button" onclick="clearCustomerSelectedDate()" class="shrink-0 px-5 py-3 rounded-xl border border-stone-300 bg-white text-stone-700 text-sm font-semibold hover:bg-stone-50">Limpiar</button>
+                    </div>
+                    <p class="text-xs text-stone-500">La fecha solo se puede elegir desde el calendario de disponibilidad.</p>
                     <p id="dateWarning" class="text-xs text-rose-600 font-semibold hidden"></p>
                 </div>
 
@@ -638,6 +643,7 @@ background-repeat:no-repeat;">
                         <div class="space-y-2">
                             <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">HORARIO DE RECOGIDA</label>
                             <select id="pickupTime" class="w-full input-canva"></select>
+                            <select id="otherPickupTime" class="w-full input-canva hidden" aria-label="Horario de recogida para otros pedidos"></select>
                         </div>
                     </div>
 
@@ -654,6 +660,7 @@ background-repeat:no-repeat;">
                         <div class="space-y-2 pt-1">
                             <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">HORARIO PREFERIDO DE ENTREGA</label>
                             <select id="shippingTime" class="w-full input-canva"></select>
+                            <select id="otherShippingTime" class="w-full input-canva hidden" aria-label="Horario de entrega a domicilio para otros pedidos"></select>
                         </div>
                     </div>
                 </div>
@@ -1015,6 +1022,18 @@ Notas adicionales:</textarea>
                             <div id="pickupTimesList" class="flex flex-wrap gap-1.5 pt-1"></div>
                         </div>
 
+                        <!-- Horarios Recogida para otros pedidos -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
+                                <i class="fa-solid fa-clock text-pink-500"></i> Horarios de Recogida · Otros pedidos
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="text" id="newOtherPickupTimeInput" placeholder="Ej. 1:00 PM - 2:00 PM" class="input-canva flex-grow">
+                                <button onclick="addCatalogOption('otherPickupTimes', 'newOtherPickupTimeInput')" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition">Agregar</button>
+                            </div>
+                            <div id="otherPickupTimesList" class="flex flex-wrap gap-1.5 pt-1"></div>
+                        </div>
+
                         <!-- Horarios Envío -->
                         <div class="space-y-2 md:col-span-2">
                             <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
@@ -1025,6 +1044,18 @@ Notas adicionales:</textarea>
                                 <button onclick="addCatalogOption('shippingTimes', 'newShippingTimeInput')" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition">Agregar</button>
                             </div>
                             <div id="shippingTimesList" class="flex flex-wrap gap-1.5 pt-1"></div>
+                        </div>
+
+                        <!-- Horarios de envío para otros pedidos -->
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
+                                <i class="fa-solid fa-truck-ramp-box text-pink-500"></i> Horarios de Envío a Domicilio · Otros pedidos
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="text" id="newOtherShippingTimeInput" placeholder="Ej. 1:00 PM - 3:00 PM" class="input-canva flex-grow">
+                                <button onclick="addCatalogOption('otherShippingTimes', 'newOtherShippingTimeInput')" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition">Agregar</button>
+                            </div>
+                            <div id="otherShippingTimesList" class="flex flex-wrap gap-1.5 pt-1"></div>
                         </div>
                     </div>
                 </div>
@@ -1672,7 +1703,9 @@ orderHours: {
                 fillings: ['Crema de Nutella', 'Cajeta de Sayula', 'Frutos Rojos Finos', 'Queso Crema Vainilla', 'Ganache de Chocolate'],
                 frostings: ['Mantequilla Fina', 'Philadelphia Special', 'Chocolate Gourmet'],
                 pickupTimes: ['10:00 AM - 12:00 PM', '12:00 PM - 2:00 PM', '2:00 PM - 4:00 PM', '4:00 PM - 6:00 PM'],
+                otherPickupTimes: ['11:00 AM - 1:00 PM', '1:00 PM - 3:00 PM', '3:00 PM - 5:00 PM', '5:00 PM - 7:00 PM'],
                 shippingTimes: ['10:00 AM - 1:00 PM (Turno Mañana)', '2:00 PM - 6:00 PM (Turno Tarde)'],
+                otherShippingTimes: ['11:00 AM - 2:00 PM (Turno Mañana)', '3:00 PM - 7:00 PM (Turno Tarde)'],
                 otherProducts: [
                     { name: 'Cupcakes', visible: true },
                     { name: 'Galletas decoradas', visible: true },
@@ -1905,7 +1938,7 @@ function closeImage() {
     cargarPedidosDesdeGoogleSheets();
 
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('eventDate').min = today;
+    
 };
         // ALMACENAMIENTO LOCAL
         function loadAppState() {
@@ -2131,6 +2164,8 @@ function showToast(message, type = 'info') {
             populateSelect('eventFrosting', state.catalogs.frostings);
             populateSelect('pickupTime', state.catalogs.pickupTimes);
             populateSelect('shippingTime', state.catalogs.shippingTimes);
+            populateSelect('otherPickupTime', state.catalogs.otherPickupTimes || ['11:00 AM - 1:00 PM', '1:00 PM - 3:00 PM', '3:00 PM - 5:00 PM', '5:00 PM - 7:00 PM']);
+            populateSelect('otherShippingTime', state.catalogs.otherShippingTimes || ['11:00 AM - 2:00 PM (Turno Mañana)', '3:00 PM - 7:00 PM (Turno Tarde)']);
 
             const branchSelect = document.getElementById('pickupLocationSelect');
             branchSelect.innerHTML = '';
@@ -2163,6 +2198,11 @@ function showToast(message, type = 'info') {
             const pickupBox = document.getElementById('pickupContainer');
             const shippingBox = document.getElementById('shippingContainer');
 
+            const isOther = customerOrderType === 'otro';
+            document.getElementById('pickupTime')?.classList.toggle('hidden', isOther);
+            document.getElementById('otherPickupTime')?.classList.toggle('hidden', !isOther);
+            document.getElementById('shippingTime')?.classList.toggle('hidden', isOther);
+            document.getElementById('otherShippingTime')?.classList.toggle('hidden', !isOther);
             if (method === 'Recoger en tienda') {
                 pickupBox.classList.remove('hidden');
                 shippingBox.classList.add('hidden');
@@ -2377,6 +2417,14 @@ function showToast(message, type = 'info') {
             document.getElementById('otherObservationsField')?.classList.toggle('hidden', !isOther);
             document.getElementById('cakeCustomerCalendar')?.classList.toggle('hidden', isOther);
             document.getElementById('otherCustomerCalendar')?.classList.toggle('hidden', !isOther);
+            const dateInput = document.getElementById('eventDate');
+            const dateDisplay = document.getElementById('eventDateDisplay');
+            if (dateInput) dateInput.value = '';
+            if (dateDisplay) dateDisplay.value = '';
+            if (isOther) selectedOtherAvailabilityDate = ''; else selectedAvailabilityDate = '';
+            const activeDetail = document.getElementById(isOther ? 'otherAvailabilityCalendarDetail' : 'availabilityCalendarDetail');
+            if (activeDetail) activeDetail.textContent = 'Selecciona una fecha verde para agregarla al formulario.';
+            renderAvailabilityCalendar();
             checkDateAvailability();
             ['eventType','eventPortions','eventFlavor','eventFilling','eventFrosting'].forEach(id => { const el=document.getElementById(id); if(el) el.required=!isOther; });
             ['otherProduct','otherQuantity'].forEach(id => { const el=document.getElementById(id); if(el) el.required=isOther; });
@@ -2386,6 +2434,7 @@ function showToast(message, type = 'info') {
             otherBtn?.classList.toggle('border-brand-500', isOther); otherBtn?.classList.toggle('bg-brand-50', isOther); otherBtn?.classList.toggle('text-brand-700', isOther);
             otherBtn?.classList.toggle('border-stone-200', !isOther); otherBtn?.classList.toggle('bg-white', !isOther); otherBtn?.classList.toggle('text-stone-600', !isOther);
             renderOtherProductSelect();
+            toggleDeliveryFields();
         }
 
         function renderOtherProductSelect() {
@@ -2437,7 +2486,7 @@ if (deliveryMethod === 'Recoger en tienda') {
         document.getElementById('pickupLocationSelect').value;
 
     pickupTime =
-        document.getElementById('pickupTime').value;
+        document.getElementById(customerOrderType === 'otro' ? 'otherPickupTime' : 'pickupTime').value;
 
     timeChosen = pickupTime;
 
@@ -2485,7 +2534,7 @@ if (deliveryMethod === 'Recoger en tienda') {
         document.getElementById('shipReceiver').value.trim();
 
     deliveryTime =
-        document.getElementById('shippingTime').value;
+        document.getElementById(customerOrderType === 'otro' ? 'otherShippingTime' : 'shippingTime').value;
 
     address =
         [street, colony, city]
@@ -3040,6 +3089,7 @@ function addCatalogOption(key, inputId) {
     const val = document.getElementById(inputId).value.trim();
     if (!val) return;
 
+    if (!Array.isArray(state.catalogs[key])) state.catalogs[key] = [];
     if (!state.catalogs[key].includes(val)) {
         state.catalogs[key].push(val);
 
@@ -3070,6 +3120,8 @@ function addCatalogOption(key, inputId) {
             renderTagList('frostingsList', 'frostings');
             renderTagList('pickupTimesList', 'pickupTimes');
             renderTagList('shippingTimesList', 'shippingTimes');
+            renderTagList('otherPickupTimesList', 'otherPickupTimes');
+            renderTagList('otherShippingTimesList', 'otherShippingTimes');
         }
 
         function renderTagList(containerId, key) {
@@ -3398,6 +3450,20 @@ function addCatalogOption(key, inputId) {
             grid.innerHTML = html;
         }
 
+        function clearCustomerSelectedDate() {
+            const input = document.getElementById('eventDate');
+            const display = document.getElementById('eventDateDisplay');
+            if (input) { input.value = ''; input.dispatchEvent(new Event('change', { bubbles: true })); }
+            if (display) display.value = '';
+            selectedAvailabilityDate = '';
+            selectedOtherAvailabilityDate = '';
+            const cakeDetail = document.getElementById('availabilityCalendarDetail');
+            const otherDetail = document.getElementById('otherAvailabilityCalendarDetail');
+            if (cakeDetail) cakeDetail.textContent = 'Selecciona una fecha disponible.';
+            if (otherDetail) otherDetail.textContent = 'Selecciona una fecha disponible.';
+            renderAvailabilityCalendar();
+        }
+
         function selectCustomerCalendarDate(key, type) {
             const isOther = type === 'otro';
             const rawStatus = isOther ? otherAvailabilityStatusForDate(key) : availabilityStatusForDate(key);
@@ -3408,6 +3474,8 @@ function addCatalogOption(key, inputId) {
             if (detail) detail.innerHTML = `<strong>${formatLongDate(key)}</strong><br>${availabilityStatusText(rawStatus === 'limited' ? 'available' : rawStatus)}`;
             if (input) {
                 input.value = key;
+                const display = document.getElementById('eventDateDisplay');
+                if (display) { const parts = key.split('-'); display.value = `${parts[2]}/${parts[1]}/${parts[0]}`; }
                 input.dispatchEvent(new Event('change', { bubbles:true }));
             }
             renderAvailabilityCalendar();

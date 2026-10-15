@@ -5860,5 +5860,54 @@ function sendSummaryWA() {
         setInterval(() => {
         }, 30000);
     </script>
+<script>
+/* Respaldo independiente para que los calendarios de clientes se dibujen también en Vercel. */
+(function () {
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  function dibujarCalendarioRespaldo(tipo) {
+    const otro = tipo === 'otro';
+    const grid = document.getElementById(otro ? 'otherAvailabilityCalendarGrid' : 'availabilityCalendarGrid');
+    const titulo = document.getElementById(otro ? 'otherAvailabilityCalendarMonth' : 'availabilityCalendarMonth');
+    if (!grid || !titulo) return;
+    try {
+      if (typeof window.renderCustomerCalendar === 'function') {
+        window.renderCustomerCalendar(tipo);
+        if (grid.children.length) return;
+      }
+    } catch (e) { console.error('Render principal del calendario falló; se usa respaldo.', e); }
+    const ahora = new Date();
+    const mesActual = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+    const keyMes = otro ? 'otherAvailabilityCalendarMonth' : 'availabilityCalendarMonth';
+    const fechaMes = (otro && window.otherAvailabilityCalendarMonth instanceof Date) ? window.otherAvailabilityCalendarMonth : (!otro && window.availabilityCalendarMonth instanceof Date) ? window.availabilityCalendarMonth : mesActual;
+    const year = fechaMes.getFullYear(), month = fechaMes.getMonth();
+    titulo.textContent = meses[month] + ' ' + year;
+    let offset = new Date(year, month, 1).getDay(); offset = offset === 0 ? 6 : offset - 1;
+    const total = new Date(year, month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+    const blocked = (window.state && Array.isArray(window.state[otro ? 'otherBlockedDates' : 'blockedDates'])) ? window.state[otro ? 'otherBlockedDates' : 'blockedDates'] : [];
+    let html = '';
+    for (let i=0; i<offset; i++) html += '<div class="availability-day is-empty" aria-hidden="true"></div>';
+    for (let d=1; d<=total; d++) {
+      const key = year + '-' + String(month+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+      const date = new Date(year, month, d); date.setHours(0,0,0,0);
+      let status = 'available';
+      if (blocked.includes(key)) status = 'full';
+      else if (date < today) status = 'closed';
+      const canPick = status === 'available';
+      const fn = otro ? 'selectOtherAvailabilityDate' : 'selectAvailabilityDate';
+      html += '<button type="button" class="availability-day ' + status + (canPick ? '' : ' disabled') + '" ' + (canPick ? 'onclick="' + fn + '(\'' + key + '\')"' : 'disabled aria-disabled="true"') + ' aria-label="' + d + ': ' + (status === 'full' ? 'Agenda llena' : status === 'closed' ? 'Fecha pasada' : 'Disponible') + '"><span class="day-number">' + d + '</span><span class="day-status-dot"></span></button>';
+    }
+    grid.innerHTML = html;
+  }
+  function asegurarCalendarios() {
+    try { dibujarCalendarioRespaldo('pastel'); } catch (e) { console.error(e); }
+    try { dibujarCalendarioRespaldo('otro'); } catch (e) { console.error(e); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', asegurarCalendarios);
+  else asegurarCalendarios();
+  window.addEventListener('load', asegurarCalendarios);
+  setTimeout(asegurarCalendarios, 500);
+})();
+</script>
 </body>
 </html>

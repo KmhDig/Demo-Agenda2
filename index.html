@@ -1989,6 +1989,7 @@ async function cargarPedidosDesdeGoogleSheets() {
 
         renderOrders();
         renderKitchenOrders();
+        renderUpcomingOrders();
 
         console.log(
             'Pedidos cargados desde Google Sheets:',
@@ -3628,7 +3629,10 @@ function addCatalogOption(key, inputId) {
         }
 
         function parseOrderDateLocal(dateValue) {
-            const match = String(dateValue || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            // Google Sheets puede devolver fechas como YYYY-MM-DD o como ISO completo.
+            // Tomamos solo la parte de calendario para evitar cambios de día por UTC.
+            if (dateValue === null || dateValue === undefined || dateValue === '') return null;
+            const match = String(dateValue).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
             if (!match) return null;
             const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
             return Number.isNaN(date.getTime()) ? null : date;
@@ -3678,15 +3682,15 @@ function addCatalogOption(key, inputId) {
                 const other=isOtherOrder(order);
                 const info=other ? `
                     <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-100 text-xs">
-                        <div class="space-y-1.5"><p><strong>Qué necesita:</strong> ${escapeHtml(order.otherProduct||order.otherNeed||'No especificado')}</p><p><strong>Cantidad:</strong> ${escapeHtml(order.quantity||'No especificada')}</p><p><strong>Detalles:</strong> ${escapeHtml(order.otherDetails||'Sin detalles')}</p></div>
-                        <div class="space-y-1.5"><p><strong>Método de entrega:</strong> ${escapeHtml(order.deliveryMethod||'No especificado')}</p><p><strong>Logística:</strong> ${escapeHtml(order.deliveryDetails||'No especificada')}</p><p><strong>Observaciones:</strong> ${escapeHtml(order.otherObservations||'Sin observaciones')}</p></div>
+                        <div class="space-y-1.5"><p><strong>Qué necesita:</strong> ${escapeHtml(order.otherProduct||order.otherNeed||order.whatNeeded||order.productService||'No especificado')}</p><p><strong>Cantidad:</strong> ${escapeHtml(order.quantity||'No especificada')}</p><p><strong>Detalles:</strong> ${escapeHtml(order.otherDetails||order.details||'Sin detalles')}</p></div>
+                        <div class="space-y-1.5"><p><strong>Método de entrega:</strong> ${escapeHtml(order.deliveryMethod||'No especificado')}</p><p><strong>Logística:</strong> ${escapeHtml(order.deliveryDetails||order.address||order.branchName||'No especificada')}</p><p><strong>Observaciones:</strong> ${escapeHtml(order.otherObservations||order.observations||'Sin observaciones')}</p></div>
                     </div>` : `
                     <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-100 text-xs">
                         <div class="space-y-1.5"><p><strong>Porciones:</strong> ${escapeHtml(order.portions||'')}</p><p><strong>Pan:</strong> ${escapeHtml(order.flavor||'')}</p><p><strong>Relleno:</strong> ${escapeHtml(order.filling||'')}</p></div>
                         <div class="space-y-1.5"><p><strong>Betún:</strong> ${escapeHtml(order.frosting||'')}</p><p><strong>Método de entrega:</strong> ${escapeHtml(order.deliveryMethod||'')}</p><p><strong>Logística:</strong> ${escapeHtml(order.deliveryDetails||'')}</p></div>
                     </div>`;
                 return `<div class="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-sm">
-                    <div class="flex flex-wrap justify-between items-start gap-3"><div><div class="flex flex-wrap items-center gap-2"><h5 class="font-bold text-stone-800 text-sm">${escapeHtml(order.clientName||'Sin nombre')}</h5><span class="text-[10px] font-bold px-2 py-1 rounded-full ${other?'bg-pink-50 text-pink-700':'bg-brand-50 text-brand-700'}">${other?'OTRO PEDIDO':'PASTEL'}</span>${order.orderNumber?`<span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">#${escapeHtml(order.orderNumber)}</span>`:''}</div><p class="text-xs text-brand-700 font-semibold mt-1">${escapeHtml(formatUpcomingDate(order.eventDate))}</p><p class="text-[11px] text-stone-400 mt-1">WhatsApp: ${escapeHtml(order.clientPhone||'Sin número')}</p></div><div class="text-right text-xs"><p class="font-semibold text-stone-700">${escapeHtml(other?(order.otherProduct||order.otherNeed||'Otro pedido'):(order.eventType||'Pastel'))}</p></div></div>
+                    <div class="flex flex-wrap justify-between items-start gap-3"><div><div class="flex flex-wrap items-center gap-2"><h5 class="font-bold text-stone-800 text-sm">${escapeHtml(order.clientName||'Sin nombre')}</h5><span class="text-[10px] font-bold px-2 py-1 rounded-full ${other?'bg-pink-50 text-pink-700':'bg-brand-50 text-brand-700'}">${other?'OTRO PEDIDO':'PASTEL'}</span>${order.orderNumber?`<span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded-full">#${escapeHtml(order.orderNumber)}</span>`:''}</div><p class="text-xs text-brand-700 font-semibold mt-1">${escapeHtml(formatUpcomingDate(order.eventDate))}</p><p class="text-[11px] text-stone-400 mt-1">WhatsApp: ${escapeHtml(order.clientPhone||'Sin número')}</p></div><div class="text-right text-xs"><p class="font-semibold text-stone-700">${escapeHtml(other?(order.otherProduct||order.otherNeed||order.whatNeeded||order.productService||'Otro pedido'):(order.eventType||'Pastel'))}</p></div></div>
                     ${info}
                     <div class="mt-3 pt-3 border-t border-stone-100 flex flex-wrap gap-2 items-center"><button type="button" onclick="viewOrderDetails('${order.id}')" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-brand-200"><i class="fa-solid fa-eye"></i> Ver pedido</button><button type="button" onclick="contactClientWA('${order.id}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200"><i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido</button><button type="button" onclick="sendOrderReminderWA('${order.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200"><i class="fa-solid fa-bell text-teal-600"></i> Recordatorio Pedido</button><button type="button" onclick="requestPaymentReceiptWA('${order.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200"><i class="fa-solid fa-receipt text-amber-600"></i> Comprobante</button></div>
                 </div>`;
@@ -3705,10 +3709,13 @@ function addCatalogOption(key, inputId) {
         let currentOrderCategoryFilter = 'all';
 
         function isOtherOrder(order) {
-            return String(order?.orderType || '').toLowerCase() === 'otro'
-                || String(order?.orderType || '').toLowerCase() === 'otros'
+            const type = String(order?.orderType || order?.tipoPedido || '').trim().toLowerCase();
+            return ['otro', 'otros', 'otro pedido', 'otros pedidos', 'other', 'other order', 'other orders'].includes(type)
                 || !!order?.otherProduct
-                || !!order?.otherNeed;
+                || !!order?.otherNeed
+                || !!order?.whatNeeded
+                || !!order?.productService
+                || !!order?.isOtherOrder;
         }
 
         function setOrderCategoryFilter(category) {

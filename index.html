@@ -648,15 +648,9 @@ Notas adicionales:</textarea>
             <div class="space-y-3">
                 <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">¿Cómo quieres enviar tu pedido?</label>
                 <input type="hidden" id="orderSendChannel" value="whatsapp">
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-1 gap-2">
                     <button type="button" data-channel="whatsapp" onclick="seleccionarCanalPedido('whatsapp')" class="order-channel-btn border-2 border-brand-500 bg-brand-50 text-brand-700 py-3 rounded-2xl text-[11px] font-bold transition">
                         <i class="fa-brands fa-whatsapp block text-lg mb-1"></i>WhatsApp
-                    </button>
-                    <button type="button" data-channel="instagram" onclick="seleccionarCanalPedido('instagram')" class="order-channel-btn border border-stone-200 bg-white text-stone-600 py-3 rounded-2xl text-[11px] font-bold transition hover:border-brand-300">
-                        <i class="fa-brands fa-instagram block text-lg mb-1"></i>Instagram
-                    </button>
-                    <button type="button" data-channel="facebook" onclick="seleccionarCanalPedido('facebook')" class="order-channel-btn border border-stone-200 bg-white text-stone-600 py-3 rounded-2xl text-[11px] font-bold transition hover:border-brand-300">
-                        <i class="fa-brands fa-facebook block text-lg mb-1"></i>Facebook
                     </button>
                 </div>
                 <p id="channelHelpText" class="text-[11px] text-stone-400">WhatsApp abrirá directamente con tu pedido listo para enviar.</p>
@@ -3793,24 +3787,12 @@ function addCatalogOption(key, inputId) {
                             <i class="fa-brands fa-whatsapp text-emerald-600"></i> Confirmar pedido
                         </button>
 
-                        <button onclick="copyAdminOrderMessage('${order.id}','confirmar')" class="bg-white hover:bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-emerald-200" title="Copiar la información completa de confirmación para pegarla en Instagram o Facebook">
-                            <i class="fa-solid fa-copy text-emerald-600"></i> Copiar confirmación
-                        </button>
-
                         <button onclick="sendOrderReminderWA('${order.id}')" class="bg-teal-50 hover:bg-teal-100 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200" title="Enviar el recordatorio directamente por WhatsApp">
                             <i class="fa-solid fa-bell text-teal-600"></i> Recordatorio Pedido
                         </button>
 
-                        <button onclick="copyAdminOrderMessage('${order.id}','recordatorio')" class="bg-white hover:bg-teal-50 text-teal-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-teal-200" title="Copiar el recordatorio para pegarlo en Instagram o Facebook">
-                            <i class="fa-solid fa-copy text-teal-600"></i> Copiar recordatorio
-                        </button>
-
                         <button onclick="requestPaymentReceiptWA('${order.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200" title="Solicitar el comprobante directamente por WhatsApp">
                             <i class="fa-solid fa-receipt text-amber-600"></i> Comprobante
-                        </button>
-
-                        <button onclick="copyAdminOrderMessage('${order.id}','comprobante')" class="bg-white hover:bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-amber-200" title="Copiar la solicitud de comprobante para pegarla en Instagram o Facebook">
-                            <i class="fa-solid fa-copy text-amber-600"></i> Copiar comprobante
                         </button>
 
                         <button onclick="addToGoogleCalendar('${order.id}')" class="bg-sky-50 hover:bg-sky-100 text-sky-800 px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 border border-sky-200">

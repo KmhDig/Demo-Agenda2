@@ -477,6 +477,68 @@ background-repeat:no-repeat;">
                 <p class="text-xs text-stone-400 pt-1">Ingresa los datos requeridos para generar tu solicitud oficial</p>
             </div>
 
+            <!-- CALENDARIO DE DISPONIBILIDAD PARA CLIENTES (VERSIÓN BÁSICA) -->
+            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(240px,.8fr)] gap-4 items-stretch mb-6">
+                <div id="cakeCustomerCalendar" class="availability-calendar">
+                    <div class="availability-calendar-head">
+                        <div class="availability-calendar-title">
+                            <div class="availability-calendar-icon"><i class="fa-solid fa-cake-candles"></i></div>
+                            <div>
+                                <div class="availability-calendar-month" id="availabilityCalendarMonth">Calendario de pasteles</div>
+                                <div class="availability-calendar-sub">Disponibilidad para pedidos de pasteles</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="availability-calendar-nav" onclick="changeAvailabilityMonth(-1)" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button type="button" class="availability-calendar-nav" onclick="changeAvailabilityMonth(1)" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="availability-week"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
+                    <div id="availabilityCalendarGrid" class="availability-grid" aria-label="Fechas disponibles para pasteles"></div>
+                    <div class="availability-legend"><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#10b981"></span> Disponible</div><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#ef4444"></span> Agenda llena</div></div>
+                    <div id="availabilityCalendarDetail" class="availability-detail" aria-live="polite">Selecciona una fecha verde para agregarla al formulario.</div>
+                </div>
+                <div id="otherCustomerCalendar" class="availability-calendar hidden">
+                    <div class="availability-calendar-head">
+                        <div class="availability-calendar-title">
+                            <div class="availability-calendar-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                            <div>
+                                <div class="availability-calendar-month" id="otherAvailabilityCalendarMonth">Calendario de otros pedidos</div>
+                                <div class="availability-calendar-sub">Disponibilidad para otros pedidos</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="availability-calendar-nav" onclick="changeOtherAvailabilityMonth(-1)" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button type="button" class="availability-calendar-nav" onclick="changeOtherAvailabilityMonth(1)" aria-label="Mes siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="availability-week"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
+                    <div id="otherAvailabilityCalendarGrid" class="availability-grid" aria-label="Fechas disponibles para otros pedidos"></div>
+                    <div class="availability-legend"><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#10b981"></span> Disponible</div><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#ef4444"></span> Agenda llena</div></div>
+                    <div id="otherAvailabilityCalendarDetail" class="availability-detail" aria-live="polite">Selecciona una fecha verde para agregarla al formulario.</div>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="rounded-2xl border border-amber-100 bg-amber-50 p-5 flex-1">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-white text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                            <div>
+                                <h4 class="font-bold text-amber-900 text-sm mb-2">¡Recuerda revisar la disponibilidad antes de elegir tu fecha!</h4>
+                                <p class="text-xs leading-relaxed text-amber-800">Verifica que tengamos lugar abierto para tu entrega antes de llenar el pedido.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded-2xl border border-brand-100 bg-brand-50 p-5 mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white text-brand-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-calendar-check text-lg"></i></div>
+                    <div>
+                        <h4 class="font-bold text-brand-800 text-xs tracking-wider mb-2">ANTES DE COMENZAR</h4>
+                        <p class="text-xs leading-relaxed text-brand-700">Consulta la disponibilidad y selecciona una fecha en el calendario antes de comenzar el formulario.</p>
+                    </div>
+                </div>
+            </div>
+
             <form id="orderForm" onsubmit="handleReviewOrder(event)" class="space-y-6">
                 <div class="space-y-3">
                     <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">TIPO DE PEDIDO</label>
@@ -986,8 +1048,15 @@ Notas adicionales:</textarea>
                         </button>
                     </div>
                     
-                    <div class="pt-1">
-                        <div id="blockedDatesList" class="flex flex-wrap gap-2"></div>
+                    <div class="pt-1"><div id="blockedDatesList" class="flex flex-wrap gap-2"></div></div>
+                    <div class="border-t border-stone-100 pt-4 space-y-3">
+                        <h5 class="font-bold text-pink-700 text-sm flex items-center gap-2"><i class="fa-solid fa-bag-shopping"></i> Bloquear fechas para Otros pedidos</h5>
+                        <div class="flex gap-3 flex-wrap">
+                            <input type="date" id="blockOtherDateInput" class="input-canva flex-grow min-w-[180px]">
+                            <button type="button" onclick="blockSpecificDate('otro')" class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest shadow transition flex items-center gap-1.5"><i class="fa-solid fa-ban"></i> BLOQUEAR OTROS PEDIDOS</button>
+                            <button type="button" onclick="removePastBlockedDates('otro')" class="bg-pink-50 hover:bg-pink-100 text-pink-700 px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider transition border border-pink-200"><i class="fa-solid fa-calendar-minus"></i> BORRAR FECHAS PASADAS</button>
+                        </div>
+                        <div id="otherBlockedDatesList" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
@@ -1576,6 +1645,7 @@ paymentAdditional: '',
 paymentTemplate: '',
 
 blockedDates: [],
+otherBlockedDates: [],
 limitedDates: [],
 orderHours: {
     lunes: { activo: true, apertura: '09:00', cierre: '18:00' },
@@ -1953,6 +2023,15 @@ if (config.blockedDates) {
     }).filter(Boolean);
 }
 
+if (Array.isArray(config.otherBlockedDates)) {
+    state.otherBlockedDates = config.otherBlockedDates.map(fecha => {
+        if (!fecha) return '';
+        const d = new Date(fecha);
+        if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
+        return String(fecha).substring(0, 10);
+    }).filter(Boolean);
+}
+
         saveAppState();
 
         normalizeOtherProductsCatalog();
@@ -2135,7 +2214,12 @@ function showToast(message, type = 'info') {
         function checkDateAvailability() {
             const inputDate = document.getElementById('eventDate').value;
             const warningEl = document.getElementById('dateWarning');
-            const status = availabilityStatusForDate(inputDate);
+            if (!inputDate) {
+                warningEl?.classList.add('hidden');
+                renderAvailabilityCalendar();
+                return;
+            }
+            const status = customerAvailabilityStatusForDate(inputDate);
 
             if (status === 'full') {
                 warningEl.textContent = '🔴 Esta fecha tiene la agenda llena. Elige otra fecha en el calendario de disponibilidad.';
@@ -2150,7 +2234,17 @@ function showToast(message, type = 'info') {
                 warningEl.classList.add('hidden');
             }
 
-            selectedAvailabilityDate = inputDate;
+            const isOther = customerOrderType === 'otro';
+            if (isOther) selectedOtherAvailabilityDate = inputDate;
+            else selectedAvailabilityDate = inputDate;
+            const calendarDetail = document.getElementById(isOther ? 'otherAvailabilityCalendarDetail' : 'availabilityCalendarDetail');
+            if (inputDate && calendarDetail) {
+                const visibleStatus = status === 'limited' ? 'available' : status;
+                calendarDetail.innerHTML = `<strong>${formatLongDate(inputDate)}</strong><br>${availabilityStatusText(visibleStatus)}`;
+                const picked = dateFromKey(inputDate);
+                if (isOther) otherAvailabilityCalendarMonth = new Date(picked.getFullYear(), picked.getMonth(), 1);
+                else availabilityCalendarMonth = new Date(picked.getFullYear(), picked.getMonth(), 1);
+            }
             renderAvailabilityCalendar();
             renderAdminAvailabilityCalendar();
         }
@@ -2281,6 +2375,9 @@ function showToast(message, type = 'info') {
             document.getElementById('otherOrderFields')?.classList.toggle('hidden', !isOther);
             document.getElementById('cakeDetailsFields')?.classList.toggle('hidden', isOther);
             document.getElementById('otherObservationsField')?.classList.toggle('hidden', !isOther);
+            document.getElementById('cakeCustomerCalendar')?.classList.toggle('hidden', isOther);
+            document.getElementById('otherCustomerCalendar')?.classList.toggle('hidden', !isOther);
+            checkDateAvailability();
             ['eventType','eventPortions','eventFlavor','eventFilling','eventFrosting'].forEach(id => { const el=document.getElementById(id); if(el) el.required=!isOther; });
             ['otherProduct','otherQuantity'].forEach(id => { const el=document.getElementById(id); if(el) el.required=isOther; });
             const cakeBtn=document.getElementById('orderTypeCakeBtn'), otherBtn=document.getElementById('orderTypeOtherBtn');
@@ -2302,7 +2399,7 @@ function showToast(message, type = 'info') {
             e.preventDefault();
 
             const dateVal = document.getElementById('eventDate').value;
-            const dateStatus = availabilityStatusForDate(dateVal);
+            const dateStatus = customerAvailabilityStatusForDate(dateVal);
             if (dateStatus === 'full' || dateStatus === 'closed') {
                 showToast(dateStatus === 'full' ? 'La fecha seleccionada tiene la agenda llena. Elige otra fecha.' : 'La fecha seleccionada no está disponible para pedidos.', 'error');
                 renderAvailabilityCalendar();
@@ -2790,6 +2887,7 @@ function savePaymentInfoDraft() {
         privateMessageTemplate: state.privateMessageTemplate,
 
         blockedDates: state.blockedDates,
+        otherBlockedDates: state.otherBlockedDates || [],
         limitedDates: state.limitedDates,
         orderHours: state.orderHours,
 
@@ -3222,6 +3320,8 @@ function addCatalogOption(key, inputId) {
         // CALENDARIO DE DISPONIBILIDAD
         // ============================================================
         let availabilityCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        let otherAvailabilityCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        let selectedOtherAvailabilityDate = '';
         let adminAvailabilityMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         let selectedAvailabilityDate = '';
 
@@ -3241,19 +3341,24 @@ function addCatalogOption(key, inputId) {
         function availabilityStatusForDate(key) {
             if (state.blockedDates.includes(key)) return 'full';
             if ((state.limitedDates || []).includes(key)) return 'limited';
-
             const todayKey = normalizeDateKey(new Date());
             if (key < todayKey) return 'closed';
             return 'available';
         }
 
+        function otherAvailabilityStatusForDate(key) {
+            if ((state.otherBlockedDates || []).includes(key)) return 'full';
+            const todayKey = normalizeDateKey(new Date());
+            if (key < todayKey) return 'closed';
+            return 'available';
+        }
+
+        function customerAvailabilityStatusForDate(key) {
+            return customerOrderType === 'otro' ? otherAvailabilityStatusForDate(key) : availabilityStatusForDate(key);
+        }
+
         function availabilityStatusText(status) {
-            return {
-                available: 'Disponible · Puedes solicitar esta fecha.',
-                limited: 'Poca disponibilidad · Te recomendamos solicitar tu pedido pronto.',
-                full: 'Agenda llena · Ya no estamos aceptando pedidos para esta fecha.',
-                closed: 'Día no laborable o fecha no disponible para pedidos.'
-            }[status] || 'Selecciona una fecha para consultar su disponibilidad.';
+            return { available: 'Disponible · Puedes solicitar esta fecha.', limited: 'Disponible · Puedes solicitar esta fecha.', full: 'Agenda llena · Ya no estamos aceptando pedidos para esta fecha.', closed: 'Día no laborable o fecha no disponible para pedidos.' }[status] || 'Selecciona una fecha para consultar su disponibilidad.';
         }
 
         function formatLongDate(key) {
@@ -3262,69 +3367,67 @@ function addCatalogOption(key, inputId) {
         }
 
         function renderAvailabilityCalendar() {
-            const grid = document.getElementById('availabilityCalendarGrid');
-            const monthTitle = document.getElementById('availabilityCalendarMonth');
+            renderCustomerCalendar('pastel');
+            renderCustomerCalendar('otro');
+        }
+
+        function renderCustomerCalendar(type) {
+            const isOther = type === 'otro';
+            const grid = document.getElementById(isOther ? 'otherAvailabilityCalendarGrid' : 'availabilityCalendarGrid');
+            const monthTitle = document.getElementById(isOther ? 'otherAvailabilityCalendarMonth' : 'availabilityCalendarMonth');
             if (!grid || !monthTitle) return;
-
-            const year = availabilityCalendarMonth.getFullYear();
-            const month = availabilityCalendarMonth.getMonth();
+            const monthDate = isOther ? otherAvailabilityCalendarMonth : availabilityCalendarMonth;
+            const selectedDate = isOther ? selectedOtherAvailabilityDate : selectedAvailabilityDate;
+            const year = monthDate.getFullYear(), month = monthDate.getMonth();
             monthTitle.textContent = `${AVAILABILITY_MONTHS[month]} ${year}`;
-
             const first = new Date(year, month, 1);
-            let start = first.getDay();
-            start = start === 0 ? 6 : start - 1;
+            let start = first.getDay(); start = start === 0 ? 6 : start - 1;
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-
             let html = '';
             for (let i=0; i<start; i++) html += '<div class="availability-day is-empty"></div>';
-
             for (let day=1; day<=daysInMonth; day++) {
                 const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                const status = availabilityStatusForDate(key);
+                const rawStatus = isOther ? otherAvailabilityStatusForDate(key) : availabilityStatusForDate(key);
+                const status = rawStatus === 'limited' ? 'available' : rawStatus;
                 const today = key === normalizeDateKey(new Date());
-                const selected = key === selectedAvailabilityDate;
-                const clickable = status !== 'closed' && key >= normalizeDateKey(new Date());
-
-                html += `<button type="button" class="availability-day ${status} ${today ? 'today' : ''} ${selected ? 'selected' : ''} ${!clickable ? 'disabled' : ''}" ${clickable ? `onclick="selectAvailabilityDate('${key}')"` : ''}>
-                    <span class="day-number">${day}</span>
-                    <span class="day-status-dot"></span>
-                </button>`;
+                const selected = key === selectedDate;
+                const clickable = (rawStatus === 'available' || rawStatus === 'limited') && key >= normalizeDateKey(new Date());
+                const fn = isOther ? 'selectOtherAvailabilityDate' : 'selectAvailabilityDate';
+                html += `<button type="button" class="availability-day ${status} ${today ? 'today' : ''} ${selected ? 'selected' : ''} ${!clickable ? 'disabled' : ''}" ${clickable ? `onclick="${fn}('${key}')"` : 'disabled aria-disabled="true"'} aria-label="${day}: ${status === 'full' ? 'Agenda llena' : status === 'closed' ? 'Fecha pasada o no disponible' : 'Disponible'}"><span class="day-number">${day}</span><span class="day-status-dot"></span></button>`;
             }
-
             grid.innerHTML = html;
         }
 
-        function selectAvailabilityDate(key) {
-            selectedAvailabilityDate = key;
-            const status = availabilityStatusForDate(key);
-            const detail = document.getElementById('availabilityCalendarDetail');
+        function selectCustomerCalendarDate(key, type) {
+            const isOther = type === 'otro';
+            const rawStatus = isOther ? otherAvailabilityStatusForDate(key) : availabilityStatusForDate(key);
+            if (rawStatus === 'full' || rawStatus === 'closed') return;
+            if (isOther) selectedOtherAvailabilityDate = key; else selectedAvailabilityDate = key;
+            const detail = document.getElementById(isOther ? 'otherAvailabilityCalendarDetail' : 'availabilityCalendarDetail');
             const input = document.getElementById('eventDate');
-
-            if (detail) {
-                detail.innerHTML = `<strong>${formatLongDate(key)}</strong><br>${availabilityStatusText(status)}`;
+            if (detail) detail.innerHTML = `<strong>${formatLongDate(key)}</strong><br>${availabilityStatusText(rawStatus === 'limited' ? 'available' : rawStatus)}`;
+            if (input) {
+                input.value = key;
+                input.dispatchEvent(new Event('change', { bubbles:true }));
             }
-
-            if (status === 'available' || status === 'limited') {
-                if (input) {
-                    input.value = key;
-                    input.dispatchEvent(new Event('change', { bubbles:true }));
-                    input.scrollIntoView({ behavior:'smooth', block:'center' });
-                }
-            }
-
             renderAvailabilityCalendar();
         }
+        function selectAvailabilityDate(key) { selectCustomerCalendarDate(key, 'pastel'); }
+        function selectOtherAvailabilityDate(key) { selectCustomerCalendarDate(key, 'otro'); }
 
         function changeAvailabilityMonth(delta) {
-            const next = new Date(availabilityCalendarMonth);
-            next.setMonth(next.getMonth() + delta);
-            const min = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-            if (next < min) return;
-            availabilityCalendarMonth = next;
-            selectedAvailabilityDate = '';
-            const detail = document.getElementById('availabilityCalendarDetail');
-            if (detail) detail.textContent = 'Selecciona una fecha para consultar su disponibilidad.';
-            renderAvailabilityCalendar();
+            const next = new Date(availabilityCalendarMonth); next.setMonth(next.getMonth() + delta);
+            const min = new Date(new Date().getFullYear(), new Date().getMonth(), 1); if (next < min) return;
+            availabilityCalendarMonth = next; selectedAvailabilityDate = '';
+            const detail = document.getElementById('availabilityCalendarDetail'); if (detail) detail.textContent = 'Selecciona una fecha para consultar su disponibilidad.';
+            renderCustomerCalendar('pastel');
+        }
+        function changeOtherAvailabilityMonth(delta) {
+            const next = new Date(otherAvailabilityCalendarMonth); next.setMonth(next.getMonth() + delta);
+            const min = new Date(new Date().getFullYear(), new Date().getMonth(), 1); if (next < min) return;
+            otherAvailabilityCalendarMonth = next; selectedOtherAvailabilityDate = '';
+            const detail = document.getElementById('otherAvailabilityCalendarDetail'); if (detail) detail.textContent = 'Selecciona una fecha para consultar su disponibilidad.';
+            renderCustomerCalendar('otro');
         }
 
         function renderAdminAvailabilityCalendar() {
@@ -3427,77 +3530,55 @@ function addCatalogOption(key, inputId) {
             showToast('Estado de la fecha eliminado.', 'info');
         }
 
-        // FECHAS BLOQUEADAS
-        function blockSpecificDate() {
-    const d = document.getElementById('blockDateInput').value;
+        // FECHAS BLOQUEADAS POR TIPO DE PEDIDO
+        function blockSpecificDate(type = 'pastel') {
+            const isOther = type === 'otro';
+            const input = document.getElementById(isOther ? 'blockOtherDateInput' : 'blockDateInput');
+            const d = input?.value;
+            if (!d) { showToast('Selecciona una fecha para bloquear.', 'error'); return; }
+            const list = isOther ? (state.otherBlockedDates = state.otherBlockedDates || []) : state.blockedDates;
+            if (!list.includes(d)) list.push(d);
+            saveAppState(); guardarConfiguracionEnGoogleSheets();
+            renderBlockedDates(); renderAvailabilityCalendar(); renderAdminAvailabilityCalendar();
+            if (input) input.value = '';
+            showToast(isOther ? 'Fecha bloqueada para otros pedidos.' : 'Fecha bloqueada para pasteles.', 'success');
+        }
 
-    if (!d) return;
+        function unblockSpecificDate(d, type = 'pastel') {
+            if (type === 'otro') state.otherBlockedDates = (state.otherBlockedDates || []).filter(item => item !== d);
+            else state.blockedDates = state.blockedDates.filter(item => item !== d);
+            saveAppState(); guardarConfiguracionEnGoogleSheets();
+            renderBlockedDates(); renderAvailabilityCalendar(); renderAdminAvailabilityCalendar();
+            showToast('Fecha desbloqueada.', 'info');
+        }
 
-    if (!state.blockedDates.includes(d)) {
-        state.blockedDates.push(d);
-
-        saveAppState();
-        guardarConfiguracionEnGoogleSheets();
-        renderBlockedDates();
-        renderAvailabilityCalendar();
-        renderAdminAvailabilityCalendar();
-
-        document.getElementById('blockDateInput').value = '';
-
-        showToast('Fecha bloqueada correctamente', 'success');
-    }
-}
-
-        function unblockSpecificDate(d) {
-    state.blockedDates = state.blockedDates.filter(item => item !== d);
-
-    saveAppState();
-    guardarConfiguracionEnGoogleSheets();
-    renderBlockedDates();
-    renderAvailabilityCalendar();
-    renderAdminAvailabilityCalendar();
-
-    showToast('Fecha desbloqueada', 'info');
-}
-
-        function removePastBlockedDates() {
-    const today = new Date();
-    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const pastDates = (state.blockedDates || []).filter(d => d < todayKey);
-
-    if (pastDates.length === 0) {
-        showToast('No hay fechas bloqueadas pasadas para borrar.', 'info');
-        return;
-    }
-
-    const confirmDelete = confirm(`Se borrarán ${pastDates.length} fecha${pastDates.length !== 1 ? 's' : ''} bloqueada${pastDates.length !== 1 ? 's' : ''} que ya pasó${pastDates.length !== 1 ? 'aron' : ''}. ¿Continuar?`);
-    if (!confirmDelete) return;
-
-    state.blockedDates = (state.blockedDates || []).filter(d => d >= todayKey);
-
-    saveAppState();
-    guardarConfiguracionEnGoogleSheets();
-    renderBlockedDates();
-    renderAvailabilityCalendar();
-    renderAdminAvailabilityCalendar();
-
-    showToast(`${pastDates.length} fecha${pastDates.length !== 1 ? 's' : ''} pasada${pastDates.length !== 1 ? 's' : ''} eliminada${pastDates.length !== 1 ? 's' : ''}.`, 'success');
-}
+        function removePastBlockedDates(type = 'pastel') {
+            const todayKey = normalizeDateKey(new Date());
+            const isOther = type === 'otro';
+            const list = isOther ? (state.otherBlockedDates || []) : (state.blockedDates || []);
+            const pastDates = list.filter(d => d < todayKey);
+            if (pastDates.length === 0) { showToast('No hay fechas bloqueadas pasadas para borrar.', 'info'); return; }
+            if (!confirm(`Se borrarán ${pastDates.length} fecha${pastDates.length !== 1 ? 's' : ''} bloqueada${pastDates.length !== 1 ? 's' : ''} que ya pasó${pastDates.length !== 1 ? 'aron' : ''}. ¿Continuar?`)) return;
+            if (isOther) state.otherBlockedDates = list.filter(d => d >= todayKey);
+            else state.blockedDates = list.filter(d => d >= todayKey);
+            saveAppState(); guardarConfiguracionEnGoogleSheets(); renderBlockedDates(); renderAvailabilityCalendar(); renderAdminAvailabilityCalendar();
+            showToast(`${pastDates.length} fecha${pastDates.length !== 1 ? 's' : ''} pasada${pastDates.length !== 1 ? 's' : ''} eliminada${pastDates.length !== 1 ? 's' : ''}.`, 'success');
+        }
 
         function renderBlockedDates() {
-            const container = document.getElementById('blockedDatesList');
-            if (!container) return;
-            container.innerHTML = '';
-            if (state.blockedDates.length === 0) {
-                container.innerHTML = '<span class="text-xs text-stone-400">No hay fechas bloqueadas actualmente.</span>';
-                return;
-            }
-            state.blockedDates.forEach(d => {
-                const chip = document.createElement('span');
-                chip.className = 'inline-flex items-center gap-1 bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-bold border border-rose-200';
-                chip.innerHTML = `${d} <button onclick="unblockSpecificDate('${d}')" class="text-rose-600 hover:text-rose-900 ml-1">✕</button>`;
-                container.appendChild(chip);
-            });
+            const renderList = (containerId, dates, type) => {
+                const container = document.getElementById(containerId); if (!container) return;
+                container.innerHTML = '';
+                if (!dates.length) { container.innerHTML = '<span class="text-xs text-stone-400">No hay fechas bloqueadas actualmente.</span>'; return; }
+                dates.forEach(d => {
+                    const chip = document.createElement('span');
+                    chip.className = 'inline-flex items-center gap-1 bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-bold border border-rose-200';
+                    chip.innerHTML = `${d} <button type="button" onclick="unblockSpecificDate('${d}','${type}')" class="text-rose-600 hover:text-rose-900 ml-1" aria-label="Desbloquear ${d}">✕</button>`;
+                    container.appendChild(chip);
+                });
+            };
+            renderList('blockedDatesList', state.blockedDates || [], 'pastel');
+            renderList('otherBlockedDatesList', state.otherBlockedDates || [], 'otro');
         }
 
         function normalizeOtherProductsCatalog() {

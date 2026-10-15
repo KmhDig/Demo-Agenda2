@@ -3391,15 +3391,19 @@ function addCatalogOption(key, inputId) {
         }
 
         function availabilityStatusForDate(key) {
-            if (state.blockedDates.includes(key)) return 'full';
-            if ((state.limitedDates || []).includes(key)) return 'limited';
+            // Protege el calendario si la configuración guardada viene vacía o con formato inesperado.
+            const blocked = Array.isArray(state?.blockedDates) ? state.blockedDates : [];
+            const limited = Array.isArray(state?.limitedDates) ? state.limitedDates : [];
+            if (blocked.includes(key)) return 'full';
+            if (limited.includes(key)) return 'limited';
             const todayKey = normalizeDateKey(new Date());
             if (key < todayKey) return 'closed';
             return 'available';
         }
 
         function otherAvailabilityStatusForDate(key) {
-            if ((state.otherBlockedDates || []).includes(key)) return 'full';
+            const blocked = Array.isArray(state?.otherBlockedDates) ? state.otherBlockedDates : [];
+            if (blocked.includes(key)) return 'full';
             const todayKey = normalizeDateKey(new Date());
             if (key < todayKey) return 'closed';
             return 'available';
@@ -3428,26 +3432,47 @@ function addCatalogOption(key, inputId) {
             const grid = document.getElementById(isOther ? 'otherAvailabilityCalendarGrid' : 'availabilityCalendarGrid');
             const monthTitle = document.getElementById(isOther ? 'otherAvailabilityCalendarMonth' : 'availabilityCalendarMonth');
             if (!grid || !monthTitle) return;
-            const monthDate = isOther ? otherAvailabilityCalendarMonth : availabilityCalendarMonth;
-            const selectedDate = isOther ? selectedOtherAvailabilityDate : selectedAvailabilityDate;
-            const year = monthDate.getFullYear(), month = monthDate.getMonth();
-            monthTitle.textContent = `${AVAILABILITY_MONTHS[month]} ${year}`;
-            const first = new Date(year, month, 1);
-            let start = first.getDay(); start = start === 0 ? 6 : start - 1;
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            let html = '';
-            for (let i=0; i<start; i++) html += '<div class="availability-day is-empty"></div>';
-            for (let day=1; day<=daysInMonth; day++) {
-                const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                const rawStatus = isOther ? otherAvailabilityStatusForDate(key) : availabilityStatusForDate(key);
-                const status = rawStatus === 'limited' ? 'available' : rawStatus;
-                const today = key === normalizeDateKey(new Date());
-                const selected = key === selectedDate;
-                const clickable = (rawStatus === 'available' || rawStatus === 'limited') && key >= normalizeDateKey(new Date());
-                const fn = isOther ? 'selectOtherAvailabilityDate' : 'selectAvailabilityDate';
-                html += `<button type="button" class="availability-day ${status} ${today ? 'today' : ''} ${selected ? 'selected' : ''} ${!clickable ? 'disabled' : ''}" ${clickable ? `onclick="${fn}('${key}')"` : 'disabled aria-disabled="true"'} aria-label="${day}: ${status === 'full' ? 'Agenda llena' : status === 'closed' ? 'Fecha pasada o no disponible' : 'Disponible'}"><span class="day-number">${day}</span><span class="day-status-dot"></span></button>`;
+            try {
+                const monthDate = isOther ? otherAvailabilityCalendarMonth : availabilityCalendarMonth;
+                const selectedDate = isOther ? selectedOtherAvailabilityDate : selectedAvailabilityDate;
+                const year = monthDate.getFullYear(), month = monthDate.getMonth();
+                monthTitle.textContent = `${AVAILABILITY_MONTHS[month]} ${year}`;
+                const first = new Date(year, month, 1);
+                let start = first.getDay(); start = start === 0 ? 6 : start - 1;
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const todayKey = normalizeDateKey(new Date());
+                let html = '';
+                for (let i=0; i<start; i++) html += '<div class="availability-day is-empty" aria-hidden="true"></div>';
+                for (let day=1; day<=daysInMonth; day++) {
+                    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                    let rawStatus = 'available';
+                    try { rawStatus = isOther ? otherAvailabilityStatusForDate(key) : availabilityStatusForDate(key); }
+                    catch (statusError) { console.error('No se pudo consultar el estado de disponibilidad para', key, statusError); }
+                    const status = rawStatus === 'limited' ? 'available' : rawStatus;
+                    const today = key === todayKey;
+                    const selected = key === selectedDate;
+                    const clickable = (rawStatus === 'available' || rawStatus === 'limited') && key >= todayKey;
+                    const fn = isOther ? 'selectOtherAvailabilityDate' : 'selectAvailabilityDate';
+                    const label = status === 'full' ? 'Agenda llena' : status === 'closed' ? 'Fecha pasada o no disponible' : 'Disponible';
+                    html += `<button type="button" class="availability-day ${status} ${today ? 'today' : ''} ${selected ? 'selected' : ''} ${!clickable ? 'disabled' : ''}" ${clickable ? `onclick="${fn}('${key}')"` : 'disabled aria-disabled="true"'} aria-label="${day}: ${label}"><span class="day-number">${day}</span><span class="day-status-dot"></span></button>`;
+                }
+                grid.innerHTML = html;
+            } catch (error) {
+                console.error('Error al dibujar el calendario de disponibilidad:', error);
+                // Fallback visible: no dejar la cuadrícula vacía si falla una parte de la disponibilidad.
+                const now = new Date();
+                const year = now.getFullYear(), month = now.getMonth();
+                let html = '';
+                const first = new Date(year, month, 1);
+                let start = first.getDay(); start = start === 0 ? 6 : start - 1;
+                const count = new Date(year, month + 1, 0).getDate();
+                for (let i=0; i<start; i++) html += '<div class="availability-day is-empty" aria-hidden="true"></div>';
+                for (let day=1; day<=count; day++) html += `<button type="button" class="availability-day disabled" disabled aria-label="${day}: disponibilidad no cargada"><span class="day-number">${day}</span></button>`;
+                grid.innerHTML = html;
+                monthTitle.textContent = `${AVAILABILITY_MONTHS[month]} ${year}`;
+                const detail = document.getElementById(isOther ? 'otherAvailabilityCalendarDetail' : 'availabilityCalendarDetail');
+                if (detail) detail.textContent = 'No se pudo cargar la disponibilidad. Actualiza la página e inténtalo de nuevo.';
             }
-            grid.innerHTML = html;
         }
 
         function clearCustomerSelectedDate() {

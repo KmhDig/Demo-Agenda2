@@ -2056,8 +2056,9 @@ if (config.blockedDates) {
     }).filter(Boolean);
 }
 
-if (Array.isArray(config.otherBlockedDates)) {
-    state.otherBlockedDates = config.otherBlockedDates.map(fecha => {
+if (Array.isArray(config.blockedDatesOther) || Array.isArray(config.otherBlockedDates)) {
+    const fechasOtros = Array.isArray(config.blockedDatesOther) ? config.blockedDatesOther : config.otherBlockedDates;
+    state.otherBlockedDates = fechasOtros.map(fecha => {
         if (!fecha) return '';
         const d = new Date(fecha);
         if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
@@ -2936,6 +2937,7 @@ function savePaymentInfoDraft() {
         privateMessageTemplate: state.privateMessageTemplate,
 
         blockedDates: state.blockedDates,
+        blockedDatesOther: state.otherBlockedDates || [],
         otherBlockedDates: state.otherBlockedDates || [],
         limitedDates: state.limitedDates,
         orderHours: state.orderHours,

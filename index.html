@@ -679,6 +679,10 @@ Notas adicionales:</textarea>
                     <textarea id="otherObservations" rows="5" placeholder="¿Hay algo más que debamos saber?" class="w-full input-canva"></textarea>
                 </div>
 
+                <div class="flex items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50/80 p-4 text-brand-800">
+                    <i class="fa-solid fa-circle-info mt-0.5 text-brand-500"></i>
+                    <p class="text-xs leading-relaxed"><strong class="font-bold">Aviso y recordatorio:</strong> Si tienes una foto de referencia de Pinterest o internet, podrás adjuntarla directamente en el chat que se abrirá.</p>
+                </div>
                 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-2xl shadow-md transition duration-200 text-sm tracking-widest uppercase">
                     REVISAR Y CONFIRMAR PEDIDO
                 </button>
@@ -714,16 +718,12 @@ Notas adicionales:</textarea>
 
             <div id="reviewDetailsContainer" class="text-xs text-stone-600 bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2 leading-relaxed"></div>
 
-            <div class="space-y-3">
-                <label class="block text-xs font-bold uppercase tracking-wider text-stone-600">¿Cómo quieres enviar tu pedido?</label>
-                <input type="hidden" id="orderSendChannel" value="whatsapp">
-                <div class="grid grid-cols-1 gap-2">
-                    <button type="button" data-channel="whatsapp" onclick="seleccionarCanalPedido('whatsapp')" class="order-channel-btn border-2 border-brand-500 bg-brand-50 text-brand-700 py-3 rounded-2xl text-[11px] font-bold transition">
-                        <i class="fa-brands fa-whatsapp block text-lg mb-1"></i>WhatsApp
-                    </button>
-                </div>
-                <p id="channelHelpText" class="text-[11px] text-stone-400">WhatsApp abrirá directamente con tu pedido listo para enviar.</p>
+            <div class="flex items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50/80 p-4 text-brand-800">
+                <i class="fa-solid fa-circle-info mt-0.5 text-brand-500"></i>
+                <p class="text-xs leading-relaxed"><strong class="font-bold">Aviso y recordatorio:</strong> Si tienes una foto de referencia de Pinterest o internet, podrás adjuntarla directamente en el chat que se abrirá.</p>
             </div>
+            <input type="hidden" id="orderSendChannel" value="whatsapp">
+            <p id="channelHelpText" class="text-[11px] text-stone-400 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-base text-[#25D366]"></i>WhatsApp abrirá directamente con tu pedido listo para enviar.</p>
 
             <div class="flex gap-3 pt-2">
                 <button onclick="closeReviewModal()" class="w-1/2 bg-stone-200 text-stone-700 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-stone-300 transition">
@@ -5439,6 +5439,7 @@ function toggleEditDeliveryFields() {
 
     if (!order) {
         console.error('No se encontró el pedido para guardar:', id);
+ 
         return;
     }
 

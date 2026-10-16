@@ -2098,9 +2098,22 @@ async function cargarPedidosDesdeGoogleSheets() {
             return;
         }
 
-        state.orders = resultado.pedidos;
+        // Normaliza y conserva todos los pedidos devueltos por la hoja.
+        // Al sincronizar, muestra por defecto la lista completa; el usuario
+        // puede volver a filtrar por Pasteles u Otros pedidos manualmente.
+        state.orders = resultado.pedidos.map(order => ({
+            ...order,
+            id: order.id ?? order.ID ?? order['ID'] ?? '',
+            orderNumber: order.orderNumber ?? order['Número de pedido'] ?? '',
+            orderType: order.orderType ?? order['Tipo de pedido'] ?? 'Pastel',
+            eventDate: order.eventDate ?? order['Fecha del evento'] ?? '',
+            createdAt: order.createdAt ?? order['Fecha en que se registró'] ?? '',
+            clientName: order.clientName ?? order['Nombre completo'] ?? '',
+            clientPhone: order.clientPhone ?? order['WhatsApp de contacto'] ?? ''
+        }));
 
-        renderOrders();
+        currentOrderCategoryFilter = 'all';
+        renderOrders(document.getElementById('orderSearchInput')?.value || '');
         renderKitchenOrders();
         renderUpcomingOrders();
 
@@ -3928,11 +3941,16 @@ function addCatalogOption(key, inputId) {
             const countEl = document.getElementById('orderCount');
             if (!container) return;
 
-            countEl.textContent = state.orders.length;
+            if (countEl) countEl.textContent = visibleOrders.length;
             container.innerHTML = '';
 
             if (state.orders.length === 0) {
                 container.innerHTML = '<div class="p-6 bg-stone-50 rounded-2xl text-center text-stone-400 text-xs">No hay pedidos registrados en la agenda.</div>';
+                return;
+            }
+
+            if (visibleOrders.length === 0) {
+                container.innerHTML = '<div class="p-6 bg-stone-50 rounded-2xl text-center text-stone-400 text-xs">No hay pedidos en esta categoría. Selecciona “Todos” para ver el historial completo.</div>';
                 return;
             }
 

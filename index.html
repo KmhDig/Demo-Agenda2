@@ -52,7 +52,7 @@
             essence: {
                 label: 'NUESTRA ESENCIA',
                 title: 'Calidad',
-                text: 'Cada creación es elaborada con ingredientes finos de la más alta calidad, cuidando hasta el último detalle estético para convertir tus momentos especiales en dulces recuerdos memorables.'
+                text: 'Creamos pasteles y postres con ingredientes de calidad y cuidamos cada detalle para hacer de tus momentos especiales un recuerdo delicioso.'
             },
 
             guide: {
@@ -284,22 +284,123 @@
             z-index: 100;
         }
     
+        /* Diseño compacto en dos columnas: esencia y guía lado a lado. */
+        #quality-guide-section {
+            display:grid !important;
+            grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr) !important;
+            align-items:start !important;
+            gap:1.15rem !important;
+            padding:1.25rem 1.5rem !important;
+            border-radius:1.5rem !important;
+        }
+        #quality-guide-section #quality-section { margin:0 !important; min-width:0; }
+        #quality-guide-section #essence-label { margin-bottom:.35rem; }
+        #quality-guide-section #essence-title { font-size:1.55rem !important; line-height:1.2; }
+        #quality-guide-section #essence-text { max-width:none; font-size:.78rem !important; line-height:1.55 !important; }
+        #quality-guide-section #steps-section {
+            margin:0 !important;
+            padding:0 0 0 1.15rem !important;
+            border:0 !important;
+            border-left:1px solid rgba(255,255,255,.3) !important;
+            border-radius:0 !important;
+            box-shadow:none !important;
+            background:transparent !important;
+            min-width:0;
+        }
+        #quality-guide-section #guide-label,
+        #quality-guide-section #guide-title { color:#fff !important; }
+        #quality-guide-section #guide-title { font-size:1.35rem !important; line-height:1.25; }
+        #quality-guide-section #steps-section > div:first-child { margin-bottom:.75rem; }
+        #quality-guide-section #steps-section > .space-y-6 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem 1rem !important; }
+        #quality-guide-section #steps-section .flex.items-start { gap:.55rem !important; min-width:0; }
+        #quality-guide-section #steps-section .w-9.h-9 { width:1.7rem !important; height:1.7rem !important; font-size:.75rem !important; background:#fff !important; color:var(--brand-main) !important; }
+        #quality-guide-section #steps-section strong { color:#fff !important; font-size:.8rem !important; }
+        #quality-guide-section #steps-section p { color:rgba(255,255,255,.82) !important; font-size:.68rem !important; line-height:1.45 !important; }
         /* Apariencia compacta: solo presentación, sin alterar la lógica. */
         #portfolio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         #portfolio-grid img { display:block; width:100%; aspect-ratio:2 / 3; object-fit:cover; }
         main { padding-top:.75rem !important; padding-bottom:.75rem !important; }
         main > section { margin-bottom:0 !important; }
         #portfolio-section { gap:.5rem !important; }
+        #quality-guide-section { margin-top:.25rem !important; }
+        #quality-guide-section #quality-section { margin:0 !important; }
+        #quality-guide-section #essence-text { max-width:52rem; }
+        #quality-guide-section #steps-section { margin:0 !important; padding:1rem 0 0 !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; background:transparent !important; border-top:1px solid rgba(255,255,255,.25) !important; }
+        #quality-guide-section #guide-label, #quality-guide-section #guide-title { color:#fff !important; }
+        #quality-guide-section #steps-section strong { color:#fff !important; }
+        #quality-guide-section #steps-section p { color:rgba(255,255,255,.82) !important; }
+        #quality-guide-section #steps-section .w-9.h-9 { background:#fff !important; color:var(--brand-main) !important; }
         #quality-section { margin-top:.25rem !important; }
-        #steps-section, #form-section { padding:.9rem !important; border-radius:1.25rem !important; }
-        #steps-section { margin-top:.5rem !important; }
+        #steps-section { padding:1rem 0 0 !important; border-radius:0 !important; }
+        #form-section { padding:.9rem !important; border-radius:1.25rem !important; }
+        #steps-section { margin-top:0 !important; }
         #form-section { margin-top:.5rem !important; }
         #form-section .space-y-8 { gap:1rem !important; }
+        @media (max-width:760px) {
+            #quality-guide-section { grid-template-columns:minmax(0,1fr) !important; gap:.9rem !important; padding:1rem !important; }
+            #quality-guide-section #steps-section { padding:.85rem 0 0 !important; border-left:0 !important; border-top:1px solid rgba(255,255,255,.3) !important; }
+            #quality-guide-section #steps-section > .space-y-6 { gap:.75rem !important; }
+        }
+        @media (max-width:420px) {
+            #quality-guide-section #steps-section > .space-y-6 { grid-template-columns:minmax(0,1fr) !important; }
+        }
         @media (max-width:640px) {
             main { padding-left:.5rem !important; padding-right:.5rem !important; }
             #portfolio-grid { gap:.25rem; }
             #portfolio-grid > div { border-radius:.6rem; }
-            #steps-section, #form-section { padding:.7rem !important; border-radius:1rem !important; }
+            #steps-section { padding:.8rem 0 0 !important; border-radius:0 !important; }
+            #form-section { padding:.7rem !important; border-radius:1rem !important; }
+            .availability-calendar { padding:.8rem; border-radius:1.15rem; }
+            .availability-calendar-title { gap:.5rem; min-width:0; }
+            .availability-calendar-icon { width:32px; height:32px; border-radius:10px; }
+            .availability-calendar-month { font-size:.92rem; }
+            .availability-calendar-sub { font-size:.58rem; }
+            .availability-calendar-nav { width:29px; height:29px; flex-shrink:0; }
+            .availability-week { gap:.15rem; margin-top:.8rem; }
+            .availability-week span { font-size:.52rem; letter-spacing:0; }
+            .availability-grid { gap:.2rem; }
+            .availability-day { min-height:42px; border-radius:9px; }
+            .availability-day .day-number { font-size:.7rem; }
+            .availability-legend { gap:.45rem .8rem; }
+            .availability-detail { font-size:.68rem; }
+        }
+
+        /* Ajuste visual final: equilibrio entre esencia y guía en escritorio. */
+        #quality-guide-section {
+            grid-template-columns: minmax(230px, .82fr) minmax(0, 1.5fr) !important;
+            align-items: center !important;
+            column-gap: 1.65rem !important;
+            row-gap: 1rem !important;
+            padding: 1.35rem 1.6rem !important;
+        }
+        #quality-guide-section #quality-section { align-self: center !important; }
+        #quality-guide-section #essence-title { margin: .2rem 0 .45rem !important; }
+        #quality-guide-section #essence-text { font-size: .8rem !important; line-height: 1.55 !important; }
+        #quality-guide-section #steps-section {
+            align-self: center !important;
+            padding: .15rem 0 .15rem 1.55rem !important;
+            border-top: 0 !important;
+            border-left: 1px solid rgba(255,255,255,.28) !important;
+        }
+        #quality-guide-section #steps-section > div:first-child { margin-bottom: .85rem !important; }
+        #quality-guide-section #guide-title { margin-top: .2rem !important; font-size: 1.45rem !important; }
+        #quality-guide-section #steps-section > .space-y-6 {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            align-items: start !important;
+            column-gap: 1.15rem !important;
+            row-gap: 1.05rem !important;
+        }
+        #quality-guide-section #steps-section .flex.items-start { gap: .55rem !important; }
+        #quality-guide-section #steps-section .w-9.h-9 { flex: 0 0 1.7rem !important; }
+        #quality-guide-section #steps-section strong { line-height: 1.35 !important; }
+        #quality-guide-section #steps-section p { font-size: .7rem !important; line-height: 1.45 !important; }
+        @media (max-width: 760px) {
+            #quality-guide-section { grid-template-columns: minmax(0,1fr) !important; padding: 1.15rem !important; gap: 1rem !important; }
+            #quality-guide-section #steps-section { padding: 1rem 0 0 !important; border-left: 0 !important; border-top: 1px solid rgba(255,255,255,.28) !important; }
+            #quality-guide-section #steps-section > .space-y-6 { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: .85rem !important; }
+        }
+        @media (max-width: 480px) {
+            #quality-guide-section #steps-section > .space-y-6 { grid-template-columns: minmax(0,1fr) !important; }
         }
 </style>
 </head>
@@ -410,17 +511,18 @@ background-repeat:no-repeat;">
 
 </section>
 
-        <!-- SECCIÓN 2: NUESTRA ESENCIA / CALIDAD -->
+        <!-- SECCIÓN 2: NUESTRA ESENCIA Y GUÍA SENCILLA EN UN MISMO BLOQUE -->
+        <section id="quality-guide-section" class="bg-brand-500 text-white p-8 md:p-10 rounded-[2rem] shadow-sm space-y-6 relative overflow-hidden">
         <section id="quality-section">
-            <div class="bg-brand-500 text-white p-8 md:p-10 rounded-[2rem] shadow-sm space-y-3 relative overflow-hidden">
+            <div class="space-y-3 relative">
                 <span id="essence-label" class="text-[11px] uppercase tracking-widest font-medium opacity-90 block"></span>
                 <h3 id="essence-title" class="text-2xl md:text-3xl font-serif font-medium"></h3>
                 <p id="essence-text" class="text-xs md:text-sm text-stone-100 font-light leading-relaxed max-w-2xl opacity-95"></p>
             </div>
         </section>
 
-        <!-- SECCIÓN 3: GUÍA SENCILLA -->
-        <section id="steps-section" class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-stone-100 canva-card-shadow space-y-6">
+        <!-- GUÍA SENCILLA: PARTE DEL MISMO BLOQUE QUE NUESTRA ESENCIA -->
+        <section id="steps-section" class="space-y-6">
             <div class="space-y-1">
                 <span id="guide-label" class="text-xs uppercase font-bold tracking-widest text-brand-500"></span>
                 <h3 id="guide-title" class="text-2xl font-serif text-brand-700"></h3>
@@ -432,8 +534,7 @@ background-repeat:no-repeat;">
                     <div class="space-y-1 pt-0.5">
                         <strong class="text-brand-800 font-semibold text-base block">Elige tu fecha</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Pedidos con mínimo 5 días de anticipación y sujetos a disponibilidad. 
-                           ⚠️ Si la fecha está llena, el sistema te avisará y te dará indicaciones para que elijas otro día.
+                            Elige un día disponible en el calendario. Solicita tu pedido con al menos 5 días de anticipación.
                         </p>
                     </div>
                 </div>
@@ -442,7 +543,7 @@ background-repeat:no-repeat;">
                     <div class="space-y-1 pt-0.5">
                         <strong class="text-brand-800 font-semibold text-base block">Personaliza tu pastel</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Elige porciones, Sabor de Pan, Relleno y Betún de tu preferencia. Escríbe todos los detalles de tu pastel en el formulario.
+                            Completa las opciones y los detalles de tu pastel. Si es otro pedido, indica el producto y la cantidad.
                         </p>
                     </div>
                 </div>
@@ -452,7 +553,7 @@ background-repeat:no-repeat;">
                     <div class="space-y-1 pt-0.5">
                         <strong class="text-brand-800 font-semibold text-base block">Envía tu orden al instante</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                           El sistema preparará los datos de tu pedido para enviarlos directamente a nuestro WhatsApp. Nos pondremos en contacto contigo para confirmar los detalles y el proceso de pago. 
+                           Revisa tus datos y envía la solicitud por WhatsApp. Te contactaremos para confirmar los detalles. 
                         </p>
                     </div>
                 </div>
@@ -462,11 +563,12 @@ background-repeat:no-repeat;">
                     <div class="space-y-1 pt-0.5">
                         <strong class="text-brand-800 font-semibold text-base block">Confirma con tu anticipo</strong>
                         <p class="text-xs text-stone-500 leading-relaxed">
-                            Se requiere un 50% de anticipo para asegurar tu espacio oficial en producción.
+                            Tu fecha quedará apartada al confirmar los detalles y realizar el anticipo del 50%.
                         </p>
                     </div>
                 </div>
             </div>
+        </section>
         </section>
 
         <!-- SECCIÓN 4: FORMULARIO DE PEDIDO -->
@@ -477,9 +579,21 @@ background-repeat:no-repeat;">
                 <p class="text-xs text-stone-400 pt-1">Ingresa los datos requeridos para generar tu solicitud oficial</p>
             </div>
 
-            <!-- CALENDARIO DE DISPONIBILIDAD PARA CLIENTES (VERSIÓN BÁSICA) -->
-            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(240px,.8fr)] gap-4 items-stretch mb-6">
-                <div id="cakeCustomerCalendar" class="availability-calendar">
+            <!-- AVISOS Y CALENDARIO DE DISPONIBILIDAD -->
+            <div class="space-y-3 mb-5">
+                <div class="rounded-2xl border border-brand-100 bg-brand-50 p-4 md:p-5">
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-white text-brand-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div>
+                            <h4 class="font-bold text-brand-800 text-xs tracking-wider mb-1">ANTES DE COMENZAR</h4>
+                            <p class="text-xs leading-relaxed text-brand-700">Primero revisa el calendario y selecciona una fecha disponible. Después completa tu pedido.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div id="cakeCustomerCalendar" class="availability-calendar w-full">
                     <div class="availability-calendar-head">
                         <div class="availability-calendar-title">
                             <div class="availability-calendar-icon"><i class="fa-solid fa-cake-candles"></i></div>
@@ -498,7 +612,7 @@ background-repeat:no-repeat;">
                     <div class="availability-legend"><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#10b981"></span> Disponible</div><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#ef4444"></span> Agenda llena</div></div>
                     <div id="availabilityCalendarDetail" class="availability-detail" aria-live="polite">Selecciona una fecha verde para agregarla al formulario.</div>
                 </div>
-                <div id="otherCustomerCalendar" class="availability-calendar hidden">
+                <div id="otherCustomerCalendar" class="availability-calendar w-full hidden">
                     <div class="availability-calendar-head">
                         <div class="availability-calendar-title">
                             <div class="availability-calendar-icon"><i class="fa-solid fa-bag-shopping"></i></div>
@@ -517,24 +631,14 @@ background-repeat:no-repeat;">
                     <div class="availability-legend"><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#10b981"></span> Disponible</div><div class="availability-legend-item"><span class="availability-legend-dot" style="background:#ef4444"></span> Agenda llena</div></div>
                     <div id="otherAvailabilityCalendarDetail" class="availability-detail" aria-live="polite">Selecciona una fecha verde para agregarla al formulario.</div>
                 </div>
-                <div class="flex flex-col gap-3">
-                    <div class="rounded-2xl border border-amber-100 bg-amber-50 p-5 flex-1">
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-white text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
-                            <div>
-                                <h4 class="font-bold text-amber-900 text-sm mb-2">¡Recuerda revisar la disponibilidad antes de elegir tu fecha!</h4>
-                                <p class="text-xs leading-relaxed text-amber-800">Verifica que tengamos lugar abierto para tu entrega antes de llenar el pedido.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            <div class="rounded-2xl border border-brand-100 bg-brand-50 p-5 mb-6">
+
+            <div class="rounded-2xl border border-amber-100 bg-amber-50 p-4 md:p-5 mb-6">
                 <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-white text-brand-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-calendar-check text-lg"></i></div>
+                    <div class="w-9 h-9 rounded-xl bg-white text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-triangle-exclamation"></i></div>
                     <div>
-                        <h4 class="font-bold text-brand-800 text-xs tracking-wider mb-2">ANTES DE COMENZAR</h4>
-                        <p class="text-xs leading-relaxed text-brand-700">Consulta la disponibilidad y selecciona una fecha en el calendario antes de comenzar el formulario.</p>
+                        <h4 class="font-bold text-amber-900 text-sm mb-1">¡Recuerda revisar la disponibilidad antes de elegir tu fecha!</h4>
+                        <p class="text-xs leading-relaxed text-amber-800">Las fechas en verde están disponibles. La agenda llena no admite nuevos pedidos.</p>
                     </div>
                 </div>
             </div>

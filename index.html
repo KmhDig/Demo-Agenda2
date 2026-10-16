@@ -37,9 +37,44 @@
         .hero-button-primary:hover { background: #754247; border-color: #754247; }
         .hero-button-secondary { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.8); backdrop-filter: blur(8px); }
         .hero-button-secondary:hover { background: rgba(255,255,255,.23); }
-        @media (max-width: 480px) {
-            .hero-actions { gap: .6rem; margin-top: 1.4rem; }
-            .hero-button { min-height: 43px; padding: .7rem .95rem; font-size: .76rem; }
+        /* Portada con mayor presencia, manteniendo la identidad de Dulce Reino */
+        #hero-section { min-height: clamp(620px, 76vh, 790px) !important; }
+        #hero-section > div { width: min(100% - 2.5rem, 1080px) !important; }
+        #hero-badge { font-size: .82rem !important; padding: .7rem 1.6rem !important; margin-bottom: 1.65rem !important; }
+        #hero-title {
+            max-width: 1050px !important; margin: 0 auto 1.35rem !important;
+            font-size: clamp(3.25rem, 5.1vw, 5.4rem) !important;
+            line-height: 1.04 !important; letter-spacing: -.025em !important;
+            text-wrap: balance;
+        }
+        #hero-subtitle {
+            max-width: 780px !important; font-size: clamp(1.15rem, 1.55vw, 1.45rem) !important;
+            line-height: 1.6 !important; margin: 0 auto !important;
+        }
+        .hero-actions { gap: 1rem !important; margin-top: 2rem !important; }
+        .hero-button {
+            min-height: 58px !important; padding: 1rem 1.65rem !important;
+            font-size: .98rem !important; gap: .7rem !important;
+        }
+        .hero-button i { font-size: 1rem !important; }
+        @media (max-width: 900px) {
+            #hero-section { min-height: 640px !important; }
+            #hero-title { font-size: clamp(2.8rem, 6.5vw, 4.2rem) !important; }
+            #hero-subtitle { font-size: 1.12rem !important; }
+        }
+        @media (max-width: 600px) {
+            #hero-section { min-height: 610px !important; padding: 4rem 0 !important; background-position: center !important; }
+            #hero-section > div { width: min(100% - 2rem, 520px) !important; }
+            #hero-badge { font-size: .7rem !important; padding: .6rem 1.15rem !important; margin-bottom: 1.25rem !important; }
+            #hero-title { font-size: clamp(2.35rem, 9vw, 3.15rem) !important; line-height: 1.08 !important; margin-bottom: 1.1rem !important; }
+            #hero-subtitle { font-size: 1rem !important; line-height: 1.55 !important; }
+            .hero-actions { gap: .7rem !important; margin-top: 1.65rem !important; }
+            .hero-button { min-height: 52px !important; padding: .85rem 1.1rem !important; font-size: .86rem !important; }
+        }
+        @media (max-width: 380px) {
+            .hero-actions { flex-direction: column !important; align-items: stretch !important; }
+            .hero-button { width: 100% !important; }
+            #hero-title { font-size: 2.25rem !important; }
         }
         @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .hero-button { transition: none; } }
     </style>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <title>Dulce Reino - Agenda de Pedidos</title>
+      <title>Dulce Reino - Propuesta de diseño mejorada</title>
      <link id="favicon-link" rel="icon" type="image/png" href="img/logo.png">
 
     <meta id="og-title" property="og:title" content="Dulce Reino - Agenda de Pedidos">
@@ -916,7 +916,52 @@ Notas adicionales:</textarea>
                     .admin-category-tab.active { background:#7c5a3c; color:#fff; border-color:#7c5a3c; box-shadow:0 2px 8px rgba(0,0,0,.08); }
                     .admin-category-panel { display:none; }
                     .admin-category-panel.active { display:block; }
-                </style>
+                
+        /* PROPUESTA VISUAL MEJORADA: más aire, jerarquía y equilibrio */
+        :root { --bg-light:#f8f6f3; }
+        body { background:#f8f6f3 !important; }
+        header { min-height:64px; }
+        #hero-section { background-position:center 52% !important; }
+        #portfolio-section > div:first-child { margin-bottom:.35rem !important; }
+        #portfolio-grid { gap:.7rem !important; }
+        #portfolio-grid > div { border-radius:1rem !important; box-shadow:0 12px 28px -20px rgba(45,35,30,.35) !important; }
+        #portfolio-grid img { aspect-ratio: 4 / 5 !important; }
+        #quality-guide-section {
+            grid-template-columns:minmax(220px,.72fr) minmax(0,1.55fr) !important;
+            align-items:center !important;
+            gap:clamp(1.25rem,2.5vw,2.25rem) !important;
+            padding:clamp(1.35rem,2.4vw,2rem) !important;
+            border-radius:1.6rem !important;
+            box-shadow:0 16px 35px -28px rgba(65,34,35,.5) !important;
+        }
+        #quality-guide-section #quality-section { padding-right:.3rem !important; }
+        #quality-guide-section #essence-label,
+        #quality-guide-section #guide-label { letter-spacing:.13em !important; font-size:.68rem !important; }
+        #quality-guide-section #essence-title { font-size:clamp(1.7rem,2.2vw,2.15rem) !important; margin:.35rem 0 .65rem !important; }
+        #quality-guide-section #essence-text { font-size:.9rem !important; line-height:1.7 !important; color:rgba(255,255,255,.88) !important; }
+        #quality-guide-section #steps-section { padding:.2rem 0 .2rem clamp(1.25rem,2vw,1.8rem) !important; }
+        #quality-guide-section #guide-title { font-size:clamp(1.45rem,2vw,1.8rem) !important; margin:.35rem 0 1rem !important; }
+        #quality-guide-section #steps-section > .space-y-6 { gap:1.15rem 1.35rem !important; }
+        #quality-guide-section #steps-section .flex.items-start { gap:.7rem !important; }
+        #quality-guide-section #steps-section .w-9.h-9 { width:2rem !important; height:2rem !important; flex-basis:2rem !important; font-size:.82rem !important; box-shadow:0 3px 10px rgba(0,0,0,.08); }
+        #quality-guide-section #steps-section strong { font-size:.88rem !important; line-height:1.4 !important; }
+        #quality-guide-section #steps-section p { font-size:.76rem !important; line-height:1.55 !important; color:rgba(255,255,255,.84) !important; }
+        #form-section { border:1px solid #eee8e3 !important; box-shadow:0 14px 35px -28px rgba(45,35,30,.35) !important; }
+        #form-section input, #form-section select, #form-section textarea { border-radius:.85rem !important; }
+        .availability-calendar { border-color:#ece7e1 !important; box-shadow:0 12px 28px -24px rgba(45,73,76,.32) !important; }
+        @media (max-width:760px) {
+            #quality-guide-section { grid-template-columns:minmax(0,1fr) !important; gap:1.1rem !important; padding:1.2rem !important; }
+            #quality-guide-section #steps-section { padding:1.1rem 0 0 !important; border-left:0 !important; border-top:1px solid rgba(255,255,255,.28) !important; }
+            #quality-guide-section #essence-text { font-size:.88rem !important; }
+            #quality-guide-section #steps-section > .space-y-6 { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:1rem !important; }
+            #portfolio-grid { gap:.4rem !important; }
+            #portfolio-grid img { aspect-ratio:3 / 4 !important; }
+        }
+        @media (max-width:480px) {
+            #quality-guide-section #steps-section > .space-y-6 { grid-template-columns:minmax(0,1fr) !important; }
+            #quality-guide-section #steps-section p { font-size:.78rem !important; }
+        }
+</style>
 
                 <div id="adminCategoryConfiguracion" class="admin-category-panel active space-y-6">
 

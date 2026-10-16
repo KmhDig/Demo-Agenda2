@@ -21,6 +21,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html { scroll-behavior: smooth; scroll-padding-top: 1rem; }
+        .hero-actions { position: relative; z-index: 2; }
+        .hero-button {
+            display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+            min-height: 46px; padding: .8rem 1.25rem; border-radius: 999px;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; font-weight: 700;
+            letter-spacing: .01em; text-decoration: none; transition: transform .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+            box-shadow: 0 8px 22px rgba(25, 18, 16, .14);
+        }
+        .hero-button:hover { transform: translateY(-2px); }
+        .hero-button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+        .hero-button-primary { background: var(--brand-main, #5f3134); color: #fff; border: 1px solid var(--brand-main, #5f3134); }
+        .hero-button-primary:hover { background: #754247; border-color: #754247; }
+        .hero-button-secondary { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.8); backdrop-filter: blur(8px); }
+        .hero-button-secondary:hover { background: rgba(255,255,255,.23); }
+        @media (max-width: 480px) {
+            .hero-actions { gap: .6rem; margin-top: 1.4rem; }
+            .hero-button { min-height: 43px; padding: .7rem .95rem; font-size: .76rem; }
+        }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .hero-button { transition: none; } }
+    </style>
     
     <!-- CONFIGURACIÓN DE LA CLIENTA / PLANTILLA MAESTRA -->
     <script>
@@ -465,6 +487,17 @@ background-repeat:no-repeat;">
         class="text-lg md:text-xl max-w-2xl mx-auto leading-relaxed text-white/95">
             Diseñamos pasteles y postres exclusivos para convertir tus momentos especiales en dulces recuerdos.
         </p>
+
+        <div class="hero-actions flex flex-wrap items-center justify-center gap-3 mt-8">
+            <a href="#form-section" class="hero-button hero-button-primary">
+                <i class="fa-regular fa-calendar-check" aria-hidden="true"></i>
+                <span>Aparta mi fecha</span>
+            </a>
+            <a href="#portfolio-section" class="hero-button hero-button-secondary">
+                <i class="fa-regular fa-images" aria-hidden="true"></i>
+                <span>Ver mi trabajo</span>
+            </a>
+        </div>
 
     </div>
 

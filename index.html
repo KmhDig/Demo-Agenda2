@@ -77,6 +77,52 @@
             #hero-title { font-size: 2.25rem !important; }
         }
         @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .hero-button { transition: none; } }
+
+        /* Encabezado con mayor presencia: logo, nombre de marca y acceso admin */
+        header.sticky { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+        #business-logo { width: 100% !important; height: 100% !important; }
+        header.sticky > div:first-child > div:first-child {
+            width: 3.75rem !important; height: 3.75rem !important;
+            border-width: 1.5px !important;
+        }
+        #brand-title {
+            font-size: clamp(1.35rem, 1.55vw, 1.65rem) !important;
+            line-height: 1.05 !important; letter-spacing: .01em !important;
+        }
+        #brand-subtitle {
+            font-size: clamp(.7rem, .8vw, .8rem) !important;
+            line-height: 1.35 !important; letter-spacing: .09em !important;
+            margin-top: .22rem !important;
+        }
+        header.sticky button[onclick="openAdminModal()"] {
+            min-height: 2.75rem !important; padding: .7rem 1.25rem !important;
+            border-radius: 999px !important; gap: .55rem !important;
+        }
+        header.sticky button[onclick="openAdminModal()"] i { font-size: .9rem !important; }
+        header.sticky button[onclick="openAdminModal()"] span {
+            font-size: .78rem !important; letter-spacing: .045em !important;
+        }
+        @media (max-width: 600px) {
+            header.sticky { padding: .75rem 1rem !important; }
+            header.sticky > div:first-child { gap: .65rem !important; }
+            header.sticky > div:first-child > div:first-child {
+                width: 3.1rem !important; height: 3.1rem !important;
+            }
+            #brand-title { font-size: 1.15rem !important; }
+            #brand-subtitle { font-size: .62rem !important; letter-spacing: .065em !important; }
+            header.sticky button[onclick="openAdminModal()"] {
+                min-width: 2.7rem !important; min-height: 2.7rem !important;
+                padding: .65rem !important;
+            }
+        }
+        @media (max-width: 360px) {
+            header.sticky { padding-left: .7rem !important; padding-right: .7rem !important; }
+            header.sticky > div:first-child > div:first-child {
+                width: 2.7rem !important; height: 2.7rem !important;
+            }
+            #brand-title { font-size: 1.05rem !important; }
+            #brand-subtitle { font-size: .56rem !important; }
+        }
     </style>
     
     <!-- CONFIGURACIÓN DE LA CLIENTA / PLANTILLA MAESTRA -->

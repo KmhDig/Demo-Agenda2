@@ -63,6 +63,14 @@ main { max-width: 1380px !important; }
 }
 </style>
 
+
+<style id="hero-gallery-spacing-adjustment">
+  /* Un poco más de aire entre la portada y la galería */
+  #portfolio-section { margin-top: clamp(1.5rem, 2.2vw, 2.25rem) !important; }
+  @media (max-width: 600px) {
+    #portfolio-section { margin-top: 1.25rem !important; }
+  }
+</style>
 </head>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>

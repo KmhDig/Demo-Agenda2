@@ -14,6 +14,55 @@
     <meta id="og-url" property="og:url" content="https://dulcereino-demo.vercel.app/">
 
     
+
+<style id="dulce-reino-form-readable">
+/* Formulario con más presencia y mejor legibilidad */
+main { max-width: 1380px !important; }
+#form-section {
+  padding: clamp(1.25rem, 2.4vw, 2.75rem) !important;
+  border-radius: 1.65rem !important;
+  margin-top: clamp(1rem, 2vw, 1.75rem) !important;
+}
+#form-section > div:first-child { margin-bottom: .35rem; }
+#form-section > div:first-child span { font-size: .76rem !important; }
+#form-section > div:first-child h3 { font-size: clamp(1.8rem, 2.5vw, 2.45rem) !important; line-height: 1.2 !important; }
+#form-section > div:first-child p { font-size: .9rem !important; line-height: 1.55 !important; }
+#form-section h4 { font-size: .82rem !important; line-height: 1.45 !important; }
+#form-section p { line-height: 1.55; }
+#form-section label, #form-section .text-\[10px\], #form-section .text-\[11px\], #form-section .text-xs { font-size: .78rem !important; }
+#form-section input:not([type="checkbox"]):not([type="radio"]),
+#form-section select,
+#form-section textarea {
+  min-height: 2.9rem;
+  padding: .78rem .95rem !important;
+  font-size: .9rem !important;
+  line-height: 1.4 !important;
+}
+#form-section textarea { min-height: 6.5rem; }
+#form-section button { font-size: .86rem; }
+#form-section .availability-calendar { padding: clamp(1rem, 1.7vw, 1.5rem) !important; }
+#form-section .availability-day { min-height: clamp(2.65rem, 3.3vw, 3.25rem); }
+#form-section .availability-day .day-number { font-size: .9rem !important; }
+#form-section .availability-week span { font-size: .72rem !important; }
+#orderForm { gap: 1.35rem !important; }
+@media (max-width: 760px) {
+  main { padding-left: .75rem !important; padding-right: .75rem !important; }
+  #form-section { padding: 1.1rem !important; border-radius: 1.15rem !important; }
+  #form-section > div:first-child h3 { font-size: 1.7rem !important; }
+  #form-section > div:first-child p { font-size: .82rem !important; }
+  #form-section input:not([type="checkbox"]):not([type="radio"]),
+  #form-section select,
+  #form-section textarea { min-height: 2.8rem; font-size: .88rem !important; }
+  #form-section .availability-calendar { padding: .8rem !important; }
+  #form-section .availability-day { min-height: 2.45rem; }
+}
+@media (max-width: 420px) {
+  #form-section { padding: .85rem !important; }
+  #form-section > div:first-child h3 { font-size: 1.55rem !important; }
+  #form-section label, #form-section .text-xs { font-size: .74rem !important; }
+}
+</style>
+
 </head>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>

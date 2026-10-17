@@ -633,7 +633,7 @@ background-repeat:no-repeat;">
             </a>
             <a href="#portfolio-section" class="hero-button hero-button-secondary">
                 <i class="fa-regular fa-images" aria-hidden="true"></i>
-                <span>Nuestras Creaciones</span>
+                <span>Ver mi trabajo</span>
             </a>
         </div>
 
@@ -2415,6 +2415,10 @@ async function cargarPedidosDesdeGoogleSheets() {
                 'No se pudieron cargar los pedidos:',
                 resultado
             );
+            const container = document.getElementById('ordersContainer');
+            if (container && state.orders.length === 0) {
+                container.innerHTML = '<div class="p-6 bg-amber-50 rounded-2xl text-center text-amber-800 text-xs space-y-3"><p>No se pudieron cargar los pedidos desde la agenda. Tus pedidos no se han borrado por este mensaje.</p><button type="button" onclick="cargarPedidosDesdeGoogleSheets()" class="px-4 py-2 rounded-xl bg-brand-500 text-white font-bold">Reintentar carga</button></div>';
+            }
             return;
         }
 
@@ -2447,6 +2451,10 @@ async function cargarPedidosDesdeGoogleSheets() {
             'Error cargando pedidos desde Google Sheets:',
             error
         );
+        const container = document.getElementById('ordersContainer');
+        if (container && state.orders.length === 0) {
+            container.innerHTML = '<div class="p-6 bg-amber-50 rounded-2xl text-center text-amber-800 text-xs space-y-3"><p>No se pudo conectar con la agenda de pedidos. Intenta cargarla nuevamente.</p><button type="button" onclick="cargarPedidosDesdeGoogleSheets()" class="px-4 py-2 rounded-xl bg-brand-500 text-white font-bold">Reintentar carga</button></div>';
+        }
     }
 }
        // SISTEMA DE TOASTS Y NOTIFICACIONES
@@ -4133,6 +4141,15 @@ function addCatalogOption(key, inputId) {
                 if (tab) tab.classList.toggle('active', name === category);
             });
 
+            if (category === 'pedidos') {
+                const container = document.getElementById('ordersContainer');
+                if (container && state.orders.length === 0) {
+                    container.innerHTML = '<div class="p-6 bg-stone-50 rounded-2xl text-center text-stone-500 text-xs">Actualizando pedidos…</div>';
+                }
+                // Reintenta la consulta al abrir la pestaña para recuperar pedidos
+                // si la carga inicial de Google Sheets falló o tardó en responder.
+                cargarPedidosDesdeGoogleSheets();
+            }
             if (category === 'proximos') renderUpcomingOrders();
             if (category === 'otrospedidos') renderOtherProductsAdmin();
         }

@@ -3287,61 +3287,58 @@ function savePaymentInfoDraft() {
            guardarConfiguracionEnGoogleSheets();
            showToast('Redes sociales y WhatsApp guardados', 'success');
         }
-  function guardarConfiguracionEnGoogleSheets() {
-
+  // Guarda la configuración y devuelve una promesa real para que los cambios
+  // de sucursales no se consideren terminados antes de que Google Sheets responda.
+  let colaGuardadoConfiguracion = Promise.resolve();
+  async function guardarConfiguracionEnGoogleSheets() {
     const configuracion = {
         businessPhone: state.businessPhone,
         socials: state.socials,
-        branches: state.branches,
+        branches: (Array.isArray(state.branches) ? state.branches : []).map(b => ({...b})),
         catalogs: state.catalogs,
         privateMessageTemplate: state.privateMessageTemplate,
-
         blockedDates: state.blockedDates,
         blockedDatesOther: state.otherBlockedDates || [],
         otherBlockedDates: state.otherBlockedDates || [],
         limitedDates: state.limitedDates,
         orderHours: state.orderHours,
-
         paymentBank: state.paymentBank || '',
         paymentHolder: state.paymentHolder || '',
         paymentAccount: state.paymentAccount || '',
         paymentAdditional: state.paymentAdditional || '',
         paymentTemplate: state.paymentTemplate || '',
-
         pin: state.pin,
         emailPrimary: state.emailPrimary,
         emailSecondary: state.emailSecondary
     };
-
-    const data = {
-        accion: 'guardarConfiguracion',
-        configuracion: configuracion
-    };
-
-    fetch(GOOGLE_SHEETS_URL, {
+    const data = { accion: 'guardarConfiguracion', configuracion };
+    const hacerPeticion = async () => {
+      const response = await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'payload=' + encodeURIComponent(JSON.stringify(data))
-    })
-    .then(response => response.json())
-    .then(resultado => {
-        console.log('Configuración Google Sheets:', resultado);
+      });
+      const resultado = await response.json();
+      console.log('Configuración Google Sheets:', resultado);
+      if (!response.ok || !resultado || !resultado.ok) {
+        throw new Error((resultado && (resultado.error || resultado.mensaje)) || 'Google Sheets rechazó la configuración');
+      }
+      return resultado;
+    };
+    // Serializa los guardados para evitar que una petición antigua termine después
+    // y sobrescriba en la base una lista más reciente.
+    const tarea = colaGuardadoConfiguracion.catch(() => {}).then(hacerPeticion);
+    colaGuardadoConfiguracion = tarea;
+    try {
+      const resultado = await tarea;
+      return resultado;
+    } catch (error) {
+      console.error('Error guardando configuración en Google Sheets:', error);
+      showToast('No se pudo guardar la configuración en Google Sheets', 'error');
+      throw error;
+    }
+  }
 
-        if (!resultado.ok) {
-            console.error('Google Sheets rechazó la configuración:', resultado);
-            showToast('No se pudo guardar la configuración', 'error');
-            return;
-        }
-
-        showToast('Configuración guardada', 'success');
-    })
-    .catch(error => {
-        console.error('Error guardando configuración en Google Sheets:', error);
-        showToast('Error al guardar la configuración', 'error');
-    });
-}
             
         function renderSocialLinks() {
     const instaEl = document.getElementById('footerInsta');
@@ -3394,48 +3391,58 @@ function savePaymentInfoDraft() {
     const name = document.getElementById('newBranchName').value.trim();
     const address = document.getElementById('newBranchAddress').value.trim();
     const map = document.getElementById('newBranchMap').value.trim();
-
     if (!name || !address) {
         showToast('Ingresa el nombre y la dirección de la sucursal', 'error');
         return;
     }
-
+    if (window.__guardandoSucursales) return;
     window.__guardandoSucursales = true;
-    state.branches.push({
-        id: Date.now(),
-        name,
-        address,
-        map
-    });
-
+    const sucursal = { id: Date.now(), name, address, map };
+    state.branches = Array.isArray(state.branches) ? state.branches : [];
+    state.branches.push(sucursal);
     saveAppState();
     renderBranches();
     initFormCatalogs();
     try {
         await guardarConfiguracionEnGoogleSheets();
+        // Confirmar desde la base una vez que el guardado terminó.
+        await sincronizarSucursalesDesdeGoogleSheets(true);
+        document.getElementById('newBranchName').value = '';
+        document.getElementById('newBranchAddress').value = '';
+        document.getElementById('newBranchMap').value = '';
+        showToast('Sucursal agregada y guardada', 'success');
+    } catch (error) {
+        // No dejar una sucursal que no se guardó realmente.
+        state.branches = state.branches.filter(b => String(b.id) !== String(sucursal.id));
+        saveAppState();
+        renderBranches();
+        initFormCatalogs();
+        showToast('No se pudo guardar la sucursal. Intenta de nuevo.', 'error');
     } finally {
         window.__guardandoSucursales = false;
     }
-    // Verifica la lista persistida después de que Google Sheets confirme el guardado.
-    await sincronizarSucursalesDesdeGoogleSheets();
-
-    document.getElementById('newBranchName').value = '';
-    document.getElementById('newBranchAddress').value = '';
-    document.getElementById('newBranchMap').value = '';
-
-    showToast('Sucursal agregada con éxito', 'success');
 }
-        function removeBranch(id) {
-    // Los IDs pueden llegar como número o texto desde el almacenamiento.
-    state.branches = (Array.isArray(state.branches) ? state.branches : [])
-        .filter(b => String(b.id) !== String(id));
-
+        async function removeBranch(id) {
+    if (window.__guardandoSucursales) return;
+    const anteriores = Array.isArray(state.branches) ? [...state.branches] : [];
+    state.branches = anteriores.filter(b => String(b.id) !== String(id));
     saveAppState();
-    guardarConfiguracionEnGoogleSheets();
-    initFormCatalogs();
     renderBranches();
-
-    showToast('Sucursal eliminada', 'info');
+    initFormCatalogs();
+    window.__guardandoSucursales = true;
+    try {
+        await guardarConfiguracionEnGoogleSheets();
+        await sincronizarSucursalesDesdeGoogleSheets(true);
+        showToast('Sucursal eliminada de Administración y guardada en la base', 'success');
+    } catch (error) {
+        state.branches = anteriores;
+        saveAppState();
+        renderBranches();
+        initFormCatalogs();
+        showToast('No se pudo eliminar de la base. Se restauró la sucursal.', 'error');
+    } finally {
+        window.__guardandoSucursales = false;
+    }
 }
         function renderBranches() {
             const container = document.getElementById('branchesList');
@@ -4177,14 +4184,16 @@ function addCatalogOption(key, inputId) {
 
         // Sincroniza únicamente las sucursales periódicamente mientras Opciones está abierta.
         // Así, si se elimina una sucursal en Google Sheets, la lista del panel se actualiza sin recargar toda la página.
-        async function sincronizarSucursalesDesdeGoogleSheets() {
-            if (window.__guardandoSucursales || window.__sincronizandoSucursales) return;
+        async function sincronizarSucursalesDesdeGoogleSheets(forzar = false) {
+            if ((!forzar && window.__guardandoSucursales) || window.__sincronizandoSucursales) return;
             window.__sincronizandoSucursales = true;
             try {
                 const response = await fetch(GOOGLE_SHEETS_URL + '?accion=obtenerConfiguracion', { cache: 'no-store' });
                 const resultado = await response.json();
                 if (!resultado || !resultado.ok || !resultado.configuracion) return;
 
+                // Una lectura iniciada antes de guardar no debe pisar el cambio local.
+                if (window.__guardandoSucursales && !forzar) return;
                 const raw = resultado.configuracion.branches;
                 let sucursales = null;
                 if (Array.isArray(raw)) {

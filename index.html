@@ -2281,7 +2281,12 @@ function closeImage() {
                 console.error("Error guardando estado", e);
             }
         }
+        // Evita que una lectura antigua de Google Sheets reemplace cambios recientes.
+        let configuracionLocalVersion = 0;
+        let colaGuardadoConfiguracion = Promise.resolve();
+
         async function cargarConfiguracionDesdeGoogleSheets() {
+    const versionAlIniciarLectura = configuracionLocalVersion;
     try {
         const response = await fetch(GOOGLE_SHEETS_URL + '?accion=obtenerConfiguracion');
 
@@ -2293,6 +2298,14 @@ function closeImage() {
         }
 
        const config = resultado.configuracion;
+
+// Si hubo cualquier guardado mientras esta lectura estaba en curso, no aplicar
+// esta respuesta: podría contener fechas anteriores y borrar cambios recientes.
+if (versionAlIniciarLectura !== configuracionLocalVersion) {
+    console.warn('Se omitió una configuración antigua para proteger cambios recientes.');
+    return;
+}
+
 console.log('CONFIGURACIÓN RECIBIDA:', config);
 
 // PIN de acceso fijo solicitado para esta versión
@@ -3286,18 +3299,22 @@ function savePaymentInfoDraft() {
            showToast('Redes sociales y WhatsApp guardados', 'success');
         }
   function guardarConfiguracionEnGoogleSheets() {
+    // Marcar el cambio local para que las lecturas que ya estaban en curso
+    // no puedan restaurar una configuración anterior.
+    configuracionLocalVersion++;
 
-    const configuracion = {
+    // Tomar una copia estable del estado en el momento de solicitar el guardado.
+    const configuracion = JSON.parse(JSON.stringify({
         businessPhone: state.businessPhone,
         socials: state.socials,
         branches: state.branches,
         catalogs: state.catalogs,
         privateMessageTemplate: state.privateMessageTemplate,
 
-        blockedDates: state.blockedDates,
-        blockedDatesOther: state.otherBlockedDates || [],
-        otherBlockedDates: state.otherBlockedDates || [],
-        limitedDates: state.limitedDates,
+        blockedDates: Array.isArray(state.blockedDates) ? state.blockedDates : [],
+        blockedDatesOther: Array.isArray(state.otherBlockedDates) ? state.otherBlockedDates : [],
+        otherBlockedDates: Array.isArray(state.otherBlockedDates) ? state.otherBlockedDates : [],
+        limitedDates: Array.isArray(state.limitedDates) ? state.limitedDates : [],
         orderHours: state.orderHours,
 
         paymentBank: state.paymentBank || '',
@@ -3309,36 +3326,49 @@ function savePaymentInfoDraft() {
         pin: state.pin,
         emailPrimary: state.emailPrimary,
         emailSecondary: state.emailSecondary
-    };
+    }));
 
     const data = {
         accion: 'guardarConfiguracion',
         configuracion: configuracion
     };
 
-    fetch(GOOGLE_SHEETS_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'payload=' + encodeURIComponent(JSON.stringify(data))
-    })
-    .then(response => response.json())
-    .then(resultado => {
+    // Los guardados se ejecutan en serie. Así una solicitud vieja no puede
+    // finalizar después de una nueva y sobrescribir las fechas más recientes.
+    const ejecutarGuardado = async () => {
+        const response = await fetch(GOOGLE_SHEETS_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'payload=' + encodeURIComponent(JSON.stringify(data))
+        });
+
+        const resultado = await response.json();
         console.log('Configuración Google Sheets:', resultado);
 
-        if (!resultado.ok) {
+        if (!resultado || !resultado.ok) {
             console.error('Google Sheets rechazó la configuración:', resultado);
             showToast('No se pudo guardar la configuración', 'error');
-            return;
+            return false;
         }
 
         showToast('Configuración guardada', 'success');
-    })
-    .catch(error => {
-        console.error('Error guardando configuración en Google Sheets:', error);
-        showToast('Error al guardar la configuración', 'error');
-    });
+        return true;
+    };
+
+    colaGuardadoConfiguracion = colaGuardadoConfiguracion
+        .catch(error => {
+            console.error('Error previo en la cola de guardado:', error);
+        })
+        .then(ejecutarGuardado)
+        .catch(error => {
+            console.error('Error guardando configuración en Google Sheets:', error);
+            showToast('Error al guardar la configuración', 'error');
+            return false;
+        });
+
+    return colaGuardadoConfiguracion;
 }
             
         function renderSocialLinks() {

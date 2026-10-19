@@ -3287,14 +3287,13 @@ function savePaymentInfoDraft() {
            guardarConfiguracionEnGoogleSheets();
            showToast('Redes sociales y WhatsApp guardados', 'success');
         }
-  // Guarda la configuración y devuelve una promesa real para que los cambios
-  // de sucursales no se consideren terminados antes de que Google Sheets responda.
-  let colaGuardadoConfiguracion = Promise.resolve();
+  // Conserva el mismo formato de envío que utilizaba la versión original,
+  // devolviendo la respuesta para que agregar/eliminar puedan comprobar el resultado.
   async function guardarConfiguracionEnGoogleSheets() {
     const configuracion = {
         businessPhone: state.businessPhone,
         socials: state.socials,
-        branches: (Array.isArray(state.branches) ? state.branches : []).map(b => ({...b})),
+        branches: state.branches,
         catalogs: state.catalogs,
         privateMessageTemplate: state.privateMessageTemplate,
         blockedDates: state.blockedDates,
@@ -3311,34 +3310,23 @@ function savePaymentInfoDraft() {
         emailPrimary: state.emailPrimary,
         emailSecondary: state.emailSecondary
     };
-    const data = { accion: 'guardarConfiguracion', configuracion };
-    const hacerPeticion = async () => {
+    const data = { accion: 'guardarConfiguracion', configuracion: configuracion };
+    try {
       const response = await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'payload=' + encodeURIComponent(JSON.stringify(data))
       });
       const resultado = await response.json();
       console.log('Configuración Google Sheets:', resultado);
-      // Compatibilidad con la respuesta original de Apps Script: el campo
-      // ok puede ser cualquier valor verdadero (por ejemplo, 1 o "true"),
-      // no necesariamente el booleano true estricto.
       if (!resultado || !resultado.ok) {
-        throw new Error((resultado && (resultado.error || resultado.mensaje)) || 'Google Sheets no confirmó el guardado');
+        console.error('Google Sheets rechazó la configuración:', resultado);
+        return { ok: false, error: (resultado && (resultado.error || resultado.mensaje)) || 'Google Sheets no confirmó el guardado' };
       }
-      return resultado;
-    };
-    // Serializa los guardados para evitar que una petición antigua termine después
-    // y sobrescriba en la base una lista más reciente.
-    const tarea = colaGuardadoConfiguracion.catch(() => {}).then(hacerPeticion);
-    colaGuardadoConfiguracion = tarea;
-    try {
-      const resultado = await tarea;
       return resultado;
     } catch (error) {
       console.error('Error guardando configuración en Google Sheets:', error);
-      showToast('No se pudo guardar la configuración en Google Sheets', 'error');
-      throw error;
+      return { ok: false, error: error.message || 'Error de conexión' };
     }
   }
 
@@ -3412,6 +3400,7 @@ function savePaymentInfoDraft() {
                 // Esperar únicamente la confirmación del guardado POST.
                 // No consultar de inmediato: Google Sheets puede tardar en reflejar la escritura.
                 const resultado = await guardarConfiguracionEnGoogleSheets();
+                if (!resultado || !resultado.ok) throw new Error((resultado && resultado.error) || 'No se confirmó el guardado');
                 document.getElementById('newBranchName').value = '';
                 document.getElementById('newBranchAddress').value = '';
                 document.getElementById('newBranchMap').value = '';
@@ -3440,7 +3429,8 @@ function savePaymentInfoDraft() {
             renderBranches();
             initFormCatalogs();
             try {
-                await guardarConfiguracionEnGoogleSheets();
+                const resultado = await guardarConfiguracionEnGoogleSheets();
+                if (!resultado || !resultado.ok) throw new Error((resultado && resultado.error) || 'No se confirmó la eliminación');
                 showToast('Sucursal eliminada de Administración y guardada en la base', 'success');
                 setTimeout(() => {
                     if (!window.__guardandoSucursales) sincronizarSucursalesDesdeGoogleSheets(true);

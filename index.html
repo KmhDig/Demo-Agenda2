@@ -2038,6 +2038,9 @@ orderHours: {
         };
 
         let state = loadAppState();
+        // Expone la misma referencia de estado al calendario de respaldo.
+        // Sin esto, window.state queda indefinido y el respaldo dibuja todos los días como disponibles.
+        window.state = state;
         normalizeOtherProductsCatalog();
 let currentEditingFinanceOrderId = null;
 let kitchenFilter = 'all';

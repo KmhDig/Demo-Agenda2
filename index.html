@@ -4856,7 +4856,7 @@ function requestPaymentReceiptWA(orderId) {
     window.open(waUrl, '_blank');
 }
 
- // ============================================
+  // ============================================
 // AGREGAR PEDIDO A GOOGLE CALENDAR
 // ============================================
 function addToGoogleCalendar(orderId) {
@@ -4993,7 +4993,6 @@ function addToGoogleCalendar(orderId) {
         'success'
     );
 }
-
  function openIphoneCalendarDirect(orderId) {
 
     const order = state.orders.find(o => o.id == orderId);
@@ -5162,97 +5161,7 @@ function addToGoogleCalendar(orderId) {
         'success'
     );
 }
-        // ESTATUS Y VISTA DE COCINA
-        function changeOrderStatus(id, newStatus) {
-    const order = state.orders.find(o => String(o.id) === String(id));
-
-    if (order) {
-        order.status = newStatus;
-        saveAppState();
-
-        actualizarProduccionEnGoogleSheets(order);
-
-        renderOrders();
-        renderKitchenOrders();
-        showToast(`Estatus de cocina actualizado a ${newStatus}`, 'success');
-    }
-}
-        function cambiarEstadoLocal(id, nuevoEstado) {
-
-    const order = state.orders.find(
-        o => String(o.id) === String(id)
-    );
-
-    if (!order) return;
-
-    // Solo cambia el estado en pantalla.
-    // Todavía NO se guarda en Google Sheets.
-    order.status = nuevoEstado;
-
-    renderKitchenOrders();
-}
-        function guardarEstadoProduccion(id) {
-
-    const order = state.orders.find(
-        o => String(o.id) === String(id)
-    );
-
-    if (!order) {
-        showToast('No se encontró el pedido', 'error');
-        return;
-    }
-
-    // Mostrar inmediatamente que estamos guardando
-    showToast('Guardando estatus...', 'success');
-
-    const data = {
-        accion: 'actualizarProduccion',
-        pedido: order
-    };
-
-    fetch(GOOGLE_SHEETS_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'payload=' + encodeURIComponent(JSON.stringify(data))
-    })
-    .then(response => response.json())
-    .then(resultado => {
-
-        console.log('Producción guardada:', resultado);
-
-        if (resultado.ok) {
-
-            saveAppState();
-
-            showToast(
-                `Estatus "${order.status}" guardado correctamente`,
-                'success'
-            );
-
-        } else {
-
-            showToast(
-                'No se pudo guardar el estatus',
-                'error'
-            );
-        }
-
-    })
-    .catch(error => {
-
-        console.error(
-            'Error guardando producción:',
-            error
-        );
-
-        showToast(
-            'Error al guardar el estatus',
-            'error'
-        );
-    });
-}
+        
         function actualizarFinanzasEnGoogleSheets(order) {
     const data = {
         accion: 'actualizarFinanzas',

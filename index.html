@@ -4995,172 +4995,56 @@ function addToGoogleCalendar(orderId) {
 }
  function openIphoneCalendarDirect(orderId) {
 
-    const order = state.orders.find(o => o.id == orderId);
+    
+    // ============================================
+    // FECHA: ACEPTAR LOS FORMATOS DEL SISTEMA
+    // ============================================
 
-    if (!order) {
-        showToast('No se encontró el pedido', 'error');
+    const fecha = String(order.eventDate || '').trim();
+
+    let day, month, year;
+
+    // Formato ISO: YYYY-MM-DD
+    if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fecha)) {
+        const partes = fecha.split('-');
+        year = partes[0];
+        month = partes[1];
+        day = partes[2];
+    }
+    // Formato mexicano: DD/MM/YYYY
+    else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fecha)) {
+        const partes = fecha.split('/');
+        day = partes[0];
+        month = partes[1];
+        year = partes[2];
+    }
+    else {
+        console.error('Fecha del pedido no reconocida:', fecha);
+        showToast('Formato de fecha no válido: ' + fecha, 'error');
         return;
     }
 
-    // ============================================
-    // FECHA
-    // ============================================
+    // Normalizar a dos dígitos y cuatro para el año
+    day = String(day).padStart(2, '0');
+    month = String(month).padStart(2, '0');
+    year = String(year);
 
-    const fecha = String(order.eventDate || '');
-    const partesFecha = fecha.split('/');
-
-    if (partesFecha.length !== 3) {
-        showToast('Formato de fecha no válido', 'error');
-        return;
-    }
-
-    const day = partesFecha[0];
-    const month = partesFecha[1];
-    const year = partesFecha[2];
-
-    // ============================================
-    // HORARIO
-    // ============================================
-
-    const horario =
-        order.deliveryMethod === 'Recoger en tienda'
-            ? order.pickupTime
-            : order.deliveryTime;
-
-    const partesHorario = String(horario || '').split('-');
-
-    if (partesHorario.length !== 2) {
-        showToast('Horario no válido', 'error');
-        return;
-    }
-
-    function convertirHora(hora) {
-
-        const match = String(hora).trim().match(
-            /(\d{1,2}):(\d{2})\s*(AM|PM)/i
-        );
-
-        if (!match) return null;
-
-        let h = parseInt(match[1], 10);
-        const m = match[2];
-        const ampm = match[3].toUpperCase();
-
-        if (ampm === 'AM' && h === 12) h = 0;
-        if (ampm === 'PM' && h !== 12) h += 12;
-
-        return (
-            String(h).padStart(2, '0') +
-            m +
-            '00'
-        );
-    }
-
-    const inicio = convertirHora(partesHorario[0]);
-    const fin = convertirHora(partesHorario[1]);
-
-    if (!inicio || !fin) {
-        showToast('No se pudo interpretar el horario', 'error');
-        return;
-    }
-
-    // ============================================
-    // DATOS DEL EVENTO
-    // ============================================
-
-    const title =
-        `Entrega Pastel - ${order.clientName} (${order.eventType})`;
-
-    const location =
-        order.deliveryMethod === 'Recoger en tienda'
-            ? order.branchName || ''
-            : order.address || '';
-
-    const details =
-        `Cliente: ${order.clientName}` +
-        `\nTeléfono: ${order.clientPhone || ''}` +
-        `\nProducto: ${order.portions || ''}` +
-        `\nSabor de pan: ${order.flavor || ''}` +
-        `\nRelleno: ${order.filling || ''}` +
-        `\nBetún: ${order.frosting || ''}` +
-        `\nMétodo de entrega: ${order.deliveryMethod || ''}` +
-        `\nLogística: ${order.deliveryDetails || ''}` +
-        `\nDetalles: ${order.eventDetails || 'Sin especificaciones extra'}`;
-
-    // ============================================
-    // ESCAPAR ICS
-    // ============================================
-
-    const escapeICS = value =>
-        String(value || '')
-            .replace(/\\/g, '\\\\')
-            .replace(/\r?\n/g, '\\n')
-            .replace(/;/g, '\\;')
-            .replace(/,/g, '\\,');
-
-    // ============================================
-    // DTSTAMP
-    // ============================================
-
-    const now = new Date();
-
-    const pad = n => String(n).padStart(2, '0');
-
-    const dtstamp =
-        now.getUTCFullYear() +
-        pad(now.getUTCMonth() + 1) +
-        pad(now.getUTCDate()) +
-        'T' +
-        pad(now.getUTCHours()) +
-        pad(now.getUTCMinutes()) +
-        pad(now.getUTCSeconds()) +
-        'Z';
-
-    // ============================================
-    // ICS
-    // ============================================
-
-    const ics = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//Sistema de Pedidos//ES',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH',
-        'BEGIN:VEVENT',
-        `UID:${Date.now()}-${order.id}@agendapedidos`,
-        `DTSTAMP:${dtstamp}`,
-
-        // IMPORTANTE:
-        // Fecha y hora locales, igual que el sistema que ya funciona.
-        `DTSTART:${year}${month}${day}T${inicio}`,
-        `DTEND:${year}${month}${day}T${fin}`,
-
-        `SUMMARY:${escapeICS(title)}`,
-        `LOCATION:${escapeICS(location)}`,
-        `DESCRIPTION:${escapeICS(details)}`,
-
-        'END:VEVENT',
-        'END:VCALENDAR'
-    ].join('\r\n');
-
-    // ============================================
-    // EXACTAMENTE EL MÉTODO QUE YA FUNCIONABA
-    // ============================================
-
-    const calendarData =
-        `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
-
-    window.open(
-        calendarData,
-        '_blank',
-        'noopener,noreferrer'
+    // Validar que la fecha exista realmente
+    const fechaValidacion = new Date(
+        Number(year),
+        Number(month) - 1,
+        Number(day)
     );
 
-    showToast(
-        'Abriendo el calendario para agregar el pedido.',
-        'success'
-    );
-}
+    if (
+        fechaValidacion.getFullYear() !== Number(year) ||
+        fechaValidacion.getMonth() !== Number(month) - 1 ||
+        fechaValidacion.getDate() !== Number(day)
+    ) {
+        console.error('Fecha inválida:', fecha);
+        showToast('La fecha del pedido no es válida', 'error');
+        return;
+    }
 
 
         

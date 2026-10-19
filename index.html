@@ -5002,14 +5002,27 @@ function openIphoneCalendarDirect(orderId) {
         return;
     }
 
-    // Aceptar YYYY-MM-DD o DD/MM/YYYY
+    
+    // Aceptar YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss.sssZ o DD/MM/YYYY
     const fecha = String(order.eventDate || '').trim();
     let year, month, day;
 
-    if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(fecha)) {
-        [year, month, day] = fecha.split('-');
-    } else if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fecha)) {
-        [day, month, year] = fecha.split('/');
+    const fechaISO = fecha.match(
+        /^(\d{4})-(\d{1,2})-(\d{1,2})(?:T.*)?$/
+    );
+
+    const fechaMX = fecha.match(
+        /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+    );
+
+    if (fechaISO) {
+        year = fechaISO[1];
+        month = fechaISO[2];
+        day = fechaISO[3];
+    } else if (fechaMX) {
+        day = fechaMX[1];
+        month = fechaMX[2];
+        year = fechaMX[3];
     } else {
         showToast('Formato de fecha no válido: ' + fecha, 'error');
         return;
@@ -5020,7 +5033,9 @@ function openIphoneCalendarDirect(orderId) {
     day = String(day).padStart(2, '0');
 
     const fechaValidacion = new Date(
-        Number(year), Number(month) - 1, Number(day)
+        Number(year),
+        Number(month) - 1,
+        Number(day)
     );
 
     if (

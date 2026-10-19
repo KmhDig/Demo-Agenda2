@@ -3402,7 +3402,9 @@ function savePaymentInfoDraft() {
     showToast('Sucursal agregada con éxito', 'success');
 }
         function removeBranch(id) {
-    state.branches = state.branches.filter(b => b.id !== id);
+    // Los IDs pueden llegar como número o texto desde el almacenamiento.
+    state.branches = (Array.isArray(state.branches) ? state.branches : [])
+        .filter(b => String(b.id) !== String(id));
 
     saveAppState();
     guardarConfiguracionEnGoogleSheets();
@@ -4168,9 +4170,19 @@ function addCatalogOption(key, inputId) {
                 cargarPedidosDesdeGoogleSheets();
             }
             if (category === 'opciones') {
-                // Repintar la lista al abrir la pestaña para mostrar las sucursales guardadas.
-                renderBranches();
-                renderCatalogAdminLists();
+                // Volver a consultar Google Sheets para evitar mostrar datos antiguos
+                // que hayan quedado en la memoria local del navegador.
+                cargarConfiguracionDesdeGoogleSheets()
+                    .then(() => {
+                        renderBranches();
+                        renderCatalogAdminLists();
+                        initFormCatalogs();
+                    })
+                    .catch(error => {
+                        console.error('No se pudo sincronizar Opciones con Google Sheets:', error);
+                        renderBranches();
+                        renderCatalogAdminLists();
+                    });
             }
             if (category === 'proximos') renderUpcomingOrders();
             if (category === 'otrospedidos') renderOtherProductsAdmin();

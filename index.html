@@ -2317,8 +2317,21 @@ if (config.socials) {
     };
 }
 
-if (config.branches) {
+// Google Sheets puede devolver branches como arreglo o como texto JSON.
+// Solo reemplazamos la lista local cuando recibimos una lista válida; así
+// no desaparecen sucursales por una respuesta vacía/mal formada.
+if (Array.isArray(config.branches)) {
     state.branches = config.branches;
+} else if (typeof config.branches === 'string' && config.branches.trim()) {
+    try {
+        const branchesParsed = JSON.parse(config.branches);
+        if (Array.isArray(branchesParsed)) state.branches = branchesParsed;
+        else console.warn('La configuración branches no contiene una lista; se conserva la lista actual.');
+    } catch (error) {
+        console.warn('No se pudo interpretar branches desde Google Sheets; se conserva la lista actual.', error);
+    }
+} else if (config.branches !== undefined && config.branches !== null) {
+    console.warn('Formato inesperado en branches desde Google Sheets; se conserva la lista actual.');
 }
 
         if (config.catalogs) {
@@ -2510,8 +2523,10 @@ function showToast(message, type = 'info') {
             populateSelect('otherShippingTime', state.catalogs.otherShippingTimes || ['11:00 AM - 2:00 PM (Turno Mañana)', '3:00 PM - 7:00 PM (Turno Tarde)']);
 
             const branchSelect = document.getElementById('pickupLocationSelect');
-            branchSelect.innerHTML = '';
+            if (branchSelect) branchSelect.innerHTML = '';
+            state.branches = Array.isArray(state.branches) ? state.branches : [];
             state.branches.forEach(b => {
+                if (!branchSelect) return;
                 const opt = document.createElement('option');
                 opt.value = b.name;
                 opt.textContent = `${b.name} (${b.address})`;

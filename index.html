@@ -3320,8 +3320,11 @@ function savePaymentInfoDraft() {
       });
       const resultado = await response.json();
       console.log('Configuración Google Sheets:', resultado);
-      if (!response.ok || !resultado || !resultado.ok) {
-        throw new Error((resultado && (resultado.error || resultado.mensaje)) || 'Google Sheets rechazó la configuración');
+      // Apps Script puede responder mediante redirección; no usar response.ok
+      // como único criterio. Mantener el contrato original: resultado.ok debe
+      // ser verdadero para confirmar que la operación fue aceptada.
+      if (!resultado || resultado.ok !== true) {
+        throw new Error((resultado && (resultado.error || resultado.mensaje)) || 'Google Sheets no confirmó el guardado');
       }
       return resultado;
     };

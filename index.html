@@ -2521,6 +2521,8 @@ function showToast(message, type = 'info') {
 
             renderCatalogAdminLists();
             renderOtherProductsAdmin();
+            // Mantener visible la lista de sucursales en Administración > Opciones.
+            renderBranches();
         }
 
         function populateSelect(id, optionsList) {
@@ -3414,15 +3416,30 @@ function savePaymentInfoDraft() {
             if (!container) return;
             container.innerHTML = '';
 
-            state.branches.forEach(b => {
+            state.branches = Array.isArray(state.branches) ? state.branches : [];
+            state.branches.forEach((b, index) => {
+                // Compatibilidad con sucursales antiguas que pudieran no tener ID.
+                if (b.id === undefined || b.id === null) b.id = `branch-${index}`;
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-stone-50 p-2.5 rounded-xl border border-stone-200 text-xs';
-                item.innerHTML = `
-                    <div>
-                        <strong>${b.name}</strong> - <span class="text-stone-500">${b.address}</span>
-                    </div>
-                    <button onclick="removeBranch(${b.id})" class="text-rose-600 hover:text-rose-800 font-bold px-2 py-1">✕</button>
-                `;
+                item.className = 'flex justify-between items-center gap-3 bg-stone-50 p-2.5 rounded-xl border border-stone-200 text-xs';
+                const details = document.createElement('div');
+                details.className = 'min-w-0 break-words';
+                const name = document.createElement('strong');
+                name.textContent = b.name || 'Sucursal sin nombre';
+                const address = document.createElement('span');
+                address.className = 'text-stone-500';
+                address.textContent = ` — ${b.address || 'Sin dirección'}`;
+                details.append(name, address);
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'shrink-0 text-rose-600 hover:text-rose-800 font-bold px-2 py-1 rounded-lg';
+                removeButton.textContent = '✕';
+                removeButton.title = `Eliminar ${b.name || 'sucursal'}`;
+                removeButton.setAttribute('aria-label', `Eliminar ${b.name || 'sucursal'}`);
+                removeButton.addEventListener('click', () => removeBranch(b.id));
+
+                item.append(details, removeButton);
                 container.appendChild(item);
             });
         }
@@ -4149,6 +4166,11 @@ function addCatalogOption(key, inputId) {
                 // Reintenta la consulta al abrir la pestaña para recuperar pedidos
                 // si la carga inicial de Google Sheets falló o tardó en responder.
                 cargarPedidosDesdeGoogleSheets();
+            }
+            if (category === 'opciones') {
+                // Repintar la lista al abrir la pestaña para mostrar las sucursales guardadas.
+                renderBranches();
+                renderCatalogAdminLists();
             }
             if (category === 'proximos') renderUpcomingOrders();
             if (category === 'otrospedidos') renderOtherProductsAdmin();

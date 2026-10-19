@@ -2050,7 +2050,7 @@ function enviarPedidoAGoogleSheets(order) {
         pedido: order
     };
 
-    fetch(GOOGLE_SHEETS_URL, {
+    return fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -2320,7 +2320,9 @@ if (config.socials) {
 // Google Sheets puede devolver branches como arreglo o como texto JSON.
 // Solo reemplazamos la lista local cuando recibimos una lista válida; así
 // no desaparecen sucursales por una respuesta vacía/mal formada.
-if (Array.isArray(config.branches)) {
+if (window.__guardandoSucursales) {
+    console.log('Se conserva la lista local mientras se guarda una sucursal.');
+} else if (Array.isArray(config.branches)) {
     state.branches = config.branches;
 } else if (typeof config.branches === 'string' && config.branches.trim()) {
     try {
@@ -3388,7 +3390,7 @@ function savePaymentInfoDraft() {
     showToast('Plantilla de dirección privada guardada', 'success');
 }
         // PUNTOS DE RECOLECCIÓN
-        function addBranch() {
+        async function addBranch() {
     const name = document.getElementById('newBranchName').value.trim();
     const address = document.getElementById('newBranchAddress').value.trim();
     const map = document.getElementById('newBranchMap').value.trim();
@@ -3398,6 +3400,7 @@ function savePaymentInfoDraft() {
         return;
     }
 
+    window.__guardandoSucursales = true;
     state.branches.push({
         id: Date.now(),
         name,
@@ -3406,9 +3409,15 @@ function savePaymentInfoDraft() {
     });
 
     saveAppState();
-    guardarConfiguracionEnGoogleSheets();
-    initFormCatalogs();
     renderBranches();
+    initFormCatalogs();
+    try {
+        await guardarConfiguracionEnGoogleSheets();
+    } finally {
+        window.__guardandoSucursales = false;
+    }
+    // Verifica la lista persistida después de que Google Sheets confirme el guardado.
+    await sincronizarSucursalesDesdeGoogleSheets();
 
     document.getElementById('newBranchName').value = '';
     document.getElementById('newBranchAddress').value = '';
@@ -4169,7 +4178,7 @@ function addCatalogOption(key, inputId) {
         // Sincroniza únicamente las sucursales periódicamente mientras Opciones está abierta.
         // Así, si se elimina una sucursal en Google Sheets, la lista del panel se actualiza sin recargar toda la página.
         async function sincronizarSucursalesDesdeGoogleSheets() {
-            if (window.__sincronizandoSucursales) return;
+            if (window.__guardandoSucursales || window.__sincronizandoSucursales) return;
             window.__sincronizandoSucursales = true;
             try {
                 const response = await fetch(GOOGLE_SHEETS_URL + '?accion=obtenerConfiguracion', { cache: 'no-store' });
@@ -4254,17 +4263,11 @@ function addCatalogOption(key, inputId) {
                         }
                     }, 5000);
                 }
-                // Los catálogos se siguen cargando desde la configuración completa al abrir Opciones.
-                cargarConfiguracionDesdeGoogleSheets()
-                    .then(() => {
-                        renderBranches();
-                        renderCatalogAdminLists();
-                    })
-                    .catch(error => {
-                        console.error('No se pudo sincronizar Opciones con Google Sheets:', error);
-                        renderBranches();
-                        renderCatalogAdminLists();
-                    });
+                // No volver a cargar toda la configuración aquí: una respuesta antigua
+                // podría sobrescribir una sucursal recién agregada. Las sucursales se
+                // sincronizan con sincronizarSucursalesDesdeGoogleSheets().
+                renderBranches();
+                renderCatalogAdminLists();
             }
             if (category === 'proximos') renderUpcomingOrders();
             if (category === 'otrospedidos') renderOtherProductsAdmin();

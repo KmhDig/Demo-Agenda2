@@ -4166,6 +4166,65 @@ function addCatalogOption(key, inputId) {
             persistOtherProductsCatalog('Opción eliminada');
         }
 
+        // Sincroniza únicamente las sucursales periódicamente mientras Opciones está abierta.
+        // Así, si se elimina una sucursal en Google Sheets, la lista del panel se actualiza sin recargar toda la página.
+        async function sincronizarSucursalesDesdeGoogleSheets() {
+            if (window.__sincronizandoSucursales) return;
+            window.__sincronizandoSucursales = true;
+            try {
+                const response = await fetch(GOOGLE_SHEETS_URL + '?accion=obtenerConfiguracion', { cache: 'no-store' });
+                const resultado = await response.json();
+                if (!resultado || !resultado.ok || !resultado.configuracion) return;
+
+                const raw = resultado.configuracion.branches;
+                let sucursales = null;
+                if (Array.isArray(raw)) {
+                    sucursales = raw;
+                } else if (typeof raw === 'string') {
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (Array.isArray(parsed)) sucursales = parsed;
+                    } catch (_) {
+                        // No reemplazar datos actuales si la respuesta no se puede interpretar.
+                    }
+                }
+                if (!Array.isArray(sucursales)) return;
+
+                const actuales = Array.isArray(state.branches) ? state.branches : [];
+                const firma = lista => JSON.stringify(lista.map(b => ({
+                    id: String(b.id ?? ''),
+                    name: String(b.name ?? ''),
+                    address: String(b.address ?? ''),
+                    map: String(b.map ?? '')
+                })));
+                if (firma(actuales) === firma(sucursales)) return;
+
+                state.branches = sucursales;
+                saveAppState();
+                renderBranches();
+
+                // Actualiza el selector de sucursales del formulario sin reiniciar los demás campos.
+                const select = document.getElementById('pickupLocationSelect');
+                if (select) {
+                    const seleccionAnterior = select.value;
+                    select.innerHTML = '';
+                    state.branches.forEach(b => {
+                        const option = document.createElement('option');
+                        option.value = b.name || '';
+                        option.textContent = `${b.name || 'Sucursal'} (${b.address || 'Sin dirección'})`;
+                        select.appendChild(option);
+                    });
+                    if (state.branches.some(b => b.name === seleccionAnterior)) select.value = seleccionAnterior;
+                    updatePickupDetails();
+                }
+                console.log('Lista de sucursales sincronizada con Google Sheets.');
+            } catch (error) {
+                console.error('Error al sincronizar sucursales:', error);
+            } finally {
+                window.__sincronizandoSucursales = false;
+            }
+        }
+
         function showAdminCategory(category) {
             const categories = ['configuracion', 'opciones', 'pedidos', 'proximos', 'otrospedidos'];
             categories.forEach(name => {
@@ -4185,13 +4244,21 @@ function addCatalogOption(key, inputId) {
                 cargarPedidosDesdeGoogleSheets();
             }
             if (category === 'opciones') {
-                // Volver a consultar Google Sheets para evitar mostrar datos antiguos
-                // que hayan quedado en la memoria local del navegador.
+                // Sincronización inmediata y luego periódica mientras el panel Opciones esté abierto.
+                sincronizarSucursalesDesdeGoogleSheets();
+                if (!window.__sucursalesSyncTimer) {
+                    window.__sucursalesSyncTimer = setInterval(() => {
+                        const panel = document.getElementById('adminCategoryOpciones');
+                        if (panel && panel.classList.contains('active')) {
+                            sincronizarSucursalesDesdeGoogleSheets();
+                        }
+                    }, 5000);
+                }
+                // Los catálogos se siguen cargando desde la configuración completa al abrir Opciones.
                 cargarConfiguracionDesdeGoogleSheets()
                     .then(() => {
                         renderBranches();
                         renderCatalogAdminLists();
-                        initFormCatalogs();
                     })
                     .catch(error => {
                         console.error('No se pudo sincronizar Opciones con Google Sheets:', error);

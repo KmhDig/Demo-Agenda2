@@ -1792,7 +1792,7 @@ Notas adicionales:</textarea>
                     <input type="text" id="editClientPhone" required class="w-full input-canva">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div id="editCakeEventFields" class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="font-bold text-stone-600">Fecha del Evento</label>
                         <input type="date" id="editEventDate" required class="w-full input-canva">
@@ -1803,7 +1803,7 @@ Notas adicionales:</textarea>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div id="editCakeSizeFlavorFields" class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="font-bold text-stone-600">Porciones / Tamaño</label>
                         <select id="editEventPortions" required class="w-full input-canva"></select>
@@ -1814,7 +1814,7 @@ Notas adicionales:</textarea>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div id="editCakeFillingFields" class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="font-bold text-stone-600">Relleno</label>
                         <select id="editEventFilling" required class="w-full input-canva"></select>
@@ -1826,7 +1826,28 @@ Notas adicionales:</textarea>
                 </div>
 
                 
-              <div class="space-y-1">
+              
+                <div id="editOtherOrderFields" class="hidden space-y-3 p-4 rounded-2xl border border-pink-100 bg-pink-50/40">
+                    <h4 class="font-bold text-pink-800">Información de otros pedidos</h4>
+                    <div class="space-y-1">
+                        <label class="font-bold text-stone-600">Qué necesita</label>
+                        <select id="editOtherProduct" class="w-full input-canva"></select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-bold text-stone-600">Cantidad</label>
+                        <input type="number" min="1" step="1" id="editOtherQuantity" class="w-full input-canva">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-bold text-stone-600">Detalles del pedido</label>
+                        <textarea id="editOtherDetails" rows="3" class="w-full input-canva" placeholder="Describe lo que necesitas..."></textarea>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="font-bold text-stone-600">Observaciones</label>
+                        <textarea id="editOtherObservations" rows="3" class="w-full input-canva" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+                </div>
+
+<div class="space-y-1">
     <label class="font-bold text-stone-600">Método de Entrega</label>
     <select
         id="editDeliveryMethod"
@@ -1951,7 +1972,7 @@ Notas adicionales:</textarea>
 
 
 <!-- DETALLES DE DISEÑO -->
-<div class="space-y-1">
+<div id="editCakeDetailsFields" class="space-y-1">
     <label class="font-bold text-stone-600">
         Detalles del pastel
         <span class="text-stone-400 font-normal">(Opcional)</span>
@@ -1976,6 +1997,10 @@ Notas adicionales:"></textarea>
         Guardar Formulario
     </button>
 </div>
+
+            </form>
+        </div>
+    </div>
 
  <script>
     const DEFAULT_STATE = {
@@ -2468,16 +2493,42 @@ async function cargarPedidosDesdeGoogleSheets() {
         // Normaliza y conserva todos los pedidos devueltos por la hoja.
         // Al sincronizar, muestra por defecto la lista completa; el usuario
         // puede volver a filtrar por Pasteles u Otros pedidos manualmente.
-        state.orders = resultado.pedidos.map(order => ({
-            ...order,
-            id: order.id ?? order.ID ?? order['ID'] ?? '',
-            orderNumber: order.orderNumber ?? order['Número de pedido'] ?? '',
-            orderType: order.orderType ?? order['Tipo de pedido'] ?? 'Pastel',
-            eventDate: order.eventDate ?? order['Fecha del evento'] ?? '',
-            createdAt: order.createdAt ?? order['Fecha en que se registró'] ?? '',
-            clientName: order.clientName ?? order['Nombre completo'] ?? '',
-            clientPhone: order.clientPhone ?? order['WhatsApp de contacto'] ?? ''
-        }));
+        const orderField = (o, ...keys) => {
+            for (const key of keys) {
+                const value = o?.[key];
+                if (value !== undefined && value !== null && String(value).trim() !== '') return value;
+            }
+            return '';
+        };
+        state.orders = resultado.pedidos.map(rawOrder => {
+            const order = { ...rawOrder };
+            order.id = orderField(rawOrder, 'id', 'ID', 'Id', 'Identificador');
+            order.orderNumber = orderField(rawOrder, 'orderNumber', 'Número de pedido', 'No. de pedido', 'Numero de pedido', 'Folio');
+            order.orderType = orderField(rawOrder, 'orderType', 'tipoPedido', 'Tipo de pedido', 'Tipo pedido', 'Tipo') || 'Pastel';
+            order.eventDate = orderField(rawOrder, 'eventDate', 'Fecha del evento', 'Fecha de entrega', 'Fecha');
+            order.createdAt = orderField(rawOrder, 'createdAt', 'Fecha en que se registró', 'Fecha de registro', 'Registrado el');
+            order.clientName = orderField(rawOrder, 'clientName', 'Nombre completo', 'Nombre del cliente', 'Cliente', 'Nombre');
+            order.clientPhone = orderField(rawOrder, 'clientPhone', 'WhatsApp de contacto', 'WhatsApp', 'Teléfono', 'Telefono', 'Celular');
+            order.eventType = orderField(rawOrder, 'eventType', 'Tipo de evento', 'Evento');
+            order.portions = orderField(rawOrder, 'portions', 'Porciones / Tamaño', 'Porciones', 'Tamaño', 'Producto');
+            order.flavor = orderField(rawOrder, 'flavor', 'Sabor de pan', 'Sabor', 'Pan');
+            order.filling = orderField(rawOrder, 'filling', 'Relleno');
+            order.frosting = orderField(rawOrder, 'frosting', 'Betún', 'Betun', 'Cobertura');
+            order.otherProduct = orderField(rawOrder, 'otherProduct', 'otherNeed', 'whatNeeded', 'productService', 'Qué necesita', 'Que necesita', 'Producto solicitado', 'Otro producto');
+            order.otherNeed = order.otherProduct;
+            order.quantity = orderField(rawOrder, 'quantity', 'Cantidad');
+            order.otherDetails = orderField(rawOrder, 'otherDetails', 'Detalles del pedido', 'Detalles', 'Descripción', 'Descripcion');
+            order.otherObservations = orderField(rawOrder, 'otherObservations', 'Observaciones', 'Notas');
+            order.deliveryMethod = orderField(rawOrder, 'deliveryMethod', 'Método de entrega', 'Metodo de entrega', 'Entrega');
+            order.deliveryDetails = orderField(rawOrder, 'deliveryDetails', 'Logística', 'Logistica', 'Detalle de entrega', 'Dirección de entrega', 'Direccion de entrega');
+            order.address = orderField(rawOrder, 'address', 'Dirección', 'Direccion', 'Domicilio');
+            order.branchName = orderField(rawOrder, 'branchName', 'Sucursal', 'Punto de entrega');
+            order.pickupTime = orderField(rawOrder, 'pickupTime', 'Horario de recogida', 'Hora de recogida');
+            order.deliveryTime = orderField(rawOrder, 'deliveryTime', 'Horario de entrega', 'Hora de entrega');
+            order.receiver = orderField(rawOrder, 'receiver', 'Quién recibe', 'Quien recibe', 'Persona que recibe');
+            order.eventDetails = orderField(rawOrder, 'eventDetails', 'Detalles del pastel', 'Detalles de diseño', 'Detalles del cliente');
+            return order;
+        });
 
         currentOrderCategoryFilter = 'all';
         renderOrders(document.getElementById('orderSearchInput')?.value || '');
@@ -4534,9 +4585,9 @@ function addCatalogOption(key, inputId) {
                                    <p><strong>Cantidad:</strong> ${escapeHtml(order.quantity || 'No especificada')}</p>
                                    <p><strong>Detalles:</strong> ${escapeHtml(order.otherDetails || 'Sin detalles')}</p>
                                    <p><strong>Observaciones:</strong> ${escapeHtml(order.otherObservations || 'Sin observaciones')}</p>`
-                                : `<p><strong>Producto:</strong> ${order.portions}</p>
-                                   <p><strong>Pan:</strong> ${order.flavor} | <strong>Relleno:</strong> ${order.filling}</p>
-                                   <p><strong>Betún:</strong> ${order.frosting}</p>`}
+                                : `<p><strong>Porciones / tamaño:</strong> ${escapeHtml(order.portions || order.size || "No especificado")}</p>
+                                   <p><strong>Pan:</strong> ${escapeHtml(order.flavor || order.breadFlavor || "No especificado")} | <strong>Relleno:</strong> ${escapeHtml(order.filling || order.fillingType || "No especificado")}</p>
+                                   <p><strong>Betún:</strong> ${escapeHtml(order.frosting || order.icing || "No especificado")}</p>`}
                         </div>
                         <div>
                             <p><strong>Entrega:</strong> ${escapeHtml(order.deliveryMethod || 'No especificada')}</p>
@@ -4589,14 +4640,49 @@ function addCatalogOption(key, inputId) {
         }
 
         function viewOrderDetails(orderId) {
-            const order = state.orders.find(o => String(o.id) === String(orderId));
+            const order = state.orders.find(o => String(o.id) === String(orderId) || String(o.orderNumber) === String(orderId));
             if (!order) { showToast('No se encontró el pedido', 'error'); return; }
             const other = isOtherOrder(order);
-            const box=(label,value)=>`<div class="bg-stone-50 rounded-xl border border-stone-100 p-3"><p class="text-[10px] uppercase tracking-wider font-bold text-stone-400 mb-1">${label}</p><p class="font-semibold text-stone-700 whitespace-pre-line">${escapeHtml(value||'—')}</p></div>`;
-            document.getElementById('viewOrderSubtitle').textContent=`${other?'Otros pedidos':'Pastel'} • ${order.orderNumber||order.id||''}`;
-            const fields=other?[["Número de pedido",order.orderNumber||order.id],["Nombre completo",order.clientName],["WhatsApp de contacto",order.clientPhone],["Fecha del evento",order.eventDate],["Qué necesita",order.otherProduct||order.otherNeed],["Cantidad",order.quantity],["Detalles",order.otherDetails],["Método de entrega",order.deliveryMethod],["Logística",order.deliveryDetails],["Observaciones",order.otherObservations]]:[["Número de pedido",order.orderNumber||order.id],["Nombre completo",order.clientName],["WhatsApp de contacto",order.clientPhone],["Fecha del evento",order.eventDate],["Evento",order.eventType],["Porciones",order.portions],["Pan",order.flavor],["Relleno",order.filling],["Betún",order.frosting],["Método de entrega",order.deliveryMethod],["Logística",order.deliveryDetails],["Detalles",order.eventDetails]];
-            document.getElementById('viewOrderDetailsContainer').innerHTML=fields.map(([l,v])=>box(l,v)).join('');
-            document.getElementById('viewOrderModal').classList.remove('hidden'); document.getElementById('viewOrderModal').classList.add('flex');
+            const val = (...keys) => {
+                for (const key of keys) {
+                    const value = order[key];
+                    if (value !== undefined && value !== null && String(value).trim() !== '') return value;
+                }
+                return '—';
+            };
+            const box = (label, value) => `<div class="bg-stone-50 rounded-xl border border-stone-100 p-3"><p class="text-[10px] uppercase tracking-wider font-bold text-stone-400 mb-1">${escapeHtml(label)}</p><p class="font-semibold text-stone-700 whitespace-pre-line break-words">${escapeHtml(value)}</p></div>`;
+            document.getElementById('viewOrderSubtitle').textContent = `${other ? 'Otros pedidos' : 'Pedido de pasteles'} • ${val('orderNumber','id')}`;
+            const common = [
+                ['Número de pedido', val('orderNumber','id')],
+                ['Nombre completo', val('clientName')],
+                ['WhatsApp de contacto', val('clientPhone')],
+                ['Fecha del evento', formatOrderDateDisplay(val('eventDate') === '—' ? '' : val('eventDate'))]
+            ];
+            const details = other ? [
+                ['Qué necesita', val('otherProduct','otherNeed','whatNeeded','productService')],
+                ['Cantidad', val('quantity')],
+                ['Detalles del pedido', val('otherDetails','details')],
+                ['Observaciones', val('otherObservations','observations')]
+            ] : [
+                ['Tipo de evento', val('eventType')],
+                ['Porciones / tamaño', val('portions','size')],
+                ['Sabor de pan', val('flavor','breadFlavor')],
+                ['Relleno', val('filling','fillingType')],
+                ['Betún', val('frosting','icing')],
+                ['Detalles del pastel', val('eventDetails','designDetails')]
+            ];
+            const delivery = [
+                ['Método de entrega', val('deliveryMethod')],
+                ['Sucursal / punto de entrega', val('branchName')],
+                ['Horario de recogida', val('pickupTime')],
+                ['Dirección', val('address')],
+                ['Quién recibe', val('receiver')],
+                ['Horario de entrega', val('deliveryTime')],
+                ['Logística / detalles de entrega', val('deliveryDetails')]
+            ].filter(([label, value]) => value !== '—');
+            document.getElementById('viewOrderDetailsContainer').innerHTML = [...common, ...details, ...delivery].map(([label, value]) => box(label, value)).join('');
+            document.getElementById('viewOrderModal').classList.remove('hidden');
+            document.getElementById('viewOrderModal').classList.add('flex');
         }
         function closeViewOrderModal(){const m=document.getElementById('viewOrderModal');if(!m)return;m.classList.add('hidden');m.classList.remove('flex');}
 
@@ -5656,201 +5742,89 @@ Cualquier duda, quedamos atentos.
 
         // EDITAR DATOS DE FORMULARIO DE PEDIDO
       function openEditFormModal(id) {
+    const order = state.orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id));
+    if (!order) { showToast('No se encontró el pedido para editar', 'error'); return; }
 
-    const order = state.orders.find(
-        o => String(o.id) === String(id)
-    );
+    const other = isOtherOrder(order);
+    const setValue = (elementId, value) => { const el = document.getElementById(elementId); if (el) el.value = value ?? ''; };
+    setValue('editOrderId', order.id);
+    setValue('editClientName', order.clientName);
+    setValue('editClientPhone', order.clientPhone);
 
-    if (!order) {
-        console.error('No se encontró el pedido para editar:', id);
-        return;
-    }
-
-    console.log('PEDIDO PARA EDITAR:', order);
-
-    // ============================================
-    // DATOS GENERALES
-    // ============================================
-
-    document.getElementById('editOrderId').value = order.id || '';
-
-    document.getElementById('editClientName').value =
-        order.clientName || '';
-
-    document.getElementById('editClientPhone').value =
-        order.clientPhone || '';
-
-    // Fecha
-    let fechaEvento = order.eventDate || '';
-
+    let fechaEvento = String(order.eventDate || '');
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaEvento)) {
         const partes = fechaEvento.split('/');
         fechaEvento = `${partes[2]}-${partes[1]}-${partes[0]}`;
-    }
-
-    document.getElementById('editEventDate').value = fechaEvento;
-
-
-    // ============================================
-    // CATÁLOGOS DEL PRODUCTO
-    // ============================================
-
-    populateSelect(
-        'editEventType',
-        state.catalogs.events
-    );
-
-    populateSelect(
-        'editEventPortions',
-        state.catalogs.portions
-    );
-
-    populateSelect(
-        'editEventFlavor',
-        state.catalogs.flavors
-    );
-
-    populateSelect(
-        'editEventFilling',
-        state.catalogs.fillings
-    );
-
-    populateSelect(
-        'editEventFrosting',
-        state.catalogs.frostings
-    );
-
-    document.getElementById('editEventType').value =
-        order.eventType || '';
-
-    document.getElementById('editEventPortions').value =
-        order.portions || '';
-
-    document.getElementById('editEventFlavor').value =
-        order.flavor || '';
-
-    document.getElementById('editEventFilling').value =
-        order.filling || '';
-
-    document.getElementById('editEventFrosting').value =
-        order.frosting || '';
-
-
-    // ============================================
-    // MÉTODO DE ENTREGA
-    // ============================================
-
-    const deliverySelect =
-        document.getElementById('editDeliveryMethod');
-
-    deliverySelect.value =
-        order.deliveryMethod || 'Recoger en tienda';
-
-
-    // ============================================
-    // SUCURSALES
-    // ============================================
-
-    const branchSelect =
-        document.getElementById('editPickupLocationSelect');
-
-    branchSelect.innerHTML = '';
-
-    if (state.branches && state.branches.length > 0) {
-
-        state.branches.forEach(branch => {
-
-            const option = document.createElement('option');
-
-            option.value = branch.name;
-            option.textContent = branch.name;
-
-            branchSelect.appendChild(option);
-        });
-    }
-
-
-    // ============================================
-    // HORARIOS DE RECOGIDA
-    // ============================================
-
-    populateSelect(
-        'editPickupTime',
-        state.catalogs.pickupTimes
-    );
-
-
-    // ============================================
-    // HORARIOS DE ENVÍO
-    // ============================================
-
-    populateSelect(
-        'editShippingTime',
-        state.catalogs.shippingTimes
-    );
-
-
-    // ============================================
-    // CARGAR DATOS SEGÚN MÉTODO
-    // ============================================
-
-    if (order.deliveryMethod === 'Recoger en tienda') {
-
-        document.getElementById('editPickupLocationSelect').value =
-            order.branchName || '';
-
-        document.getElementById('editPickupTime').value =
-            order.pickupTime || '';
-
     } else {
-
-        // Dirección
-        const direccion = order.address || '';
-
-        // Si la dirección está guardada como:
-        // Calle, Colonia, Ciudad
-        const partesDireccion = direccion.split(',').map(
-            parte => parte.trim()
-        );
-
-        document.getElementById('editShipStreet').value =
-            partesDireccion[0] || '';
-
-        document.getElementById('editShipColony').value =
-            partesDireccion[1] || '';
-
-        document.getElementById('editShipCity').value =
-            partesDireccion[2] || '';
-
-        document.getElementById('editShipReceiver').value =
-            order.receiver || '';
-
-        document.getElementById('editShippingTime').value =
-            order.deliveryTime || '';
+        fechaEvento = fechaEvento.match(/^\d{4}-\d{2}-\d{2}/)?.[0] || '';
     }
+    setValue('editEventDate', fechaEvento);
 
+    populateSelect('editEventType', state.catalogs.events);
+    populateSelect('editEventPortions', state.catalogs.portions);
+    populateSelect('editEventFlavor', state.catalogs.flavors);
+    populateSelect('editEventFilling', state.catalogs.fillings);
+    populateSelect('editEventFrosting', state.catalogs.frostings);
+    setValue('editEventType', order.eventType);
+    setValue('editEventPortions', order.portions || order.size);
+    setValue('editEventFlavor', order.flavor || order.breadFlavor);
+    setValue('editEventFilling', order.filling || order.fillingType);
+    setValue('editEventFrosting', order.frosting || order.icing);
+    setValue('editEventDetails', order.eventDetails || order.designDetails);
 
-    // Mostrar/ocultar los campos correspondientes
+    const otherSelect = document.getElementById('editOtherProduct');
+    if (otherSelect) {
+        normalizeOtherProductsCatalog();
+        const products = state.catalogs.otherProducts || [];
+        otherSelect.innerHTML = '<option value="">Selecciona una opción</option>' +
+            products.map(item => `<option value="${escapeHtml(item.name)}">${escapeHtml(item.name)}</option>`).join('');
+        const savedProduct = order.otherProduct || order.otherNeed || order.whatNeeded || order.productService || '';
+        if (savedProduct && ![...otherSelect.options].some(option => option.value === savedProduct)) {
+            otherSelect.add(new Option(savedProduct, savedProduct));
+        }
+        otherSelect.value = savedProduct;
+    }
+    setValue('editOtherQuantity', order.quantity);
+    setValue('editOtherDetails', order.otherDetails || order.details);
+    setValue('editOtherObservations', order.otherObservations || order.observations);
+
+    ['editCakeEventFields','editCakeSizeFlavorFields','editCakeFillingFields','editCakeDetailsFields'].forEach(elementId => {
+        document.getElementById(elementId)?.classList.toggle('hidden', other);
+    });
+    document.getElementById('editOtherOrderFields')?.classList.toggle('hidden', !other);
+    ['editEventType','editEventPortions','editEventFlavor','editEventFilling','editEventFrosting'].forEach(elementId => {
+        const el = document.getElementById(elementId);
+        if (el) el.required = !other;
+    });
+    ['editOtherProduct','editOtherQuantity'].forEach(elementId => {
+        const el = document.getElementById(elementId);
+        if (el) el.required = other;
+    });
+
+    const deliverySelect = document.getElementById('editDeliveryMethod');
+    deliverySelect.value = order.deliveryMethod || 'Recoger en tienda';
+    const branchSelect = document.getElementById('editPickupLocationSelect');
+    branchSelect.innerHTML = '';
+    (state.branches || []).forEach(branch => {
+        const option = document.createElement('option');
+        option.value = branch.name;
+        option.textContent = branch.name;
+        branchSelect.appendChild(option);
+    });
+    setValue('editPickupLocationSelect', order.branchName);
+    populateSelect('editPickupTime', state.catalogs.pickupTimes);
+    populateSelect('editShippingTime', state.catalogs.shippingTimes);
+    setValue('editPickupTime', order.pickupTime);
+    const addressParts = String(order.address || '').split(',').map(part => part.trim());
+    setValue('editShipStreet', addressParts[0] || '');
+    setValue('editShipColony', addressParts[1] || '');
+    setValue('editShipCity', addressParts[2] || '');
+    setValue('editShipReceiver', order.receiver);
+    setValue('editShippingTime', order.deliveryTime);
     toggleEditDeliveryFields();
 
-
-    // ============================================
-    // DETALLES DE DISEÑO
-    // ============================================
-
-    document.getElementById('editEventDetails').value =
-        order.eventDetails || '';
-
-
-   // ============================================
-// ABRIR MODAL
-// ============================================
-
-document.getElementById('editFormModal')
-    .classList.remove('hidden');
-
-document.getElementById('editFormModal')
-    .classList.add('flex');
+    document.getElementById('editFormModal').classList.remove('hidden');
+    document.getElementById('editFormModal').classList.add('flex');
 }
 
 function toggleEditDeliveryFields() {
@@ -5900,20 +5874,22 @@ function toggleEditDeliveryFields() {
     order.eventDate =
         document.getElementById('editEventDate').value;
 
-    order.eventType =
-        document.getElementById('editEventType').value;
-
-    order.portions =
-        document.getElementById('editEventPortions').value;
-
-    order.flavor =
-        document.getElementById('editEventFlavor').value;
-
-    order.filling =
-        document.getElementById('editEventFilling').value;
-
-    order.frosting =
-        document.getElementById('editEventFrosting').value;
+    const editingOtherOrder = isOtherOrder(order);
+    if (editingOtherOrder) {
+        order.otherProduct = document.getElementById('editOtherProduct').value;
+        order.otherNeed = order.otherProduct;
+        order.quantity = document.getElementById('editOtherQuantity').value;
+        order.otherDetails = document.getElementById('editOtherDetails').value.trim();
+        order.otherObservations = document.getElementById('editOtherObservations').value.trim();
+        order.orderType = order.orderType || 'Otro pedido';
+    } else {
+        order.eventType = document.getElementById('editEventType').value;
+        order.portions = document.getElementById('editEventPortions').value;
+        order.flavor = document.getElementById('editEventFlavor').value;
+        order.filling = document.getElementById('editEventFilling').value;
+        order.frosting = document.getElementById('editEventFrosting').value;
+        order.eventDetails = document.getElementById('editEventDetails').value.trim();
+    }
 
     order.deliveryMethod =
         document.getElementById('editDeliveryMethod').value;
@@ -5990,10 +5966,6 @@ function toggleEditDeliveryFields() {
     // ============================================
     // DETALLES DE DISEÑO
     // ============================================
-
-    order.eventDetails =
-        document.getElementById('editEventDetails').value.trim();
-
 
     // ============================================
     // GUARDAR CAMBIOS

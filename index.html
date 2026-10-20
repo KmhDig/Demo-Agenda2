@@ -1792,11 +1792,12 @@ Notas adicionales:</textarea>
                     <input type="text" id="editClientPhone" required class="w-full input-canva">
                 </div>
 
+                <div class="space-y-1">
+                    <label class="font-bold text-stone-600">Fecha del Evento / Entrega</label>
+                    <input type="date" id="editEventDate" required class="w-full input-canva">
+                </div>
+
                 <div id="editCakeEventFields" class="grid grid-cols-2 gap-3">
-                    <div class="space-y-1">
-                        <label class="font-bold text-stone-600">Fecha del Evento</label>
-                        <input type="date" id="editEventDate" required class="w-full input-canva">
-                    </div>
                     <div class="space-y-1">
                         <label class="font-bold text-stone-600">Tipo de Evento</label>
                         <select id="editEventType" required class="w-full input-canva"></select>
@@ -2493,40 +2494,53 @@ async function cargarPedidosDesdeGoogleSheets() {
         // Normaliza y conserva todos los pedidos devueltos por la hoja.
         // Al sincronizar, muestra por defecto la lista completa; el usuario
         // puede volver a filtrar por Pasteles u Otros pedidos manualmente.
+        const normalizeOrderKey = value => String(value ?? '')
+            .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+            .toLowerCase().replace(/[^a-z0-9]/g, '');
         const orderField = (o, ...keys) => {
             for (const key of keys) {
                 const value = o?.[key];
                 if (value !== undefined && value !== null && String(value).trim() !== '') return value;
             }
+            // Google Sheets may return headers with different accents, spaces or punctuation.
+            const entries = Object.entries(o || {});
+            for (const key of keys) {
+                const wanted = normalizeOrderKey(key);
+                const found = entries.find(([actual, value]) =>
+                    normalizeOrderKey(actual) === wanted &&
+                    value !== undefined && value !== null && String(value).trim() !== ''
+                );
+                if (found) return found[1];
+            }
             return '';
         };
         state.orders = resultado.pedidos.map(rawOrder => {
             const order = { ...rawOrder };
-            order.id = orderField(rawOrder, 'id', 'ID', 'Id', 'Identificador');
-            order.orderNumber = orderField(rawOrder, 'orderNumber', 'Número de pedido', 'No. de pedido', 'Numero de pedido', 'Folio');
-            order.orderType = orderField(rawOrder, 'orderType', 'tipoPedido', 'Tipo de pedido', 'Tipo pedido', 'Tipo') || 'Pastel';
-            order.eventDate = orderField(rawOrder, 'eventDate', 'Fecha del evento', 'Fecha de entrega', 'Fecha');
+            order.id = orderField(rawOrder, 'id', 'ID', 'Id', 'Identificador', 'pedidoId', 'orderId');
+            order.orderNumber = orderField(rawOrder, 'orderNumber', 'Número de pedido', 'No. de pedido', 'Numero de pedido', 'Folio', 'numeroPedido');
+            order.orderType = orderField(rawOrder, 'orderType', 'tipoPedido', 'Tipo de pedido', 'Tipo pedido', 'Tipo', 'categoria', 'category') || 'Pastel';
+            order.eventDate = orderField(rawOrder, 'eventDate', 'Fecha del evento', 'Fecha de entrega', 'Fecha', 'fechaEvento', 'fechaPedido', 'deliveryDate');
             order.createdAt = orderField(rawOrder, 'createdAt', 'Fecha en que se registró', 'Fecha de registro', 'Registrado el');
-            order.clientName = orderField(rawOrder, 'clientName', 'Nombre completo', 'Nombre del cliente', 'Cliente', 'Nombre');
-            order.clientPhone = orderField(rawOrder, 'clientPhone', 'WhatsApp de contacto', 'WhatsApp', 'Teléfono', 'Telefono', 'Celular');
-            order.eventType = orderField(rawOrder, 'eventType', 'Tipo de evento', 'Evento');
-            order.portions = orderField(rawOrder, 'portions', 'Porciones / Tamaño', 'Porciones', 'Tamaño', 'Producto');
-            order.flavor = orderField(rawOrder, 'flavor', 'Sabor de pan', 'Sabor', 'Pan');
-            order.filling = orderField(rawOrder, 'filling', 'Relleno');
-            order.frosting = orderField(rawOrder, 'frosting', 'Betún', 'Betun', 'Cobertura');
-            order.otherProduct = orderField(rawOrder, 'otherProduct', 'otherNeed', 'whatNeeded', 'productService', 'Qué necesita', 'Que necesita', 'Producto solicitado', 'Otro producto');
+            order.clientName = orderField(rawOrder, 'clientName', 'Nombre completo', 'Nombre del cliente', 'Cliente', 'Nombre', 'nombreCliente', 'customerName', 'name');
+            order.clientPhone = orderField(rawOrder, 'clientPhone', 'WhatsApp de contacto', 'WhatsApp', 'Teléfono', 'Telefono', 'Celular', 'telefonoCliente', 'phone', 'whatsapp');
+            order.eventType = orderField(rawOrder, 'eventType', 'Tipo de evento', 'Evento', 'tipoEvento');
+            order.portions = orderField(rawOrder, 'portions', 'Porciones / Tamaño', 'Porciones', 'Tamaño', 'Producto', 'size', 'cakeSize', 'tamano');
+            order.flavor = orderField(rawOrder, 'flavor', 'Sabor de pan', 'Sabor', 'Pan', 'breadFlavor', 'saborPan');
+            order.filling = orderField(rawOrder, 'filling', 'Relleno', 'fillingType', 'tipoRelleno');
+            order.frosting = orderField(rawOrder, 'frosting', 'Betún', 'Betun', 'Cobertura', 'icing', 'tipoBetun');
+            order.otherProduct = orderField(rawOrder, 'otherProduct', 'otherNeed', 'whatNeeded', 'productService', 'Qué necesita', 'Que necesita', 'Producto solicitado', 'Otro producto', 'productoServicio', 'productoSolicitado');
             order.otherNeed = order.otherProduct;
             order.quantity = orderField(rawOrder, 'quantity', 'Cantidad');
-            order.otherDetails = orderField(rawOrder, 'otherDetails', 'Detalles del pedido', 'Detalles', 'Descripción', 'Descripcion');
-            order.otherObservations = orderField(rawOrder, 'otherObservations', 'Observaciones', 'Notas');
-            order.deliveryMethod = orderField(rawOrder, 'deliveryMethod', 'Método de entrega', 'Metodo de entrega', 'Entrega');
+            order.otherDetails = orderField(rawOrder, 'otherDetails', 'Detalles del pedido', 'Detalles', 'Descripción', 'Descripcion', 'details', 'orderDetails');
+            order.otherObservations = orderField(rawOrder, 'otherObservations', 'Observaciones', 'Notas', 'observations', 'notes');
+            order.deliveryMethod = orderField(rawOrder, 'deliveryMethod', 'Método de entrega', 'Metodo de entrega', 'Entrega', 'metodoEntrega');
             order.deliveryDetails = orderField(rawOrder, 'deliveryDetails', 'Logística', 'Logistica', 'Detalle de entrega', 'Dirección de entrega', 'Direccion de entrega');
             order.address = orderField(rawOrder, 'address', 'Dirección', 'Direccion', 'Domicilio');
             order.branchName = orderField(rawOrder, 'branchName', 'Sucursal', 'Punto de entrega');
             order.pickupTime = orderField(rawOrder, 'pickupTime', 'Horario de recogida', 'Hora de recogida');
             order.deliveryTime = orderField(rawOrder, 'deliveryTime', 'Horario de entrega', 'Hora de entrega');
             order.receiver = orderField(rawOrder, 'receiver', 'Quién recibe', 'Quien recibe', 'Persona que recibe');
-            order.eventDetails = orderField(rawOrder, 'eventDetails', 'Detalles del pastel', 'Detalles de diseño', 'Detalles del cliente');
+            order.eventDetails = orderField(rawOrder, 'eventDetails', 'Detalles del pastel', 'Detalles de diseño', 'Detalles del cliente', 'designDetails', 'cakeDetails', 'detallesPastel');
             return order;
         });
 
@@ -5745,32 +5759,64 @@ Cualquier duda, quedamos atentos.
     const order = state.orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id));
     if (!order) { showToast('No se encontró el pedido para editar', 'error'); return; }
 
-    const other = isOtherOrder(order);
-    const setValue = (elementId, value) => { const el = document.getElementById(elementId); if (el) el.value = value ?? ''; };
-    setValue('editOrderId', order.id);
-    setValue('editClientName', order.clientName);
-    setValue('editClientPhone', order.clientPhone);
+    const normalizeKey = value => String(value ?? '').normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const read = (...keys) => {
+        for (const key of keys) {
+            const value = order[key];
+            if (value !== undefined && value !== null && String(value).trim() !== '') return value;
+        }
+        const entries = Object.entries(order);
+        for (const key of keys) {
+            const wanted = normalizeKey(key);
+            const found = entries.find(([actual, value]) =>
+                normalizeKey(actual) === wanted && value !== undefined &&
+                value !== null && String(value).trim() !== ''
+            );
+            if (found) return found[1];
+        }
+        return '';
+    };
+    const setValue = (elementId, value) => {
+        const el = document.getElementById(elementId);
+        if (el) el.value = value ?? '';
+    };
+    const setSelectValue = (elementId, value) => {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const saved = String(value ?? '');
+        if (saved && !Array.from(el.options).some(option => option.value === saved)) {
+            el.add(new Option(saved, saved));
+        }
+        el.value = saved;
+    };
 
-    let fechaEvento = String(order.eventDate || '');
+    setValue('editOrderId', read('id', 'ID', 'pedidoId', 'orderId'));
+    setValue('editClientName', read('clientName', 'Nombre completo', 'Nombre del cliente', 'Cliente', 'Nombre', 'nombreCliente', 'customerName', 'name'));
+    setValue('editClientPhone', read('clientPhone', 'WhatsApp de contacto', 'WhatsApp', 'Teléfono', 'Telefono', 'Celular', 'telefonoCliente', 'phone', 'whatsapp'));
+
+    let fechaEvento = String(read('eventDate', 'Fecha del evento', 'Fecha de entrega', 'Fecha', 'fechaEvento', 'fechaPedido', 'deliveryDate') || '');
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaEvento)) {
         const partes = fechaEvento.split('/');
         fechaEvento = `${partes[2]}-${partes[1]}-${partes[0]}`;
+    } else if (/^\d{4}-\d{2}-\d{2}T/.test(fechaEvento)) {
+        fechaEvento = fechaEvento.slice(0, 10);
     } else {
         fechaEvento = fechaEvento.match(/^\d{4}-\d{2}-\d{2}/)?.[0] || '';
     }
     setValue('editEventDate', fechaEvento);
 
-    populateSelect('editEventType', state.catalogs.events);
-    populateSelect('editEventPortions', state.catalogs.portions);
-    populateSelect('editEventFlavor', state.catalogs.flavors);
-    populateSelect('editEventFilling', state.catalogs.fillings);
-    populateSelect('editEventFrosting', state.catalogs.frostings);
-    setValue('editEventType', order.eventType);
-    setValue('editEventPortions', order.portions || order.size);
-    setValue('editEventFlavor', order.flavor || order.breadFlavor);
-    setValue('editEventFilling', order.filling || order.fillingType);
-    setValue('editEventFrosting', order.frosting || order.icing);
-    setValue('editEventDetails', order.eventDetails || order.designDetails);
+    populateSelect('editEventType', state.catalogs.events || []);
+    populateSelect('editEventPortions', state.catalogs.portions || []);
+    populateSelect('editEventFlavor', state.catalogs.flavors || []);
+    populateSelect('editEventFilling', state.catalogs.fillings || []);
+    populateSelect('editEventFrosting', state.catalogs.frostings || []);
+    setSelectValue('editEventType', read('eventType', 'Tipo de evento', 'Evento', 'tipoEvento'));
+    setSelectValue('editEventPortions', read('portions', 'Porciones / Tamaño', 'Porciones', 'Tamaño', 'Producto', 'size', 'cakeSize', 'tamano'));
+    setSelectValue('editEventFlavor', read('flavor', 'Sabor de pan', 'Sabor', 'Pan', 'breadFlavor', 'saborPan'));
+    setSelectValue('editEventFilling', read('filling', 'Relleno', 'fillingType', 'tipoRelleno'));
+    setSelectValue('editEventFrosting', read('frosting', 'Betún', 'Betun', 'Cobertura', 'icing', 'tipoBetun'));
+    setValue('editEventDetails', read('eventDetails', 'Detalles del pastel', 'Detalles de diseño', 'Detalles del cliente', 'designDetails', 'cakeDetails', 'detallesPastel'));
 
     const otherSelect = document.getElementById('editOtherProduct');
     if (otherSelect) {
@@ -5778,16 +5824,21 @@ Cualquier duda, quedamos atentos.
         const products = state.catalogs.otherProducts || [];
         otherSelect.innerHTML = '<option value="">Selecciona una opción</option>' +
             products.map(item => `<option value="${escapeHtml(item.name)}">${escapeHtml(item.name)}</option>`).join('');
-        const savedProduct = order.otherProduct || order.otherNeed || order.whatNeeded || order.productService || '';
-        if (savedProduct && ![...otherSelect.options].some(option => option.value === savedProduct)) {
-            otherSelect.add(new Option(savedProduct, savedProduct));
+        const savedProduct = read('otherProduct', 'otherNeed', 'whatNeeded', 'productService', 'Qué necesita', 'Que necesita', 'Producto solicitado', 'Otro producto', 'productoServicio', 'productoSolicitado');
+        if (savedProduct && !Array.from(otherSelect.options).some(option => option.value === String(savedProduct))) {
+            otherSelect.add(new Option(String(savedProduct), String(savedProduct)));
         }
-        otherSelect.value = savedProduct;
+        otherSelect.value = savedProduct || '';
     }
-    setValue('editOtherQuantity', order.quantity);
-    setValue('editOtherDetails', order.otherDetails || order.details);
-    setValue('editOtherObservations', order.otherObservations || order.observations);
+    setValue('editOtherQuantity', read('quantity', 'Cantidad', 'qty'));
+    setValue('editOtherDetails', read('otherDetails', 'Detalles del pedido', 'Detalles', 'Descripción', 'Descripcion', 'details', 'orderDetails'));
+    setValue('editOtherObservations', read('otherObservations', 'Observaciones', 'Notas', 'observations', 'notes'));
 
+    const typeValue = String(read('orderType', 'tipoPedido', 'Tipo de pedido', 'Tipo pedido', 'Tipo', 'categoria', 'category') || '');
+    const other = ['otro', 'otros', 'otro pedido', 'otros pedidos', 'other', 'other order', 'other orders']
+        .includes(typeValue.trim().toLowerCase()) ||
+        !!read('otherProduct', 'otherNeed', 'whatNeeded', 'productService', 'Qué necesita', 'Que necesita', 'Producto solicitado', 'Otro producto', 'productoServicio', 'productoSolicitado') ||
+        !!order.isOtherOrder;
     ['editCakeEventFields','editCakeSizeFlavorFields','editCakeFillingFields','editCakeDetailsFields'].forEach(elementId => {
         document.getElementById(elementId)?.classList.toggle('hidden', other);
     });
@@ -5801,26 +5852,29 @@ Cualquier duda, quedamos atentos.
         if (el) el.required = other;
     });
 
-    const deliverySelect = document.getElementById('editDeliveryMethod');
-    deliverySelect.value = order.deliveryMethod || 'Recoger en tienda';
+    const deliveryMethod = read('deliveryMethod', 'Método de entrega', 'Metodo de entrega', 'Entrega', 'metodoEntrega');
+    setSelectValue('editDeliveryMethod', deliveryMethod || 'Recoger en tienda');
     const branchSelect = document.getElementById('editPickupLocationSelect');
-    branchSelect.innerHTML = '';
-    (state.branches || []).forEach(branch => {
-        const option = document.createElement('option');
-        option.value = branch.name;
-        option.textContent = branch.name;
-        branchSelect.appendChild(option);
-    });
-    setValue('editPickupLocationSelect', order.branchName);
-    populateSelect('editPickupTime', state.catalogs.pickupTimes);
-    populateSelect('editShippingTime', state.catalogs.shippingTimes);
-    setValue('editPickupTime', order.pickupTime);
-    const addressParts = String(order.address || '').split(',').map(part => part.trim());
+    if (branchSelect) {
+        branchSelect.innerHTML = '';
+        (state.branches || []).forEach(branch => {
+            const option = document.createElement('option');
+            option.value = branch.name;
+            option.textContent = branch.name;
+            branchSelect.appendChild(option);
+        });
+    }
+    setSelectValue('editPickupLocationSelect', read('branchName', 'Sucursal', 'Punto de entrega', 'sucursal'));
+    populateSelect('editPickupTime', state.catalogs.pickupTimes || []);
+    populateSelect('editShippingTime', state.catalogs.shippingTimes || []);
+    setSelectValue('editPickupTime', read('pickupTime', 'Horario de recogida', 'Hora de recogida', 'pickupTime'));
+    const address = String(read('address', 'Dirección', 'Direccion', 'Domicilio', 'deliveryAddress', 'deliveryDetails', 'Logística', 'Logistica') || '');
+    const addressParts = address.split(',').map(part => part.trim());
     setValue('editShipStreet', addressParts[0] || '');
     setValue('editShipColony', addressParts[1] || '');
     setValue('editShipCity', addressParts[2] || '');
-    setValue('editShipReceiver', order.receiver);
-    setValue('editShippingTime', order.deliveryTime);
+    setValue('editShipReceiver', read('receiver', 'Quién recibe', 'Quien recibe', 'Persona que recibe', 'receiverName'));
+    setSelectValue('editShippingTime', read('deliveryTime', 'Horario de entrega', 'Hora de entrega', 'shippingTime'));
     toggleEditDeliveryFields();
 
     document.getElementById('editFormModal').classList.remove('hidden');

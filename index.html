@@ -6562,5 +6562,110 @@ function sendSummaryWA() {
   }
 </style>
 
+
+<style id="dulce-reino-compact-responsive-final">
+  /* Ajuste compacto global: solo presentación, conserva funciones y contenido */
+  html { scroll-padding-top: 5rem; }
+  body { overflow-x: hidden; }
+  header.sticky { padding: .65rem clamp(.75rem, 2vw, 1.5rem) !important; }
+  header.sticky > div:first-child { gap: .65rem !important; min-width: 0; }
+  header.sticky > div:first-child > div:first-child {
+    width: clamp(2.5rem, 4vw, 3.25rem) !important;
+    height: clamp(2.5rem, 4vw, 3.25rem) !important;
+  }
+  #brand-title { font-size: clamp(1.08rem, 1.6vw, 1.4rem) !important; }
+  #brand-subtitle { font-size: clamp(.56rem, .75vw, .7rem) !important; }
+  header.sticky button[onclick="openAdminModal()"] {
+    min-height: 2.55rem !important; padding: .6rem .9rem !important;
+  }
+
+  #hero-section {
+    min-height: clamp(390px, 62vh, 560px) !important;
+    padding: clamp(2rem, 5vw, 3.5rem) 0 !important;
+  }
+  #hero-section > div { width: min(100% - 2rem, 900px) !important; }
+  #hero-badge { margin-bottom: 1rem !important; padding: .5rem 1rem !important; font-size: .68rem !important; }
+  #hero-title {
+    font-size: clamp(2rem, 4.3vw, 3.8rem) !important;
+    line-height: 1.08 !important; margin-bottom: .85rem !important;
+  }
+  #hero-subtitle { font-size: clamp(.9rem, 1.25vw, 1.08rem) !important; line-height: 1.5 !important; }
+  .hero-actions { gap: .65rem !important; margin-top: 1.2rem !important; }
+  .hero-button { min-height: 2.75rem !important; padding: .7rem 1.1rem !important; font-size: .82rem !important; }
+
+  main { max-width: 1120px !important; padding: .8rem clamp(.55rem, 1.8vw, 1.25rem) 1rem !important; }
+  main > section { margin-bottom: .8rem !important; }
+  #portfolio-section { margin-top: .7rem !important; gap: .55rem !important; }
+  #portfolio-section h3 { font-size: clamp(1.45rem, 2.5vw, 2rem) !important; line-height: 1.2 !important; margin-top: .25rem !important; }
+  #portfolio-section span { letter-spacing: .2em !important; font-size: .65rem !important; }
+  #portfolio-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(.35rem, 1vw, .75rem) !important;
+    align-items: stretch;
+  }
+  #portfolio-grid > div {
+    min-width: 0; overflow: hidden; border-radius: clamp(.55rem, 1.2vw, .9rem) !important;
+    aspect-ratio: 4 / 5;
+  }
+  #portfolio-grid img {
+    display: block; width: 100% !important; height: 100% !important;
+    aspect-ratio: auto !important; object-fit: cover !important;
+  }
+
+  #quality-guide-section {
+    margin-top: .65rem !important; margin-bottom: .75rem !important;
+    padding: clamp(.9rem, 2vw, 1.35rem) !important; border-radius: 1.15rem !important;
+    gap: .85rem !important;
+  }
+  #quality-guide-section #essence-title { font-size: clamp(1.3rem, 2vw, 1.65rem) !important; }
+  #quality-guide-section #essence-text { font-size: .76rem !important; line-height: 1.5 !important; }
+  #quality-guide-section #guide-title { font-size: clamp(1.2rem, 2vw, 1.5rem) !important; }
+  #quality-guide-section #steps-section strong { font-size: .78rem !important; }
+  #quality-guide-section #steps-section p { font-size: .68rem !important; line-height: 1.45 !important; }
+
+  #form-section { padding: clamp(.85rem, 2vw, 1.25rem) !important; border-radius: 1.2rem !important; margin-top: .6rem !important; }
+  #form-section > div:first-child h3 { font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important; line-height: 1.2 !important; }
+  #form-section > div:first-child p { font-size: .78rem !important; }
+  #form-section input:not([type="checkbox"]):not([type="radio"]),
+  #form-section select, #form-section textarea {
+    min-height: 2.55rem !important; padding: .6rem .75rem !important; font-size: .84rem !important;
+  }
+  #form-section textarea { min-height: 5rem !important; }
+  #form-section .availability-calendar { padding: .8rem !important; border-radius: 1rem !important; }
+  #form-section .availability-day { min-height: 2.4rem !important; border-radius: .6rem !important; }
+  #orderForm { gap: 1rem !important; }
+
+  @media (max-width: 760px) {
+    header.sticky { padding: .6rem .75rem !important; }
+    #hero-section { min-height: 390px !important; padding: 2.5rem 0 !important; }
+    #hero-section > div { width: min(100% - 1.25rem, 520px) !important; }
+    #hero-title { font-size: clamp(1.9rem, 7vw, 2.65rem) !important; }
+    #hero-subtitle { font-size: .9rem !important; }
+    .hero-actions { margin-top: 1rem !important; }
+    .hero-button { min-height: 2.55rem !important; padding: .65rem .85rem !important; font-size: .76rem !important; }
+    #portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: .45rem !important; }
+    #portfolio-grid > div { aspect-ratio: 4 / 5; }
+    #quality-guide-section { grid-template-columns: minmax(0,1fr) !important; }
+    #quality-guide-section #steps-section {
+      padding: .8rem 0 0 !important; border-left: 0 !important;
+      border-top: 1px solid rgba(255,255,255,.28) !important;
+    }
+    #quality-guide-section #steps-section > .space-y-6 { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+    main { padding: .6rem .55rem .9rem !important; }
+  }
+  @media (max-width: 420px) {
+    #hero-section { min-height: 360px !important; }
+    #hero-title { font-size: 1.9rem !important; }
+    #hero-subtitle { font-size: .84rem !important; }
+    .hero-actions { flex-direction: column !important; align-items: stretch !important; }
+    .hero-button { width: 100% !important; }
+    #portfolio-grid { gap: .35rem !important; }
+    #portfolio-grid > div { border-radius: .55rem !important; }
+    #quality-guide-section #steps-section > .space-y-6 { grid-template-columns: minmax(0,1fr) !important; }
+    #form-section { padding: .75rem !important; }
+  }
+</style>
+
 </body>
 </html>

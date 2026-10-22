@@ -71,6 +71,45 @@ main { max-width: 1380px !important; }
     #portfolio-section { margin-top: 1.25rem !important; }
   }
 </style>
+
+<style id="portfolio-four-images-two-by-two-all-devices">
+  /* Galería de cuatro fotos: dos columnas por dos filas en celular, tablet y computadora. */
+  html body #portfolio-section #portfolio-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    grid-auto-columns: auto !important;
+    gap: clamp(.4rem, 1.2vw, .9rem) !important;
+    width: 100% !important;
+  }
+  html body #portfolio-section #portfolio-grid > div {
+    grid-column: auto / span 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow: hidden !important;
+  }
+  html body #portfolio-section #portfolio-grid img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 5 !important;
+    object-fit: cover !important;
+  }
+  @media (max-width: 900px) {
+    html body #portfolio-section #portfolio-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: .5rem !important;
+    }
+  }
+  @media (max-width: 600px) {
+    html body #portfolio-section #portfolio-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: .4rem !important;
+    }
+  }
+</style>
+
 </head>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -226,9 +265,7 @@ main { max-width: 1380px !important; }
                 'img/Pastel1.jpg',
                 'img/Pastel2.jpg',
                 'img/Pastel3.jpg',
-                'img/Pastel4.jpg',
-                'img/Pastel5.jpg',
-                'img/Pastel6.jpg'
+                'img/Pastel4.jpg'
             ],
 
             googleSheetsUrl: 'https://script.google.com/macros/s/AKfycbzQH7A5GdHLZvUJd_8FGidqQsnjPxLCvFssW7gR6U_pJSE6XH_fpOiV3CjFLx69skNP/exec'  
@@ -676,6 +713,13 @@ background-repeat:no-repeat;">
             <img src="" id="portfolio-image-3"
                   onclick="openImage(this.src)"
          class="w-full aspect-[2/3] object-cover hover:scale-105 transition duration-500 cursor-pointer">
+        </div>
+
+        <div class="overflow-hidden rounded-xl shadow-sm bg-white">
+            <img src="" id="portfolio-image-4"
+                 alt="Pastel artesanal de Dulce Reino"
+                 onclick="openImage(this.src)"
+                 class="w-full aspect-[2/3] object-cover hover:scale-105 transition duration-500 cursor-pointer">
         </div>
 
     </div>
@@ -6733,4 +6777,34 @@ main > section { margin-bottom: .65rem !important; }
   #hero-actions { gap: .35rem !important; }
   .hero-button { padding: .45rem .55rem !important; font-size: .64rem !important; }
 }
+</style>
+
+<style id="portfolio-four-images-responsive">
+  /* Galería: cuatro creaciones en escritorio y cuadrícula 2 × 2 en celular */
+  #portfolio-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: .75rem !important;
+    align-items: stretch !important;
+  }
+  #portfolio-grid > div {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    border-radius: .9rem !important;
+  }
+  #portfolio-grid img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 5 !important;
+    object-fit: cover !important;
+  }
+  @media (max-width: 600px) {
+    #portfolio-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: .5rem !important;
+    }
+    #portfolio-grid > div { border-radius: .7rem !important; }
+    #portfolio-grid img { aspect-ratio: 4 / 5 !important; }
+  }
 </style>
